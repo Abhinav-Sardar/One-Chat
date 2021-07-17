@@ -12,48 +12,63 @@ import {
   ActionButton,
   ActionsButtonWrapper,
 } from "../Styled-components/Mainpage.styled";
+import { useEffect } from "react";
 
 const MainPage: FC = () => {
+  useEffect(() => {
+    document.body.style.background = `linear-gradient(60deg, ${constants.appAccentColor}, #fff)`;
+  }, []);
   return (
-    <Page>
-      <div
-        className="page"
-        style={{
-          background: "linear-gradient(60deg, #be3fbe, #fff)",
-        }}
-      >
-        <StyledStickyHeader>
-          <div className="logo">
-            <IoChatboxSharp fill={constants.appAccentColor} fontSize={"3vw"} />
-            <span>One-Chat</span>
-          </div>
-
-          <span className="tagline">Best place for One Time Chats</span>
-        </StyledStickyHeader>
-        <MainContent>
-          <div className="logo">
-            <IoChatboxSharp />
-          </div>
-          <div className="info">
-            <h1 className="company__name">One-Chat</h1>
-            <h2>Best place for One Time Chats with anyone in the world</h2>
-          </div>
-        </MainContent>
-        <ActionsButtonWrapper>
-          <Link to="/create">
-            <ActionButton>
-              Create a room <TiPlus className="plus" />
-            </ActionButton>
-          </Link>
-          <ActionButton>
-            Join a room <BsFillChatSquareFill />
-          </ActionButton>
-          <ActionButton>
-            Customize <FaBrush />
-          </ActionButton>
-        </ActionsButtonWrapper>
-      </div>
-    </Page>
+    <div className="page">
+      <ThisHeader />
+      <ThisMain />
+      <ThisButtons />
+    </div>
   );
 };
+
+function ThisHeader(): JSX.Element {
+  return (
+    <StyledStickyHeader>
+      <div className="logo">
+        <IoChatboxSharp fill={constants.appAccentColor} fontSize={"3vw"} />
+        <span>One-Chat</span>
+      </div>
+
+      <span className="tagline">Best place for One Time Chats</span>
+    </StyledStickyHeader>
+  );
+}
+
+function ThisMain(): JSX.Element {
+  return (
+    <MainContent>
+      <div className="logo">
+        <IoChatboxSharp />
+      </div>
+      <div className="info">
+        <h1 className="company__name">One-Chat</h1>
+        <h2>Best place for One Time Chats with anyone in the world</h2>
+      </div>
+    </MainContent>
+  );
+}
+
+function ThisButtons(): JSX.Element {
+  return (
+    <ActionsButtonWrapper>
+      <Link to="/create">
+        <ActionButton>
+          Create a room <TiPlus className="plus" />
+        </ActionButton>
+      </Link>
+      <ActionButton>
+        Join a room <BsFillChatSquareFill />
+      </ActionButton>
+      <ActionButton>
+        Customize <FaBrush />
+      </ActionButton>
+    </ActionsButtonWrapper>
+  );
+}
 export default MainPage;

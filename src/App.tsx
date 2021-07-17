@@ -4,8 +4,12 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
 import "./globals.css";
 import CreateRoom from "./Components/CreateRoom";
+import { accentColorChecker } from "./Constants";
 
 const App: FC = () => {
+  useEffect(() => {
+    accentColorChecker();
+  });
   return (
     <Fragment>
       <Router>

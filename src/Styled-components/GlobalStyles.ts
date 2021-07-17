@@ -14,7 +14,6 @@ body {
   height:100vh ; 
   width:100vw; 
   overflow-x: hidden;
-  background: linear-gradient(60deg, #be3fbe, #fff);
 }
 `;
 export const Wrapper = styled.div`

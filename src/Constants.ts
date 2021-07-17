@@ -1,3 +1,9 @@
 export const constants = {
-  appAccentColor: "#bd14ca",
+  appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
 };
+
+export function accentColorChecker(): void {
+  if (!localStorage.getItem("one-chat-accent-color")) {
+    localStorage.setItem("one-chat-accent-color", "#bd14ca");
+  }
+}
