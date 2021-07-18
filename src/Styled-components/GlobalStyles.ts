@@ -6,14 +6,25 @@ export const GlobalStyles = createGlobalStyle`
     padding:0 ; 
     margin:0 ; 
 }
-*::selection{
-  color:white ; 
-  background-color: ${constants.appAccentColor};
-}
+
 body {
   height:100vh ; 
   width:100vw; 
   overflow-x: hidden;
+  > *:not(.logo , .tagline)::selection {
+    background:white ; 
+    color:${constants.appAccentColor}
+}
+}
+.logo > span::selection {
+  color:white ; 
+  background-color:${constants.appAccentColor}
+
+}
+.tagline::selection {
+  color:white ; 
+  background-color:${constants.appAccentColor}
+  
 }
 `;
 export const Wrapper = styled.div`

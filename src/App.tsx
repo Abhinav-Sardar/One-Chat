@@ -4,24 +4,38 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
 import "./globals.css";
 import CreateRoom from "./Components/CreateRoom";
-import { accentColorChecker } from "./Constants";
-
+import { accentColorChecker, Animation } from "./Constants";
+import Customize from "./Components/Customize";
+import { animated } from "react-spring";
 const App: FC = () => {
   useEffect(() => {
     accentColorChecker();
   });
+  const { fade } = Animation();
   return (
     <Fragment>
-      <Router>
+      <Router forceRefresh>
         <Switch>
           <Route path="/" exact>
-            <MainPage />
+            <animated.div style={fade}>
+              <MainPage />
+            </animated.div>
           </Route>
           <Route path="/create">
-            <CreateRoom />
+            <animated.div style={fade}>
+              <CreateRoom />
+            </animated.div>
           </Route>
+          <Route path="/customize">
+            <animated.div style={fade}>
+              <Customize />
+            </animated.div>
+          </Route>
+
           <Route path="/*">
-            <NotFoundPage />
+            <animated.div style={fade}>
+              <NotFoundPage />
+            </animated.div>
           </Route>
         </Switch>
       </Router>

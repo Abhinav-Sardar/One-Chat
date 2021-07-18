@@ -1,29 +1,32 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, useEffect } from "react";
 import { StyledStickyHeader } from "../Styled-components/Mainpage.styled";
 import { IoChatboxSharp } from "react-icons/io5";
-import { constants } from "../Constants";
+import { constants, Animation } from "../Constants";
 import { MainContent } from "../Styled-components/Mainpage.styled";
-import { Page } from "../Styled-components/GlobalStyles";
 import { BsFillChatSquareFill } from "react-icons/bs";
 import { TiPlus } from "react-icons/ti";
 import { FaBrush } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Customize from "./Customize";
 import {
   ActionButton,
   ActionsButtonWrapper,
 } from "../Styled-components/Mainpage.styled";
-import { useEffect } from "react";
 
 const MainPage: FC = () => {
+  const { fade } = Animation();
   useEffect(() => {
-    document.body.style.background = `linear-gradient(60deg, ${constants.appAccentColor}, #fff)`;
+    document.getElementById(
+      "root"
+    )!.style.background = `linear-gradient(60deg, ${constants.appAccentColor}, #fff)`;
+    console.log(fade);
   }, []);
   return (
-    <div className="page">
+    <Fragment>
       <ThisHeader />
       <ThisMain />
       <ThisButtons />
-    </div>
+    </Fragment>
   );
 };
 
@@ -65,9 +68,11 @@ function ThisButtons(): JSX.Element {
       <ActionButton>
         Join a room <BsFillChatSquareFill />
       </ActionButton>
-      <ActionButton>
-        Customize <FaBrush />
-      </ActionButton>
+      <Link to="/customize">
+        <ActionButton>
+          Customize <FaBrush />
+        </ActionButton>
+      </Link>
     </ActionsButtonWrapper>
   );
 }

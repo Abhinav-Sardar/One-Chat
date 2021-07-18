@@ -1,6 +1,6 @@
 import { FaRegGrimace } from "react-icons/fa";
 import { Fragment, FC } from "react";
-import { Page } from "../Styled-components/NotFound";
+import { Page } from "../Styled-components/NotFound.styled";
 import { Link } from "react-router-dom";
 const NotFoundPage: FC = () => {
   return (

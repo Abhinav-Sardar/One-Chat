@@ -15,6 +15,7 @@ export const StyledStickyHeader = styled.div`
   border-bottom: 1px solid black;
   z-index: 8;
   top: 0;
+
   .logo {
     height: 100%;
     margin-left: 2vw;
@@ -55,6 +56,10 @@ export const MainContent = styled.main`
     width: 100vw;
     text-align: center;
     color: ${constants.appAccentColor};
+    > *::selection {
+      background-color: ${constants.appAccentColor};
+      color: white;
+    }
     h1 {
       font-family: "Raleway", sans-serif;
       font-size: 5vw;
@@ -73,6 +78,7 @@ export const ActionButton = styled.button`
   font-size: 1.3vw;
   transition: 0.4s ease-in;
   color: white;
+  font-family: "Quicksand", sans-serif;
   background-color: ${constants.appAccentColor};
   &:hover {
     color: ${constants.appAccentColor};
