@@ -79,6 +79,7 @@ export const ActionButton = styled.button`
   transition: 0.4s ease-in;
   color: white;
   font-family: "Quicksand", sans-serif;
+
   background-color: ${constants.appAccentColor};
   &:hover {
     color: ${constants.appAccentColor};

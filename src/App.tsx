@@ -7,10 +7,12 @@ import CreateRoom from "./Components/CreateRoom";
 import { accentColorChecker, Animation } from "./Constants";
 import Customize from "./Components/Customize";
 import { animated } from "react-spring";
+import "react-responsive-modal/styles.css";
+
 const App: FC = () => {
   useEffect(() => {
     accentColorChecker();
-  });
+  }, []);
   const { fade } = Animation();
   return (
     <Fragment>
@@ -34,7 +36,7 @@ const App: FC = () => {
 
           <Route path="/*">
             <animated.div style={fade}>
-              <NotFoundPage />
+              <NotFoundPage isRoomError={false} />
             </animated.div>
           </Route>
         </Switch>
