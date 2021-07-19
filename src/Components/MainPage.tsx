@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect } from "react";
+import { FC, Fragment, useEffect, memo } from "react";
 import { StyledStickyHeader } from "../Styled-components/Mainpage.styled";
 import { IoChatboxSharp } from "react-icons/io5";
 import { constants, Animation } from "../Constants";
@@ -76,4 +76,4 @@ function ThisButtons(): JSX.Element {
     </ActionsButtonWrapper>
   );
 }
-export default MainPage;
+export default memo(MainPage);

@@ -1,5 +1,5 @@
 import { useRef, FC as FunctionalComponent, FormEvent } from "react";
-import { Page } from "../Styled-components/CreateRoom.styled";
+import { AvatarsWrapper, Page } from "../Styled-components/CreateRoom.styled";
 
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
@@ -7,6 +7,10 @@ import { useEffect } from "react";
 import Modal from "react-responsive-modal";
 import { FaTimes } from "react-icons/fa";
 import { useState } from "react";
+import { createAvatar } from "@dicebear/avatars";
+import * as style from "@dicebear/avatars-avataaars-sprites";
+import parse from "html-react-parser";
+
 const CreateRoom: FunctionalComponent = () => {
   const NameRef = useRef<HTMLInputElement | null>()!;
   const RoomRef = useRef<HTMLInputElement | null>()!;
@@ -46,6 +50,12 @@ const CreateRoom: FunctionalComponent = () => {
       </Form>
       <Modal
         open={isModalOpen}
+        styles={{
+          modal: {
+            background: "blue",
+            color: "white",
+          },
+        }}
         onClose={() => setIsModalOpen(false)}
         closeIcon={
           <FaTimes
@@ -57,12 +67,21 @@ const CreateRoom: FunctionalComponent = () => {
           />
         }
       >
-        <br />
-        <br />
-        <br />
-        <h1>Ayush ek girl hai</h1>
+        <AvatarsWrapper>{parse(AvatarsHolder())}</AvatarsWrapper>
       </Modal>
     </Page>
   );
 };
 export default CreateRoom;
+
+function AvatarsHolder() {
+  let str = "";
+  for (let i = 0; i < 100; i++) {
+    let svg = createAvatar(style);
+    str += `
+    ${svg}
+    
+    `;
+  }
+  return str;
+}

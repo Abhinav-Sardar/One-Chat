@@ -44,3 +44,15 @@ export const Form = styled.form`
     }
   }
 `;
+
+export const AvatarsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 40vw;
+  svg {
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50%;
+    border: 1px solid white;
+  }
+`;
