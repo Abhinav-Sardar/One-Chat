@@ -41,3 +41,9 @@ a {
   height: 100%;
   width: 100%;
 }
+
+@keyframes loader {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,5 +1,9 @@
 import { useRef, FC as FunctionalComponent, FormEvent } from "react";
-import { AvatarsWrapper, Page } from "../Styled-components/CreateRoom.styled";
+import {
+  AvatarActionBtns,
+  AvatarsWrapper,
+  Page,
+} from "../Styled-components/CreateRoom.styled";
 
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
@@ -10,17 +14,51 @@ import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
-
+import { constants } from "../Constants";
+import { AiOutlineReload } from "react-icons/ai";
+import { HiOutlineArrowDown } from "react-icons/hi";
 const CreateRoom: FunctionalComponent = () => {
+  type maxAvatarType = {
+    isNew: boolean;
+    number: number;
+  };
+
   const NameRef = useRef<HTMLInputElement | null>()!;
   const RoomRef = useRef<HTMLInputElement | null>()!;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [avatars, setAvatars] = useState<string[]>([]);
+  const [maxAvatarIndex, setMaxAvatar] = useState<maxAvatarType>({
+    number: 42,
+    isNew: true,
+  });
+  const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     NameRef.current?.focus();
   }, []);
+  function handleClose() {
+    setIsModalOpen(false);
+  }
+  useEffect(() => {
+    if (maxAvatarIndex.isNew) {
+      let acc = [];
+      while (acc.length !== maxAvatarIndex.number) {
+        acc.push(returnRandomAvatar());
+      }
+      setAvatars(acc);
+    } else {
+      let acc = [...avatars];
+      while (acc.length !== maxAvatarIndex.number) {
+        acc.push(returnRandomAvatar());
+      }
+      setAvatars(acc);
+    }
+    setLoading(false);
+    console.log(maxAvatarIndex);
+  }, [maxAvatarIndex]);
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
   }
+
   return (
     <Page>
       <Form onSubmit={(e) => handleSubmit(e)}>
@@ -52,11 +90,11 @@ const CreateRoom: FunctionalComponent = () => {
         open={isModalOpen}
         styles={{
           modal: {
-            background: "blue",
+            background: constants.appAccentColor,
             color: "white",
           },
         }}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => handleClose()}
         closeIcon={
           <FaTimes
             fill="red"
@@ -67,21 +105,50 @@ const CreateRoom: FunctionalComponent = () => {
           />
         }
       >
-        <AvatarsWrapper>{parse(AvatarsHolder())}</AvatarsWrapper>
+        <AvatarActionBtns>
+          <h1>Choose you avatar</h1>
+        </AvatarActionBtns>
+        <AvatarsWrapper>
+          {avatars.map((avatar: string) => {
+            return <div onClick={() => alert("Wassup")}>{parse(avatar)}</div>;
+          })}
+        </AvatarsWrapper>
+        <br />
+        <AvatarActionBtns>
+          {loading ? (
+            <AiOutlineReload className="loader" />
+          ) : (
+            <>
+              <button
+                onClick={() =>
+                  setMaxAvatar((prev) => {
+                    setLoading(true);
+                    return { isNew: false, number: prev.number + 18 };
+                  })
+                }
+              >
+                <span>Load More</span>
+                <HiOutlineArrowDown />
+              </button>
+              <button
+                onClick={() =>
+                  setMaxAvatar((prev) => {
+                    setLoading(true);
+                    return { isNew: true, number: prev.number };
+                  })
+                }
+              >
+                <span>Load New </span>
+                <AiOutlineReload className="loader2" />
+              </button>
+            </>
+          )}
+        </AvatarActionBtns>
       </Modal>
     </Page>
   );
 };
 export default CreateRoom;
-
-function AvatarsHolder() {
-  let str = "";
-  for (let i = 0; i < 100; i++) {
-    let svg = createAvatar(style);
-    str += `
-    ${svg}
-    
-    `;
-  }
-  return str;
+function returnRandomAvatar(): string {
+  return createAvatar(style);
 }

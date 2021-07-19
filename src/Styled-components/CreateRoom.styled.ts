@@ -8,6 +8,9 @@ export const Page = styled.div`
   height: 100vh;
   width: 100vw;
   background-color: ${constants.appAccentColor};
+  .btn {
+    color: white;
+  }
 `;
 
 export const Form = styled.form`
@@ -49,10 +52,62 @@ export const AvatarsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   max-width: 40vw;
-  svg {
-    width: 5vw;
-    height: 5vw;
+  div {
+    svg {
+      width: 5vw;
+      height: 5vw;
+      border-radius: 50%;
+      border: 1px solid white;
+
+      justify-content: center;
+    }
     border-radius: 50%;
-    border: 1px solid white;
+
+    margin: 0.5vw;
+  }
+`;
+
+export const AvatarActionBtns = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  .loader {
+    animation: loader 2s infinite linear;
+    font-size: 2.5vw;
+    color: white;
+    margin-bottom: 0.2vw;
+  }
+  h1 {
+    font-family: "Quicksand", sans-serif;
+    font-size: 2.5vw;
+  }
+  button {
+    margin: 1vw 1vw;
+    background-color: #1741ff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    color: white;
+    font-size: 1.1vw;
+    border-radius: 10px;
+    padding: 0 2vw;
+    height: 2.5vw;
+    transition: 200ms ease-in-out;
+    &:hover {
+      background-color: steelblue;
+    }
+    span {
+      font-family: "Poppins", sans-serif;
+    }
+
+    svg {
+      padding: 0;
+      margin-left: 0.5vw;
+      color: white;
+    }
   }
 `;
