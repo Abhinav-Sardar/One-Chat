@@ -70,6 +70,7 @@ export const Button = styled.button`
   }
   span {
     font-family: "Poppins", sans-serif;
+    font-size: 1.1vw;
   }
 
   span,

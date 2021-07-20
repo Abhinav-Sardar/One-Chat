@@ -27,6 +27,15 @@ export const Form = styled.form`
   .field {
     width: 100%;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    svg:not(.btn-avatar) {
+      width: 5vw;
+      height: 5vw;
+      border-radius: 50%;
+      border: 1px solid white;
+    }
 
     span {
       font-size: 2vw;
@@ -45,6 +54,37 @@ export const Form = styled.form`
         margin-left: 5px;
       }
     }
+    button.choose__avatar {
+      background-color: ${constants.appAccentColor};
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      color: white;
+      font-size: 1.1vw;
+      border-radius: 10px;
+      padding: 0 2vw;
+      height: 2.5vw;
+      transition: 300ms ease-in-out;
+      &:hover {
+        background-color: white;
+        svg,
+        span {
+          color: ${constants.appAccentColor};
+        }
+      }
+      span {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.2vw;
+      }
+
+      svg {
+        padding: 0;
+        margin-left: 0.5vw;
+        color: white;
+      }
+    }
   }
 `;
 
@@ -52,12 +92,15 @@ export const AvatarsWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   max-width: 40vw;
+  .current {
+    border: 2px solid yellow;
+  }
   div {
+    border: 2px solid white;
     svg {
       width: 5vw;
       height: 5vw;
       border-radius: 50%;
-      border: 1px solid white;
 
       justify-content: center;
     }

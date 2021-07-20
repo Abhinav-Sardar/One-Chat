@@ -2,7 +2,7 @@ import { FC, Fragment, useEffect } from "react";
 import MainPage from "./Components/MainPage";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
-import "./globals.css";
+
 import CreateRoom from "./Components/CreateRoom";
 import { accentColorChecker, Animation } from "./Constants";
 import Customize from "./Components/Customize";

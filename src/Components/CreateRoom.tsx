@@ -9,7 +9,7 @@ import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
 import Modal from "react-responsive-modal";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaUserAlt } from "react-icons/fa";
 import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
@@ -17,6 +17,8 @@ import parse from "html-react-parser";
 import { constants } from "../Constants";
 import { AiOutlineReload } from "react-icons/ai";
 import { HiOutlineArrowDown } from "react-icons/hi";
+import { Button } from "../Styled-components/Customize.style";
+
 const CreateRoom: FunctionalComponent = () => {
   type maxAvatarType = {
     isNew: boolean;
@@ -32,11 +34,16 @@ const CreateRoom: FunctionalComponent = () => {
     isNew: true,
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentAvatar, setCurrentAvatar] = useState<string>("");
   useEffect(() => {
     NameRef.current?.focus();
   }, []);
   function handleClose() {
     setIsModalOpen(false);
+  }
+  function setAvatarIcon(avatar: string): void {
+    handleClose();
+    setCurrentAvatar(avatar);
   }
   useEffect(() => {
     if (maxAvatarIndex.isNew) {
@@ -58,7 +65,11 @@ const CreateRoom: FunctionalComponent = () => {
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
   }
-
+  useEffect(() => {
+    if (avatars.length === 42) {
+      setCurrentAvatar(avatars[0]);
+    }
+  }, [avatars]);
   return (
     <Page>
       <Form onSubmit={(e) => handleSubmit(e)}>
@@ -81,8 +92,14 @@ const CreateRoom: FunctionalComponent = () => {
         </div>
         <div className="field">
           <span>Avatar</span>
+          {currentAvatar && parse(currentAvatar)}
           <br />
-          <button onClick={() => setIsModalOpen(true)}>Choose Avatar</button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="choose__avatar"
+          >
+            <span>Choose Avatar</span> <FaUserAlt className="btn-avatar" />
+          </button>
         </div>
         <button type="submit">Create Room</button>
       </Form>
@@ -106,11 +123,21 @@ const CreateRoom: FunctionalComponent = () => {
         }
       >
         <AvatarActionBtns>
-          <h1>Choose you avatar</h1>
+          <h1>Choose your avatar</h1>
         </AvatarActionBtns>
         <AvatarsWrapper>
           {avatars.map((avatar: string) => {
-            return <div onClick={() => alert("Wassup")}>{parse(avatar)}</div>;
+            if (avatar !== currentAvatar) {
+              return (
+                <div onClick={() => setAvatarIcon(avatar)}>{parse(avatar)}</div>
+              );
+            } else {
+              return (
+                <div onClick={() => setAvatarIcon(avatar)} className="current">
+                  {parse(avatar)}
+                </div>
+              );
+            }
           })}
         </AvatarsWrapper>
         <br />
@@ -120,23 +147,23 @@ const CreateRoom: FunctionalComponent = () => {
           ) : (
             <>
               <button
-                onClick={() =>
+                onClick={() => {
+                  setLoading(true);
                   setMaxAvatar((prev) => {
-                    setLoading(true);
                     return { isNew: false, number: prev.number + 18 };
-                  })
-                }
+                  });
+                }}
               >
                 <span>Load More</span>
                 <HiOutlineArrowDown />
               </button>
               <button
-                onClick={() =>
+                onClick={() => {
+                  setLoading(true);
                   setMaxAvatar((prev) => {
-                    setLoading(true);
                     return { isNew: true, number: prev.number };
-                  })
-                }
+                  });
+                }}
               >
                 <span>Load New </span>
                 <AiOutlineReload className="loader2" />

@@ -11,10 +11,14 @@ body {
   height:100vh ; 
   width:100vw; 
   overflow-x: hidden;
+  scroll-behavior: smooth;
   > *:not(.logo , .tagline)::selection {
     background:white ; 
     color:${constants.appAccentColor}
 }
+}
+svg:root {
+  color:white ; 
 }
 .logo > span::selection {
   color:white ; 
