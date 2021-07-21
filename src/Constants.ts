@@ -22,3 +22,14 @@ export function Animation() {
     FontFamChanger: useSpring({ fontFamily: '"Poppins" , sans-serif' }),
   };
 }
+
+export type user = {
+  name: string;
+  currentRoomName: string;
+  avatarSvg: string;
+};
+
+export type maxAvatarType = {
+  isNew: boolean;
+  number: number;
+};

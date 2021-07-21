@@ -1,4 +1,9 @@
-import { useRef, FC as FunctionalComponent, FormEvent } from "react";
+import {
+  useRef,
+  FC as FunctionalComponent,
+  FormEvent,
+  useContext,
+} from "react";
 import {
   AvatarActionBtns,
   AvatarsWrapper,
@@ -14,16 +19,17 @@ import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
-import { constants } from "../Constants";
+import { constants, maxAvatarType, user } from "../Constants";
 import { AiOutlineReload } from "react-icons/ai";
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
+import { Link } from "react-router-dom";
+import { UserContext } from "../App";
 
 const CreateRoom: FunctionalComponent = () => {
-  type maxAvatarType = {
-    isNew: boolean;
-    number: number;
-  };
+  const [client, setClient] = useContext(UserContext);
 
   const NameRef = useRef<HTMLInputElement | null>()!;
   const RoomRef = useRef<HTMLInputElement | null>()!;
@@ -38,6 +44,12 @@ const CreateRoom: FunctionalComponent = () => {
   useEffect(() => {
     NameRef.current?.focus();
   }, []);
+  useEffect(() => {
+    if (isModalOpen === true) {
+      //@ts-ignore
+      setTimeout(() => window.scroll(0, 0), 1000);
+    }
+  }, [isModalOpen]);
   function handleClose() {
     setIsModalOpen(false);
   }
@@ -62,9 +74,24 @@ const CreateRoom: FunctionalComponent = () => {
     setLoading(false);
     console.log(maxAvatarIndex);
   }, [maxAvatarIndex]);
+
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
+    const name = NameRef.current?.value;
+    const room = RoomRef.current?.value;
+    if (name && room && name.trim() && room.trim()) {
+      const newUser: user = {
+        avatarSvg: currentAvatar,
+        name: name,
+        currentRoomName: room,
+      };
+      setClient(newUser);
+      window.location.assign(`/room/${room}`);
+    } else {
+      toast.error("Invalid Username Or Room Name !");
+    }
   }
+
   useEffect(() => {
     if (avatars.length === 42) {
       setCurrentAvatar(avatars[0]);
@@ -72,6 +99,7 @@ const CreateRoom: FunctionalComponent = () => {
   }, [avatars]);
   return (
     <Page>
+      <h1 className="purpose">Create</h1>
       <Form onSubmit={(e) => handleSubmit(e)}>
         <div className="field">
           <span>Name</span>
@@ -97,11 +125,14 @@ const CreateRoom: FunctionalComponent = () => {
           <button
             onClick={() => setIsModalOpen(true)}
             className="choose__avatar"
+            type="button"
           >
             <span>Choose Avatar</span> <FaUserAlt className="btn-avatar" />
           </button>
         </div>
-        <button type="submit">Create Room</button>
+        <button type="submit" className="submit">
+          Create Room
+        </button>
       </Form>
       <Modal
         open={isModalOpen}
@@ -126,14 +157,20 @@ const CreateRoom: FunctionalComponent = () => {
           <h1>Choose your avatar</h1>
         </AvatarActionBtns>
         <AvatarsWrapper>
-          {avatars.map((avatar: string) => {
+          {avatars.map((avatar: string, index: number) => {
             if (avatar !== currentAvatar) {
               return (
-                <div onClick={() => setAvatarIcon(avatar)}>{parse(avatar)}</div>
+                <div onClick={() => setAvatarIcon(avatar)} key={`key${index}`}>
+                  {parse(avatar)}
+                </div>
               );
             } else {
               return (
-                <div onClick={() => setAvatarIcon(avatar)} className="current">
+                <div
+                  onClick={() => setAvatarIcon(avatar)}
+                  className="current"
+                  key={`key${index}`}
+                >
                   {parse(avatar)}
                 </div>
               );
@@ -172,6 +209,14 @@ const CreateRoom: FunctionalComponent = () => {
           )}
         </AvatarActionBtns>
       </Modal>
+      <ToastContainer
+        draggable={false}
+        pauseOnHover={false}
+        closeOnClick={false}
+      />
+      <Link to="/">
+        <button className="redirect">Back To Homepage</button>
+      </Link>
     </Page>
   );
 };

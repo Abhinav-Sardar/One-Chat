@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, memo } from "react";
 import {
   Button,
   ButtonsWrapper,
@@ -66,4 +66,4 @@ const Customize: FC = () => {
     </CustomizePage>
   );
 };
-export default Customize;
+export default memo(Customize);

@@ -4,16 +4,39 @@ export const Page = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
+  flex-direction: column;
   height: 100vh;
   width: 100vw;
   background-color: ${constants.appAccentColor};
-  .btn {
+  > * {
+    margin: 0.5vw 0;
+  }
+  .purpose {
     color: white;
+    font-family: "Quicksand", sans-serif;
+    font-size: 4vw;
+    &::selection {
+      color: ${constants.appAccentColor};
+      background-color: white;
+    }
   }
 `;
 
 export const Form = styled.form`
+  button.submit {
+    color: #053fb3;
+    background-color: yellow;
+    padding: 1vw 4vw;
+    transition: 300ms ease-in-out;
+    font-size: 1.5vw;
+    border-radius: 20px;
+    border: 1px solid yellow;
+    font-family: "Poppins", sans-serif;
+    &:hover {
+      color: yellow;
+      background-color: #053fb3;
+    }
+  }
   background-color: #053fb3;
   overflow-y: auto;
   border: 1px solid black;
@@ -34,13 +57,17 @@ export const Form = styled.form`
       width: 5vw;
       height: 5vw;
       border-radius: 50%;
-      border: 1px solid white;
+      border: 2px solid white;
     }
 
     span {
       font-size: 2vw;
       font-family: "Poppins", sans-serif;
       color: white;
+      &::selection {
+        color: ${constants.appAccentColor};
+        background-color: white;
+      }
     }
     input {
       width: 80%;
@@ -135,10 +162,10 @@ export const AvatarActionBtns = styled.div`
     justify-content: center;
     border: 0;
     color: white;
-    font-size: 1.1vw;
+    font-size: 1.4vw;
     border-radius: 10px;
-    padding: 0 2vw;
-    height: 2.5vw;
+    padding: 0 2.5vw;
+    height: 3vw;
     transition: 200ms ease-in-out;
     &:hover {
       background-color: steelblue;

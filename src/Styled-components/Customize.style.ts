@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { constants } from "../Constants";
+
 export const Title = styled.h6`
   color: white;
   font-family: "Poppins", sans-serif;
@@ -7,7 +8,6 @@ export const Title = styled.h6`
 `;
 
 export const CustomizePage = styled.div`
-  /* @ts-ignore */
   background: ${(props) => {
     //@ts-ignore
     return props.bgcolor;

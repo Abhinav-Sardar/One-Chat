@@ -7,7 +7,6 @@ import { BsFillChatSquareFill } from "react-icons/bs";
 import { TiPlus } from "react-icons/ti";
 import { FaBrush } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import Customize from "./Customize";
 import {
   ActionButton,
   ActionsButtonWrapper,
