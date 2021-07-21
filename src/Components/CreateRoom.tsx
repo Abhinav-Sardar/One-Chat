@@ -4,7 +4,8 @@ import {
 	AvatarsWrapper,
 	Page,
 } from "../Styled-components/CreateRoom.styled";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
@@ -62,6 +63,14 @@ const CreateRoom: FunctionalComponent = () => {
 	}, [maxAvatarIndex]);
 	function handleSubmit(e: FormEvent): void {
 		e.preventDefault();
+		if (
+			NameRef.current?.value &&
+			NameRef.current?.value.trim() &&
+			RoomRef.current?.value &&
+			RoomRef.current?.value.trim()
+		) {
+			window.location.assign(`/room/${RoomRef.current.value}`);
+		}
 	}
 	useEffect(() => {
 		if (avatars.length === 42) {
@@ -70,6 +79,7 @@ const CreateRoom: FunctionalComponent = () => {
 	}, [avatars]);
 	return (
 		<Page>
+			<h1 className='purpose'>Sup B)</h1>
 			<Form onSubmit={(e) => handleSubmit(e)}>
 				<div className='field'>
 					<span>Name</span>
@@ -170,6 +180,11 @@ const CreateRoom: FunctionalComponent = () => {
 					)}
 				</AvatarActionBtns>
 			</Modal>
+			<ToastContainer
+				closeOnClick={false}
+				draggable={false}
+				pauseOnHover={false}
+			/>
 		</Page>
 	);
 };

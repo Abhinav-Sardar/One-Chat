@@ -4,7 +4,10 @@ export const Page = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-
+	flex-direction: column;
+	.purpose {
+		color: White;
+	}
 	height: 100vh;
 	width: 100vw;
 	background-color: ${constants.appAccentColor};
@@ -18,13 +21,16 @@ export const Form = styled.form`
 		color: #053fb3;
 		background-color: yellow;
 		border: 1px solid yellow;
-		padding: 1vw 2vw;
+		padding: 1.7vw 2.7vw;
 		&:hover {
 			color: yellow;
 			background-color: #053fb3;
 		}
 		transition: 300ms ease-ease-in-out;
-		border: 0;
+		font-size: 1.7vw;
+		border-radius: 10px;
+		font-family: "Quicksand", sans-serif;
+		transition: 300ms ease-in-out;
 	}
 	background-color: #053fb3;
 	overflow-y: auto;
@@ -76,8 +82,8 @@ export const Form = styled.form`
 			color: white;
 			font-size: 1.1vw;
 			border-radius: 10px;
-			padding: 0 2vw;
-			height: 2.5vw;
+			padding: 0 3vw;
+			height: 2.8vw;
 			transition: 300ms ease-in-out;
 			&:hover {
 				background-color: white;
