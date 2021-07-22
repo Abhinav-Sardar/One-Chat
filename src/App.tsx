@@ -4,10 +4,11 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
 
 import CreateRoom from "./Components/CreateRoom";
-import { accentColorChecker, Animation, user } from "./Constants";
+import { accentColorChecker, user } from "./Constants";
 import Customize from "./Components/Customize";
-import { animated } from "react-spring";
 import "react-responsive-modal/styles.css";
+import Chat from "./Components/Chat";
+import JoinRoom from "./Components/JoinRoom";
 
 export const UserContext = createContext<[user, any]>([
   { avatarSvg: "", name: "", currentRoomName: "" },
@@ -17,7 +18,7 @@ const App: FC = () => {
   useEffect(() => {
     accentColorChecker();
   }, []);
-  const { fade } = Animation();
+
   const [client, setClient] = useState<user>({
     avatarSvg: "",
     name: "",
@@ -29,25 +30,22 @@ const App: FC = () => {
         <Router forceRefresh>
           <Switch>
             <Route path="/" exact>
-              <animated.div style={fade}>
-                <MainPage />
-              </animated.div>
+              <MainPage />
             </Route>
             <Route path="/create">
-              <animated.div style={fade}>
-                <CreateRoom />
-              </animated.div>
+              <CreateRoom />
+            </Route>
+            <Route path="/join">
+              <JoinRoom />
             </Route>
             <Route path="/customize">
-              <animated.div style={fade}>
-                <Customize />
-              </animated.div>
+              <Customize />
             </Route>
-
+            <Route path="/room/:roomId">
+              <Chat />
+            </Route>
             <Route path="/*">
-              <animated.div style={fade}>
-                <NotFoundPage isRoomError={false} />
-              </animated.div>
+              <NotFoundPage isRoomError={false} />
             </Route>
           </Switch>
         </Router>

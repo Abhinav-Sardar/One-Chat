@@ -1,7 +1,7 @@
 import { FC, Fragment, useEffect, memo } from "react";
 import { StyledStickyHeader } from "../Styled-components/Mainpage.styled";
 import { IoChatboxSharp } from "react-icons/io5";
-import { constants, Animation } from "../Constants";
+import { constants } from "../Constants";
 import { MainContent } from "../Styled-components/Mainpage.styled";
 import { BsFillChatSquareFill } from "react-icons/bs";
 import { TiPlus } from "react-icons/ti";
@@ -13,12 +13,10 @@ import {
 } from "../Styled-components/Mainpage.styled";
 
 const MainPage: FC = () => {
-  const { fade } = Animation();
   useEffect(() => {
     document.getElementById(
       "root"
     )!.style.background = `linear-gradient(60deg, ${constants.appAccentColor}, #fff)`;
-    console.log(fade);
   }, []);
   return (
     <Fragment>

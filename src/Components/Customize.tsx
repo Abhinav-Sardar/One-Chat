@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import { AiOutlineSave } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
+import Buttons from "./Customized.Buttons";
+
 const Customize: FC = () => {
   const [color, setColor] = useState<string>(constants.appAccentColor);
 
@@ -47,23 +49,9 @@ const Customize: FC = () => {
         onChange={(newColor) => setColor(newColor)}
       />
       <h2>Color:{color}</h2>
-      <ButtonsWrapper>
-        {saved === false ? (
-          <Button onClick={handleSave}>
-            <span>Save</span> <AiOutlineSave />
-          </Button>
-        ) : (
-          <Button>
-            <span>Saved</span> <FaCheck className="check" />
-          </Button>
-        )}
-        <Link to="/">
-          <Button>
-            <span>Back To Home</span> <FaHome />
-          </Button>
-        </Link>
-      </ButtonsWrapper>
+      <Buttons saved={saved} handleSave={handleSave} />
     </CustomizePage>
   );
 };
+
 export default memo(Customize);

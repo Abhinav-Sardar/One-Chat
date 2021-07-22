@@ -28,7 +28,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { Link } from "react-router-dom";
 import { UserContext } from "../App";
 
-const CreateRoom: FunctionalComponent = () => {
+const JoinRoom: FunctionalComponent = () => {
   const [client, setClient] = useContext(UserContext);
 
   const NameRef = useRef<HTMLInputElement | null>()!;
@@ -99,7 +99,7 @@ const CreateRoom: FunctionalComponent = () => {
   }, [avatars]);
   return (
     <Page>
-      <h1 className="purpose">Create</h1>
+      <h1 className="purpose">Join</h1>
       <Form onSubmit={(e) => handleSubmit(e)}>
         <div className="field">
           <span>Name</span>
@@ -115,7 +115,7 @@ const CreateRoom: FunctionalComponent = () => {
             //@ts-ignore
             ref={RoomRef}
             spellCheck
-            placeholder="Name Your Room"
+            placeholder="Room Name"
           />
         </div>
         <div className="field">
@@ -225,7 +225,7 @@ const CreateRoom: FunctionalComponent = () => {
     </Page>
   );
 };
-export default CreateRoom;
+export default JoinRoom;
 function returnRandomAvatar(): string {
   return createAvatar(style);
 }

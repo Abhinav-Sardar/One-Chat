@@ -52,8 +52,8 @@ export const ButtonsWrapper = styled.section`
   align-items: center;
 `;
 export const Button = styled.button`
-  padding: 0 2vw;
-  height: 2.5vw;
+  padding: 0 3vw;
+  height: 3vw;
   margin: 1vw 1vw;
   background-color: #1741ff;
   display: flex;
@@ -70,7 +70,7 @@ export const Button = styled.button`
   }
   span {
     font-family: "Poppins", sans-serif;
-    font-size: 1.1vw;
+    font-size: 1.4vw;
   }
 
   span,
@@ -81,5 +81,6 @@ export const Button = styled.button`
     padding: 0;
     margin: 0 0.3vw;
     color: white;
+    font-size: 1.5vw;
   }
 `;
