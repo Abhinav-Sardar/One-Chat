@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { constants } from "../Constants";
 export const Page = styled.div`
-<<<<<<< HEAD
   display: flex;
   justify-content: center;
   align-items: center;
@@ -106,137 +105,39 @@ export const Form = styled.form`
         font-family: "Poppins", sans-serif;
         font-size: 1.2vw;
       }
-=======
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	.purpose {
-		color: White;
-	}
-	height: 100vh;
-	width: 100vw;
-	background-color: ${constants.appAccentColor};
-	.btn {
-		color: white;
-	}
-`;
 
-export const Form = styled.form`
-	button[type="submit"] {
-		color: #053fb3;
-		background-color: yellow;
-		border: 1px solid yellow;
-		padding: 1.7vw 2.7vw;
-		&:hover {
-			color: yellow;
-			background-color: #053fb3;
-		}
-		transition: 300ms ease-ease-in-out;
-		font-size: 1.7vw;
-		border-radius: 10px;
-		font-family: "Quicksand", sans-serif;
-		transition: 300ms ease-in-out;
-	}
-	background-color: #053fb3;
-	overflow-y: auto;
-	border: 1px solid black;
-	height: 36vw;
-	width: 40vw;
-
-	display: flex;
-	justify-content: space-around;
-	flex-direction: column;
-	align-items: center;
-	.field {
-		width: 100%;
-		text-align: center;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		svg:not(.btn-avatar) {
-			width: 5vw;
-			height: 5vw;
-			border-radius: 50%;
-			border: 1px solid white;
-		}
-
-		span {
-			font-size: 2vw;
-			font-family: "Poppins", sans-serif;
-			color: white;
-		}
-		input {
-			width: 80%;
-			height: 2vw;
-			font-size: 1.2vw;
-			font-family: "Open Sans", sans-serif;
-			border-radius: 5px;
-			border: 0;
-			&::placeholder {
-				font-size: 1.1vw;
-				margin-left: 5px;
-			}
-		}
-		button.choose__avatar {
-			background-color: ${constants.appAccentColor};
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			justify-content: center;
-			border: 0;
-			color: white;
-			font-size: 1.1vw;
-			border-radius: 10px;
-			padding: 0 3vw;
-			height: 2.8vw;
-			transition: 300ms ease-in-out;
-			&:hover {
-				background-color: white;
-				svg,
-				span {
-					color: ${constants.appAccentColor};
-				}
-			}
-			span {
-				font-family: "Poppins", sans-serif;
-				font-size: 1.2vw;
-			}
->>>>>>> 2a9930143736506904ce91d05a26900dffe59259
-
-			svg {
-				padding: 0;
-				margin-left: 0.5vw;
-				color: white;
-			}
-		}
-	}
+      svg {
+        padding: 0;
+        margin-left: 0.5vw;
+        color: white;
+      }
+    }
+  }
 `;
 
 export const AvatarsWrapper = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	max-width: 40vw;
-	.current {
-		border: 2px solid yellow;
-	}
-	div {
-		border: 2px solid white;
-		svg {
-			width: 5vw;
-			height: 5vw;
-			border-radius: 50%;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 40vw;
+  .current {
+    border: 2px solid yellow;
+  }
+  div {
+    border: 2px solid white;
+    svg {
+      width: 5vw;
+      height: 5vw;
+      border-radius: 50%;
 
-			justify-content: center;
-		}
-		border-radius: 50%;
+      justify-content: center;
+    }
+    border-radius: 50%;
 
-		margin: 0.5vw;
-	}
+    margin: 0.5vw;
+  }
 `;
 
 export const AvatarActionBtns = styled.div`
-<<<<<<< HEAD
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -272,48 +173,11 @@ export const AvatarActionBtns = styled.div`
     span {
       font-family: "Poppins", sans-serif;
     }
-=======
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	.loader {
-		animation: loader 2s infinite linear;
-		font-size: 2.5vw;
-		color: white;
-		margin-bottom: 0.2vw;
-	}
-	h1 {
-		font-family: "Quicksand", sans-serif;
-		font-size: 2.5vw;
-	}
-	button {
-		margin: 1vw 1vw;
-		background-color: #1741ff;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		border: 0;
-		color: white;
-		font-size: 1.1vw;
-		border-radius: 10px;
-		padding: 0 2vw;
-		height: 2.5vw;
-		transition: 200ms ease-in-out;
-		&:hover {
-			background-color: steelblue;
-		}
-		span {
-			font-family: "Poppins", sans-serif;
-		}
->>>>>>> 2a9930143736506904ce91d05a26900dffe59259
 
-		svg {
-			padding: 0;
-			margin-left: 0.5vw;
-			color: white;
-		}
-	}
+    svg {
+      padding: 0;
+      margin-left: 0.5vw;
+      color: white;
+    }
+  }
 `;
