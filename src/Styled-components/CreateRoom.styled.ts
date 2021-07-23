@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { constants } from "../Constants";
 export const Page = styled.div`
   display: flex;
@@ -136,7 +136,11 @@ export const AvatarsWrapper = styled.div`
     margin: 0.5vw;
   }
 `;
-
+const loader = keyframes`
+  to {
+          transform: rotate(360deg);
+}
+`;
 export const AvatarActionBtns = styled.div`
   display: flex;
   flex-direction: row;
@@ -144,10 +148,7 @@ export const AvatarActionBtns = styled.div`
   align-items: center;
   width: 100%;
   .loader {
-    animation: loader 2s infinite linear;
-    font-size: 2.5vw;
-    color: white;
-    margin-bottom: 0.2vw;
+    font-family: "Poppins", arial, sans-serif;
   }
   h1 {
     font-family: "Quicksand", sans-serif;

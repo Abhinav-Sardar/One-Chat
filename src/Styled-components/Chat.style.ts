@@ -11,6 +11,7 @@ export const RemainingChatArea = styled.div`
   display: flex;
   flex-direction: row;
   height: 80vw;
+  justify-content: flex-start;
 `;
 
 export const MeetControls = styled.footer`

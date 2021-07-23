@@ -18,3 +18,5 @@ export type maxAvatarType = {
   isNew: boolean;
   number: number;
 };
+
+export const userInfoStorageKey: string = "one-chat-user-info";

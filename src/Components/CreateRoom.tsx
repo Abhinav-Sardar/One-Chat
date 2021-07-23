@@ -19,20 +19,21 @@ import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
-import { constants, maxAvatarType, user } from "../Constants";
+import {
+  constants,
+  maxAvatarType,
+  user,
+  userInfoStorageKey,
+} from "../Constants";
 import { AiOutlineReload } from "react-icons/ai";
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { Link } from "react-router-dom";
-import { UserContext } from "../App";
 
 const CreateRoom: FunctionalComponent = () => {
-  const [client, setClient] = useContext(UserContext);
-
-  const NameRef = useRef<HTMLInputElement | null>()!;
-  const RoomRef = useRef<HTMLInputElement | null>()!;
+  //@ts-ignore
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [avatars, setAvatars] = useState<string[]>([]);
   const [maxAvatarIndex, setMaxAvatar] = useState<maxAvatarType>({
@@ -41,9 +42,8 @@ const CreateRoom: FunctionalComponent = () => {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
-  useEffect(() => {
-    NameRef.current?.focus();
-  }, []);
+  const [room, setRoom] = useState<string>("");
+  const [name, setName] = useState<string>("");
   useEffect(() => {
     if (isModalOpen === true) {
       //@ts-ignore
@@ -77,15 +77,14 @@ const CreateRoom: FunctionalComponent = () => {
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
-    const name = NameRef.current?.value;
-    const room = RoomRef.current?.value;
     if (name && room && name.trim() && room.trim()) {
       const newUser: user = {
         avatarSvg: currentAvatar,
         name: name,
         currentRoomName: room,
       };
-      setClient(newUser);
+      console.log(newUser);
+      sessionStorage.setItem(userInfoStorageKey, JSON.stringify(newUser));
       window.location.assign(`/room/${room}`);
     } else {
       toast.error("Invalid Username Or Room Name !");
@@ -104,8 +103,15 @@ const CreateRoom: FunctionalComponent = () => {
         <div className="field">
           <span>Name</span>
           <br />
-          {/* @ts-ignore */}
-          <input type="text" ref={NameRef} spellCheck placeholder="Your Name" />
+          <input
+            type="text"
+            /* @ts-ignore */
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            spellCheck
+            required
+            placeholder="Your Name"
+          />
         </div>
         <div className="field">
           <span>Room Name</span>
@@ -113,8 +119,10 @@ const CreateRoom: FunctionalComponent = () => {
           <input
             type="text"
             //@ts-ignore
-            ref={RoomRef}
+            value={room}
+            onChange={(e) => setRoom(e.target.value)}
             spellCheck
+            required
             placeholder="Name Your Room"
           />
         </div>
@@ -162,7 +170,7 @@ const CreateRoom: FunctionalComponent = () => {
               return (
                 <div
                   onClick={() => setAvatarIcon(avatar)}
-                  key={String(new Date().getMilliseconds() * Math.random())}
+                  key={(new Date().getSeconds() * Math.random()).toString()}
                 >
                   {parse(avatar)}
                 </div>
@@ -172,7 +180,7 @@ const CreateRoom: FunctionalComponent = () => {
                 <div
                   onClick={() => setAvatarIcon(avatar)}
                   className="current"
-                  key={String(new Date().getMilliseconds() * Math.random())}
+                  key={(new Date().getSeconds() * Math.random()).toString()}
                 >
                   {parse(avatar)}
                 </div>
@@ -183,14 +191,14 @@ const CreateRoom: FunctionalComponent = () => {
         <br />
         <AvatarActionBtns>
           {loading ? (
-            <AiOutlineReload className="loader" />
+            <h2 className="loader">Loading . . .</h2>
           ) : (
             <>
               <button
                 onClick={() => {
                   setLoading(true);
                   setMaxAvatar((prev) => {
-                    return { isNew: false, number: prev.number + 18 };
+                    return { isNew: false, number: prev.number + 24 };
                   });
                 }}
               >

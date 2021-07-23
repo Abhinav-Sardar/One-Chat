@@ -62,9 +62,11 @@ function ThisButtons(): JSX.Element {
           Create a room <TiPlus className="plus" />
         </ActionButton>
       </Link>
-      <ActionButton>
-        Join a room <BsFillChatSquareFill />
-      </ActionButton>
+      <Link to="/join">
+        <ActionButton>
+          Join a room <BsFillChatSquareFill />
+        </ActionButton>
+      </Link>
       <Link to="/customize">
         <ActionButton>
           Customize <FaBrush />
