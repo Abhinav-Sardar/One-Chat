@@ -1,9 +1,25 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, FormEvent } from "react";
 import { FC } from "react";
 import { Redirect, useParams } from "react-router-dom";
 
 import { user, userInfoStorageKey } from "../Constants";
 import parsed from "html-react-parser";
+import {
+  FaUserAlt,
+  FaShareAlt,
+  FaRegSmile,
+  FaSmile,
+  FaUser,
+} from "react-icons/fa";
+import { GrShareOption } from "react-icons/gr";
+import {
+  AiFillInfoCircle,
+  AiFillFileImage,
+  AiOutlineUser,
+  AiOutlineInfoCircle,
+} from "react-icons/ai";
+import { FiShare2 } from "react-icons/fi";
+import { BiSend } from "react-icons/bi";
 import {
   ChatArea,
   ChatPage,
@@ -65,26 +81,94 @@ const ChatComponent: FC = () => {
   const [name, setName] = useState<string>("");
   const [room, setRoom] = useState<string>("");
   const [svgURl, setSvgUrl] = useState<string>("");
+  const [usersOpen, setUsersOpen] = useState<boolean>(false);
+  const [shareOpen, setShareOpen] = useState<boolean>(false);
+  const [infoOpen, setInfoOpen] = useState<boolean>(false);
+  const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   useEffect(() => {
-    setName(client.name);
-    setRoom(client.currentRoomName);
+    setName(client.name.trimStart().trimEnd());
+    setRoom(client.currentRoomName.trimStart().trimEnd());
     setSvgUrl(client.avatarSvg);
   }, [client]);
+
+  function handleSubmit(e: FormEvent): void {
+    e.preventDefault();
+  }
+
+  function Icons(): JSX.Element {
+    return (
+      <>
+        {!emojiOpen ? (
+          <FaRegSmile onClick={() => setEmojiOpen(!emojiOpen)} />
+        ) : (
+          <FaSmile onClick={() => setEmojiOpen(!emojiOpen)} />
+        )}
+        <AiFillFileImage />
+
+        {!usersOpen ? (
+          <AiOutlineUser
+            onClick={() => {
+              setUsersOpen(!usersOpen);
+            }}
+          />
+        ) : (
+          <FaUser
+            onClick={() => {
+              setUsersOpen(!usersOpen);
+            }}
+          />
+        )}
+        {!shareOpen ? (
+          <FiShare2
+            onClick={() => {
+              setShareOpen(!shareOpen);
+            }}
+          />
+        ) : (
+          <FaShareAlt
+            onClick={() => {
+              setShareOpen(!shareOpen);
+            }}
+          />
+        )}
+        {!infoOpen ? (
+          <AiOutlineInfoCircle
+            onClick={() => {
+              setInfoOpen(!infoOpen);
+            }}
+          />
+        ) : (
+          <AiFillInfoCircle
+            onClick={() => {
+              setInfoOpen(!infoOpen);
+            }}
+          />
+        )}
+      </>
+    );
+  }
+
   return (
     <>
       <ChatPage>
         <RemainingChatArea>
           <ChatArea>
-            <div className="mainChat"></div>
+            <div className="mainChat">
+              <h1>{room}</h1>
+            </div>
           </ChatArea>
         </RemainingChatArea>
 
         <MeetControls>
-          <form className="input">
+          <form className="input" onSubmit={(e) => handleSubmit(e)}>
             <input type="text" name="" id="" />
-            <button type="submit">Submit</button>
+            <button type="submit">
+              <BiSend />
+            </button>
           </form>
-          <div className="icons">icons here</div>
+          <div className="icons">
+            <Icons />
+          </div>
         </MeetControls>
       </ChatPage>
     </>
