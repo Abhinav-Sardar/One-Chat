@@ -1,24 +1,28 @@
+import { animated } from "react-spring";
 import styled from "styled-components";
 import { constants } from "../Constants";
 
-export const ChatPage = styled.div`
-  height: 100vh;
+export const MeetInfo = styled.section`
   width: 100vw;
   display: flex;
-  flex-direction: column;
+  justify-content: space-around;
+  height: 10%;
 `;
-
 export const RemainingChatArea = styled.div`
   display: flex;
   flex-direction: row;
-  height: 80vw;
+  height: 78%;
   justify-content: flex-start;
+  .idk {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+  }
 `;
 
 export const MeetControls = styled.footer`
-  border: 1px solid black;
   width: 100vw;
-  height: 20vh;
+  height: 12%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,7 +54,7 @@ export const MeetControls = styled.footer`
     input {
       height: 3vw;
       width: 50vw;
-      border: 1px solid gray;
+      border: 2px solid gray;
       &:focus {
         border: 2px solid ${constants.appAccentColor};
         color: ${constants.appAccentColor};
@@ -67,6 +71,7 @@ export const MeetControls = styled.footer`
       font-size: 2vw;
       margin: 0 1.3vw;
       color: ${constants.appAccentColor};
+      transition: 400ms ease-ease-in-out;
     }
   }
 `;

@@ -9,29 +9,43 @@ import Customize from "./Components/Customize";
 import "react-responsive-modal/styles.css";
 import Chat from "./Components/Chat";
 import JoinRoom from "./Components/JoinRoom";
+import { useSpring, animated } from "react-spring";
 
 const App: FC = () => {
+  const fade = useSpring({ from: { opacity: 0 }, to: { opacity: 1 } });
   return (
     <Fragment>
       <Router forceRefresh>
         <Switch>
           <Route path="/" exact>
-            <MainPage />
+            <animated.div style={fade}>
+              <MainPage />
+            </animated.div>
           </Route>
           <Route path="/create">
-            <CreateRoom />
+            <animated.div style={fade}>
+              <CreateRoom />
+            </animated.div>
           </Route>
           <Route path="/join">
-            <JoinRoom isAuth={false} />
+            <animated.div style={fade}>
+              <JoinRoom isAuth={false} />
+            </animated.div>
           </Route>
           <Route path="/customize">
-            <Customize />
+            <animated.div style={fade}>
+              <Customize />
+            </animated.div>
           </Route>
           <Route path="/room/:roomId">
-            <Chat />
+            <animated.div style={fade}>
+              <Chat />
+            </animated.div>
           </Route>
           <Route path="/*">
-            <NotFoundPage isRoomError={false} />
+            <animated.div style={fade}>
+              <NotFoundPage isRoomError={false} />
+            </animated.div>
           </Route>
         </Switch>
       </Router>

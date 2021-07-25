@@ -10,6 +10,8 @@ import {
   FaRegSmile,
   FaSmile,
   FaUser,
+  FaMoon,
+  FaSun,
 } from "react-icons/fa";
 import { GrShareOption } from "react-icons/gr";
 import {
@@ -22,15 +24,18 @@ import { FiShare2 } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
 import {
   ChatArea,
-  ChatPage,
   MeetControls,
+  MeetInfo,
   RemainingChatArea,
 } from "../Styled-components/Chat.style";
 import JoinRoom from "./JoinRoom";
 import NotFoundPage from "./NotFound";
+import { setTextRange } from "typescript";
+import { useSpring, animated } from "react-spring";
 
 const Chat: FC = () => {
   //@ts-ignore
+  const { roomId } = useParams();
   const [userStatus, setStatus] = useState<
     "NoInfo" | null | user | "WrongRoom" | "AllFine"
   >(null);
@@ -40,21 +45,23 @@ const Chat: FC = () => {
       //@ts-ignore
     )!.href = `${window.location.origin}/comments-solid.svg`;
   }, []);
-
   useEffect(() => {
     const userInfo = sessionStorage.getItem(userInfoStorageKey);
     //@ts-ignore
     const parsed: user | null = JSON.parse(userInfo);
     if (parsed) {
-      setStatus("AllFine");
-      console.log(parsed.name);
-      console.log(parsed.currentRoomName);
+      if (roomId === parsed.currentRoomName) {
+        setStatus("AllFine");
+        console.log(parsed.name);
+        console.log(parsed.currentRoomName);
+      } else {
+        setStatus("NoInfo");
+      }
     } else {
       setStatus("NoInfo");
     }
   }, []);
   //@ts-ignore
-  const { roomId } = useParams();
   return (
     <>
       {userStatus === "NoInfo" ? (
@@ -85,6 +92,7 @@ const ChatComponent: FC = () => {
   const [shareOpen, setShareOpen] = useState<boolean>(false);
   const [infoOpen, setInfoOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
+  const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   useEffect(() => {
     setName(client.name.trimStart().trimEnd());
     setRoom(client.currentRoomName.trimStart().trimEnd());
@@ -144,24 +152,86 @@ const ChatComponent: FC = () => {
             }}
           />
         )}
+        {theme === "#fff" ? (
+          <FaSun
+            onClick={() => {
+              setTheme("#232424");
+            }}
+          />
+        ) : (
+          <FaMoon
+            onClick={() => {
+              setTheme("#fff");
+            }}
+          />
+        )}
       </>
     );
   }
-
+  useEffect(() => {
+    if (emojiOpen === true) {
+      setShareOpen(false);
+      setInfoOpen(false);
+      setUsersOpen(false);
+    }
+  }, [emojiOpen]);
+  useEffect(() => {
+    if (shareOpen === true) {
+      setEmojiOpen(false);
+      setInfoOpen(false);
+      setUsersOpen(false);
+    }
+  }, [shareOpen]);
+  useEffect(() => {
+    if (infoOpen === true) {
+      setShareOpen(false);
+      setEmojiOpen(false);
+      setUsersOpen(false);
+    }
+  }, [infoOpen]);
+  useEffect(() => {
+    if (usersOpen === true) {
+      setShareOpen(false);
+      setEmojiOpen(false);
+      setInfoOpen(false);
+    }
+  }, [usersOpen]);
+  const backgroundAnimation = useSpring({
+    backgroundColor: theme,
+  });
   return (
     <>
-      <ChatPage>
+      {/* @ts-ignore */}
+      <animated.main style={backgroundAnimation} className="main__chat">
+        <MeetInfo
+          style={{
+            borderBottom: `1px solid ${
+              theme === "#232424" ? "#fff" : "#232424"
+            }`,
+          }}
+        >
+          <span>1neo21n</span>
+          <span>nwpen2o</span>
+          <span>nwpen2o</span>
+          <span>nwpen2o</span>
+          <span>nwpen2o</span>
+        </MeetInfo>
         <RemainingChatArea>
           <ChatArea>
             <div className="mainChat">
               <h1>{room}</h1>
             </div>
           </ChatArea>
+          <div className="idk">SUp B)</div>
         </RemainingChatArea>
 
-        <MeetControls>
+        <MeetControls
+          style={{
+            borderTop: `1px solid ${theme === "#232424" ? "#fff" : "#232424"}`,
+          }}
+        >
           <form className="input" onSubmit={(e) => handleSubmit(e)}>
-            <input type="text" name="" id="" />
+            <input type="text" name="" id="" spellCheck={false} />
             <button type="submit">
               <BiSend />
             </button>
@@ -170,7 +240,7 @@ const ChatComponent: FC = () => {
             <Icons />
           </div>
         </MeetControls>
-      </ChatPage>
+      </animated.main>
     </>
   );
 };
