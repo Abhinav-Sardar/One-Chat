@@ -1,3 +1,4 @@
+import { animated } from "react-spring";
 import styled from "styled-components";
 import { constants } from "../Constants";
 
@@ -7,12 +8,7 @@ export const Title = styled.h6`
   font-size: 4vw;
 `;
 
-export const CustomizePage = styled.div`
-  background: ${(props) => {
-    //@ts-ignore
-    return props.bgcolor;
-  }};
-
+export const CustomizePage = styled(animated.div)`
   height: 100vh;
   width: 100vw;
   display: flex;

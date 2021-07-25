@@ -2,7 +2,7 @@ import { useEffect, useState, useContext, FormEvent } from "react";
 import { FC } from "react";
 import { Redirect, useParams } from "react-router-dom";
 
-import { user, userInfoStorageKey } from "../Constants";
+import { ChatUser, user, userInfoStorageKey } from "../Constants";
 import parsed from "html-react-parser";
 import {
   FaUserAlt,
@@ -32,6 +32,7 @@ import JoinRoom from "./JoinRoom";
 import NotFoundPage from "./NotFound";
 import { setTextRange } from "typescript";
 import { useSpring, animated } from "react-spring";
+import { ChatHeader, UsersInChat } from "./Chat.SubComponents";
 
 const Chat: FC = () => {
   //@ts-ignore
@@ -93,6 +94,20 @@ const ChatComponent: FC = () => {
   const [infoOpen, setInfoOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
+  const dummmyUsers: ChatUser[] = [
+    {
+      name: "Abhinav",
+      profilePic: "ono32nonn",
+    },
+    {
+      name: "Abhinav",
+      profilePic: "ono32nonn",
+    },
+    {
+      name: "Ayush",
+      profilePic: "ono32nonn",
+    },
+  ];
   useEffect(() => {
     setName(client.name.trimStart().trimEnd());
     setRoom(client.currentRoomName.trimStart().trimEnd());
@@ -199,37 +214,37 @@ const ChatComponent: FC = () => {
   const backgroundAnimation = useSpring({
     backgroundColor: theme,
   });
+  const colorSetter = useSpring({
+    color: theme === "#232424" ? "#fff" : "#232424",
+    border: `1px solid ${theme === "#232424" ? "#fff" : "#232424"}`,
+  });
+  const footerAndHeaderExpander = useSpring({
+    from: {
+      width: "0vw",
+    },
+    to: {
+      width: "100vw",
+    },
+  });
   return (
     <>
-      {/* @ts-ignore */}
       <animated.main style={backgroundAnimation} className="main__chat">
-        <MeetInfo
-          style={{
-            borderBottom: `1px solid ${
-              theme === "#232424" ? "#fff" : "#232424"
-            }`,
-          }}
-        >
-          <span>1neo21n</span>
-          <span>nwpen2o</span>
-          <span>nwpen2o</span>
-          <span>nwpen2o</span>
-          <span>nwpen2o</span>
-        </MeetInfo>
-        <RemainingChatArea>
+        <ChatHeader roomName={room} />
+        <RemainingChatArea style={colorSetter}>
           <ChatArea>
             <div className="mainChat">
               <h1>{room}</h1>
             </div>
           </ChatArea>
-          <div className="idk">SUp B)</div>
+
+          <UsersInChat
+            users={dummmyUsers}
+            usersOpen={usersOpen}
+            borderColor={theme === "#232424" ? "#fff" : "#232424"}
+          />
         </RemainingChatArea>
 
-        <MeetControls
-          style={{
-            borderTop: `1px solid ${theme === "#232424" ? "#fff" : "#232424"}`,
-          }}
-        >
+        <MeetControls style={footerAndHeaderExpander}>
           <form className="input" onSubmit={(e) => handleSubmit(e)}>
             <input type="text" name="" id="" spellCheck={false} />
             <button type="submit">

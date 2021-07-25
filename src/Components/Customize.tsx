@@ -14,6 +14,7 @@ import { AiOutlineSave } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 import Buttons from "./Customized.Buttons";
+import { useSpring } from "react-spring";
 
 const Customize: FC = () => {
   const [color, setColor] = useState<string>(constants.appAccentColor);
@@ -27,12 +28,11 @@ const Customize: FC = () => {
       setSaved(false);
     }, 1000);
   }
-
+  const bgColorChanger = useSpring({
+    background: color,
+  });
   return (
-    <CustomizePage
-      // @ts-ignore
-      bgcolor={color}
-    >
+    <CustomizePage style={bgColorChanger}>
       <Title>Customize</Title>
 
       <hr

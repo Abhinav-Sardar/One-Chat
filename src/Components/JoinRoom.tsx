@@ -32,6 +32,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { Link } from "react-router-dom";
 import { isPropertySignature } from "typescript";
+import { useSpring } from "react-spring";
 
 const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   isAuth,
@@ -101,8 +102,18 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       setCurrentAvatar(avatars[0]);
     }
   }, [avatars]);
+  const appear = useSpring({
+    from: {
+      transform: "scale(0.4)",
+      opacity: 0,
+    },
+    to: {
+      transform: "scale(1)",
+      opacity: 1,
+    },
+  });
   return (
-    <Page>
+    <Page style={appear}>
       <h1 className="purpose">Join</h1>
       <Form onSubmit={(e) => handleSubmit(e)}>
         <div className="field">

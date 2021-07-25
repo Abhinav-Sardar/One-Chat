@@ -2,25 +2,30 @@ import { animated } from "react-spring";
 import styled from "styled-components";
 import { constants } from "../Constants";
 
-export const MeetInfo = styled.section`
+export const MeetInfo = styled(animated.section)`
   width: 100vw;
   display: flex;
   justify-content: space-around;
   height: 10%;
+  align-items: center;
+  .roomName {
+    font-size: 2vw;
+    font-family: "Poppins", arial, sans-serif;
+    color: ${constants.appAccentColor};
+  }
 `;
-export const RemainingChatArea = styled.div`
+export const RemainingChatArea = styled(animated.div)`
   display: flex;
   flex-direction: row;
   height: 78%;
   justify-content: flex-start;
-  .idk {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-  }
 `;
 
-export const MeetControls = styled.footer`
+export const StyledUsers = styled(animated.aside)`
+  border-left: ${(pr) => (Boolean(pr.about) ? `1px solid ${pr.theme}` : "0")};
+`;
+
+export const MeetControls = styled(animated.footer)`
   width: 100vw;
   height: 12%;
   display: flex;
@@ -79,4 +84,7 @@ export const MeetControls = styled.footer`
 export const ChatArea = styled.div`
   flex: 1;
   flex-direction: column;
+  h1 {
+    font-size: 200%;
+  }
 `;

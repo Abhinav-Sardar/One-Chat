@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
 };
@@ -24,3 +26,13 @@ export type ChatUser = {
   name: string;
 };
 export const userInfoStorageKey: string = "one-chat-user-info";
+
+export interface HeaderProps {
+  roomName: string;
+}
+
+export interface UsersInChatProps {
+  users: ChatUser[];
+  usersOpen: boolean;
+  borderColor: string;
+}

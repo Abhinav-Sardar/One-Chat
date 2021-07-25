@@ -1,6 +1,7 @@
+import { animated } from "react-spring";
 import styled, { keyframes } from "styled-components";
 import { constants } from "../Constants";
-export const Page = styled.div`
+export const Page = styled(animated.div)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,6 +24,7 @@ export const Page = styled.div`
 `;
 
 export const Form = styled.form`
+  overflow: hidden;
   button.submit {
     color: #053fb3;
     background-color: yellow;

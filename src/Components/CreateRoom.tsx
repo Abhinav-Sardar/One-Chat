@@ -31,6 +31,7 @@ import { Button } from "../Styled-components/Customize.style";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { Link } from "react-router-dom";
+import { animated, useSpring, useSprings } from "react-spring";
 
 const CreateRoom: FunctionalComponent = () => {
   //@ts-ignore
@@ -96,8 +97,19 @@ const CreateRoom: FunctionalComponent = () => {
       setCurrentAvatar(avatars[0]);
     }
   }, [avatars]);
+  const appear = useSpring({
+    from: {
+      transform: "scale(0.4)",
+      opacity: 0,
+    },
+    to: {
+      transform: "scale(1)",
+      opacity: 1,
+    },
+  });
+
   return (
-    <Page>
+    <Page style={appear}>
       <h1 className="purpose">Create</h1>
       <Form onSubmit={(e) => handleSubmit(e)}>
         <div className="field">

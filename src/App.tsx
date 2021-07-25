@@ -23,14 +23,10 @@ const App: FC = () => {
             </animated.div>
           </Route>
           <Route path="/create">
-            <animated.div style={fade}>
-              <CreateRoom />
-            </animated.div>
+            <CreateRoom />
           </Route>
           <Route path="/join">
-            <animated.div style={fade}>
-              <JoinRoom isAuth={false} />
-            </animated.div>
+            <JoinRoom isAuth={false} />
           </Route>
           <Route path="/customize">
             <animated.div style={fade}>
