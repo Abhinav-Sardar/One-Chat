@@ -6,7 +6,7 @@ export const MeetInfo = styled(animated.section)`
   width: 100vw;
   display: flex;
   justify-content: space-around;
-  height: 10%;
+  height: 10vh;
   align-items: center;
   .roomName {
     font-size: 2vw;
@@ -21,19 +21,14 @@ export const RemainingChatArea = styled(animated.div)`
   justify-content: flex-start;
 `;
 
-export const StyledUsers = styled(animated.aside)`
-  border-left: ${(pr) => (Boolean(pr.about) ? `1px solid ${pr.theme}` : "0")};
-`;
-
 export const MeetControls = styled(animated.footer)`
   width: 100vw;
-  height: 12%;
+  height: 12vh;
   display: flex;
   justify-content: space-between;
   align-items: center;
   .input {
     display: flex;
-
     height: 100%;
     align-items: center;
     button {
@@ -87,4 +82,8 @@ export const ChatArea = styled.div`
   h1 {
     font-size: 200%;
   }
+`;
+
+export const UsersSection = styled(animated.aside)`
+  border: 1px solid black;
 `;

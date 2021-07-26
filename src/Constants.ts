@@ -1,4 +1,5 @@
 import { CSSProperties } from "react";
+import { useSpring } from "react-spring";
 
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
@@ -35,4 +36,16 @@ export interface UsersInChatProps {
   users: ChatUser[];
   usersOpen: boolean;
   borderColor: string;
+}
+
+export interface ShareProps {
+  roomName: string;
+  shareOpen: boolean;
+  theme: string;
+}
+
+export function Animations(): object {
+  return {
+    SidePanelsAppear: useSpring({}),
+  };
 }

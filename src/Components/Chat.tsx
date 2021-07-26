@@ -2,7 +2,7 @@ import { useEffect, useState, useContext, FormEvent } from "react";
 import { FC } from "react";
 import { Redirect, useParams } from "react-router-dom";
 
-import { ChatUser, user, userInfoStorageKey } from "../Constants";
+import { ChatUser, constants, user, userInfoStorageKey } from "../Constants";
 import parsed from "html-react-parser";
 import {
   FaUserAlt,
@@ -27,12 +27,12 @@ import {
   MeetControls,
   MeetInfo,
   RemainingChatArea,
+  UsersSection,
 } from "../Styled-components/Chat.style";
 import JoinRoom from "./JoinRoom";
 import NotFoundPage from "./NotFound";
-import { setTextRange } from "typescript";
-import { useSpring, animated } from "react-spring";
-import { ChatHeader, UsersInChat } from "./Chat.SubComponents";
+import { useSpring, animated, useTransition } from "react-spring";
+import { ChatHeader } from "./Chat.SubComponents";
 
 const Chat: FC = () => {
   //@ts-ignore
@@ -96,16 +96,76 @@ const ChatComponent: FC = () => {
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const dummmyUsers: ChatUser[] = [
     {
-      name: "Abhinav",
-      profilePic: "ono32nonn",
+      name: name,
+      profilePic: svgURl,
     },
     {
-      name: "Abhinav",
-      profilePic: "ono32nonn",
+      name: name,
+      profilePic: svgURl,
     },
     {
-      name: "Ayush",
-      profilePic: "ono32nonn",
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
+    },
+    {
+      name: name,
+      profilePic: svgURl,
     },
   ];
   useEffect(() => {
@@ -217,6 +277,7 @@ const ChatComponent: FC = () => {
   const colorSetter = useSpring({
     color: theme === "#232424" ? "#fff" : "#232424",
     border: `1px solid ${theme === "#232424" ? "#fff" : "#232424"}`,
+    borderRight: "none",
   });
   const footerAndHeaderExpander = useSpring({
     from: {
@@ -226,6 +287,21 @@ const ChatComponent: FC = () => {
       width: "100vw",
     },
   });
+  const usersTransition = useTransition(usersOpen, {
+    from: {
+      opacity: 0,
+      width: "0vw",
+    },
+    enter: {
+      opacity: 1,
+      width: "25vw",
+    },
+    leave: {
+      opacity: 0,
+      width: "0vw",
+    },
+  });
+
   return (
     <>
       <animated.main style={backgroundAnimation} className="main__chat">
@@ -237,11 +313,12 @@ const ChatComponent: FC = () => {
             </div>
           </ChatArea>
 
-          <UsersInChat
-            users={dummmyUsers}
-            usersOpen={usersOpen}
-            borderColor={theme === "#232424" ? "#fff" : "#232424"}
-          />
+          {
+            //@ts-ignore
+            usersTransition((style, item) => {
+              return item ? <UsersSection style={style}>FFS</UsersSection> : "";
+            })
+          }
         </RemainingChatArea>
 
         <MeetControls style={footerAndHeaderExpander}>
