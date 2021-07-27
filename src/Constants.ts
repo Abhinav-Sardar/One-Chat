@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { useSpring } from "react-spring";
+import { useSpring, useTransition } from "react-spring";
 
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
@@ -30,12 +30,12 @@ export const userInfoStorageKey: string = "one-chat-user-info";
 
 export interface HeaderProps {
   roomName: string;
+  onClick: () => void;
 }
 
 export interface UsersInChatProps {
   users: ChatUser[];
-  usersOpen: boolean;
-  borderColor: string;
+  theme: string;
 }
 
 export interface ShareProps {
@@ -43,9 +43,16 @@ export interface ShareProps {
   shareOpen: boolean;
   theme: string;
 }
-
-export function Animations(): object {
-  return {
-    SidePanelsAppear: useSpring({}),
-  };
+const alphabets: string[] = "abcdefghijklmnopqrstuvwxyz".split("");
+const nums: string[] = "1234567890".split("");
+const specialChars: string[] = '!@#$%^&*()_+=-";:,.<>/?'.split("");
+export function getRandomKey(): string {
+  let str = "";
+  const allFields: string[][] = [alphabets, nums, specialChars];
+  const randomField: string[] =
+    allFields[Math.floor(Math.random()) * allFields.length];
+  for (let i = 0; i < 6; i++) {
+    str += randomField[Math.floor(Math.random() * randomField.length)];
+  }
+  return str;
 }

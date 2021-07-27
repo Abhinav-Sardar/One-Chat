@@ -5,13 +5,31 @@ import { constants } from "../Constants";
 export const MeetInfo = styled(animated.section)`
   width: 100vw;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   height: 10vh;
   align-items: center;
   .roomName {
     font-size: 2vw;
     font-family: "Poppins", arial, sans-serif;
     color: ${constants.appAccentColor};
+    margin-left: 2vw;
+  }
+  button {
+    &:hover {
+      background-color: whitesmoke;
+      color: red;
+    }
+    transition: 400ms ease-in-out;
+
+    height: 70%;
+    color: white;
+    background-color: red;
+    margin-right: 2vw;
+    padding: 0 1vw;
+    font-size: 1.5vw;
+    border-radius: 20px;
+    outline: 0;
+    border: 1px solid red;
   }
 `;
 export const RemainingChatArea = styled(animated.div)`
@@ -69,7 +87,7 @@ export const MeetControls = styled(animated.footer)`
     svg {
       color: ${constants.appAccentColor};
       font-size: 2vw;
-      margin: 0 1.3vw;
+      margin: 0 1.1vw;
       color: ${constants.appAccentColor};
       transition: 400ms ease-ease-in-out;
     }
@@ -80,10 +98,60 @@ export const ChatArea = styled.div`
   flex: 1;
   flex-direction: column;
   h1 {
-    font-size: 200%;
+    margin-left: 50%;
   }
+  border-right: 1px solid ${(pr) => pr.theme};
 `;
 
 export const UsersSection = styled(animated.aside)`
-  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  .length {
+    width: 100%;
+    font-size: 1.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1vw 0;
+    font-family: "Mulish", sans-serif;
+  }
+`;
+
+export const User = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid ${(pr) => pr.theme};
+  svg {
+    height: 4vw;
+    width: 4vw;
+    border-radius: 50%;
+    border: 1px solid ${(pr) => pr.theme};
+  }
+  h2 {
+    font-size: 1.5vw;
+    font-family: "Quicksand", sans-serif;
+  }
+`;
+
+export const SidePanelHeader = styled.div`
+  color: ${constants.appAccentColor};
+  font-family: "Poppins", sans-serif;
+  font-size: 2vw;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ChatPage = styled(animated.div)`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
 `;

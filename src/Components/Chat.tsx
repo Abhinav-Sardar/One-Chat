@@ -24,15 +24,17 @@ import { FiShare2 } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
 import {
   ChatArea,
+  ChatPage,
   MeetControls,
   MeetInfo,
   RemainingChatArea,
+  SidePanelHeader,
   UsersSection,
 } from "../Styled-components/Chat.style";
 import JoinRoom from "./JoinRoom";
 import NotFoundPage from "./NotFound";
 import { useSpring, animated, useTransition } from "react-spring";
-import { ChatHeader } from "./Chat.SubComponents";
+import { ChatHeader, UsersPanelInfo } from "./Chat.SubComponents";
 
 const Chat: FC = () => {
   //@ts-ignore
@@ -95,10 +97,6 @@ const ChatComponent: FC = () => {
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const dummmyUsers: ChatUser[] = [
-    {
-      name: name,
-      profilePic: svgURl,
-    },
     {
       name: name,
       profilePic: svgURl,
@@ -287,52 +285,77 @@ const ChatComponent: FC = () => {
       width: "100vw",
     },
   });
-  const usersTransition = useTransition(usersOpen, {
+  const config = {
     from: {
       opacity: 0,
       width: "0vw",
+      delay: 150,
     },
     enter: {
       opacity: 1,
-      width: "25vw",
+      width: "23vw",
     },
     leave: {
       opacity: 0,
       width: "0vw",
     },
-  });
-
+  };
+  const usersTransition = useTransition(usersOpen, config);
+  const shareTransition = useTransition(shareOpen, config);
+  const LeaveRoom = () => {
+    window.location.assign("/");
+  };
   return (
     <>
-      <animated.main style={backgroundAnimation} className="main__chat">
-        <ChatHeader roomName={room} />
+      <ChatPage style={backgroundAnimation}>
+        <ChatHeader roomName={room} onClick={LeaveRoom} />
         <RemainingChatArea style={colorSetter}>
-          <ChatArea>
-            <div className="mainChat">
+          <ChatArea theme={theme === "#232424" ? "#fff" : "#232424"}>
+            <div className='mainChat'>
               <h1>{room}</h1>
             </div>
           </ChatArea>
 
-          {
-            //@ts-ignore
-            usersTransition((style, item) => {
-              return item ? <UsersSection style={style}>FFS</UsersSection> : "";
-            })
-          }
+          {usersTransition((style, item) => {
+            return item ? (
+              <>
+                <UsersSection style={style}>
+                  <SidePanelHeader>Users In Chat</SidePanelHeader>
+                  <div
+                    className='length'
+                    style={{
+                      borderTop: `1px solid ${
+                        theme === "#232424" ? "#fff" : "#232424"
+                      }`,
+                    }}
+                  >
+                    Number Of Users :{dummmyUsers.length}
+                  </div>
+
+                  <UsersPanelInfo
+                    users={dummmyUsers}
+                    theme={theme === "#232424" ? "#fff" : "#232424"}
+                  />
+                </UsersSection>
+              </>
+            ) : (
+              ""
+            );
+          })}
         </RemainingChatArea>
 
         <MeetControls style={footerAndHeaderExpander}>
-          <form className="input" onSubmit={(e) => handleSubmit(e)}>
-            <input type="text" name="" id="" spellCheck={false} />
-            <button type="submit">
+          <form className='input' onSubmit={(e) => handleSubmit(e)}>
+            <input type='text' name='' id='' spellCheck={false} />
+            <button type='submit'>
               <BiSend />
             </button>
           </form>
-          <div className="icons">
+          <div className='icons'>
             <Icons />
           </div>
         </MeetControls>
-      </animated.main>
+      </ChatPage>
     </>
   );
 };

@@ -30,12 +30,7 @@ svg:root {
   background-color:${constants.appAccentColor}
   
 }
-.main__chat {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-}
+
 `;
 export const Wrapper = styled.div`
   display: flex;

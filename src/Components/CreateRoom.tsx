@@ -21,6 +21,7 @@ import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
 import {
   constants,
+  getRandomKey,
   maxAvatarType,
   user,
   userInfoStorageKey,
@@ -110,47 +111,47 @@ const CreateRoom: FunctionalComponent = () => {
 
   return (
     <Page style={appear}>
-      <h1 className="purpose">Create</h1>
+      <h1 className='purpose'>Create</h1>
       <Form onSubmit={(e) => handleSubmit(e)}>
-        <div className="field">
+        <div className='field'>
           <span>Name</span>
           <br />
           <input
-            type="text"
+            type='text'
             /* @ts-ignore */
             value={name}
             onChange={(e) => setName(e.target.value)}
             spellCheck
             required
-            placeholder="Your Name"
+            placeholder='Your Name'
           />
         </div>
-        <div className="field">
+        <div className='field'>
           <span>Room Name</span>
           <br />
           <input
-            type="text"
+            type='text'
             //@ts-ignore
             value={room}
             onChange={(e) => setRoom(e.target.value)}
             spellCheck
             required
-            placeholder="Name Your Room"
+            placeholder='Name Your Room'
           />
         </div>
-        <div className="field">
+        <div className='field'>
           <span>Avatar</span>
           {currentAvatar && parse(currentAvatar)}
           <br />
           <button
             onClick={() => setIsModalOpen(true)}
-            className="choose__avatar"
-            type="button"
+            className='choose__avatar'
+            type='button'
           >
-            <span>Choose Avatar</span> <FaUserAlt className="btn-avatar" />
+            <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
           </button>
         </div>
-        <button type="submit" className="submit">
+        <button type='submit' className='submit'>
           Create Room
         </button>
       </Form>
@@ -165,7 +166,7 @@ const CreateRoom: FunctionalComponent = () => {
         onClose={() => handleClose()}
         closeIcon={
           <FaTimes
-            fill="red"
+            fill='red'
             fontSize={"2vw"}
             style={{
               margin: "1vh 0",
@@ -180,10 +181,7 @@ const CreateRoom: FunctionalComponent = () => {
           {avatars.map((avatar: string, index: number) => {
             if (avatar !== currentAvatar) {
               return (
-                <div
-                  onClick={() => setAvatarIcon(avatar)}
-                  key={(new Date().getSeconds() * Math.random()).toString()}
-                >
+                <div onClick={() => setAvatarIcon(avatar)} key={getRandomKey()}>
                   {parse(avatar)}
                 </div>
               );
@@ -191,8 +189,8 @@ const CreateRoom: FunctionalComponent = () => {
               return (
                 <div
                   onClick={() => setAvatarIcon(avatar)}
-                  className="current"
-                  key={(new Date().getSeconds() * Math.random()).toString()}
+                  className='current'
+                  key={getRandomKey()}
                 >
                   {parse(avatar)}
                 </div>
@@ -203,7 +201,7 @@ const CreateRoom: FunctionalComponent = () => {
         <br />
         <AvatarActionBtns>
           {loading ? (
-            <h2 className="loader">Loading . . .</h2>
+            <h2 className='loader'>Loading . . .</h2>
           ) : (
             <>
               <button
@@ -226,7 +224,7 @@ const CreateRoom: FunctionalComponent = () => {
                 }}
               >
                 <span>Load New </span>
-                <AiOutlineReload className="loader2" />
+                <AiOutlineReload className='loader2' />
               </button>
             </>
           )}
@@ -237,7 +235,7 @@ const CreateRoom: FunctionalComponent = () => {
         pauseOnHover={false}
         closeOnClick={false}
       />
-      <Link to="/">
+      <Link to='/'>
         <Button>
           <span>Back To Home</span> <FaHome />
         </Button>{" "}

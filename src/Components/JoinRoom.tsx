@@ -21,6 +21,7 @@ import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
 import {
   constants,
+  getRandomKey,
   maxAvatarType,
   user,
   userInfoStorageKey,
@@ -114,23 +115,23 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   });
   return (
     <Page style={appear}>
-      <h1 className="purpose">Join</h1>
+      <h1 className='purpose'>Join</h1>
       <Form onSubmit={(e) => handleSubmit(e)}>
-        <div className="field">
+        <div className='field'>
           <span>Name</span>
           <br />
           <input
-            type="text"
+            type='text'
             /* @ts-ignore */
             value={name}
             onChange={(e) => setName(e.target.value)}
             spellCheck
             required
-            placeholder="Your Name"
+            placeholder='Your Name'
           />
         </div>
         {isAuth ? (
-          <div className="field">
+          <div className='field'>
             <h2
               style={{
                 color: "white",
@@ -142,33 +143,33 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             </h2>
           </div>
         ) : (
-          <div className="field">
+          <div className='field'>
             <span>Room Name</span>
             <br />
             <input
-              type="text"
+              type='text'
               //@ts-ignore
               value={room}
               onChange={(e) => setRoom(e.target.value)}
               spellCheck
               required
-              placeholder="Name Your Room"
+              placeholder='Name Your Room'
             />
           </div>
         )}
-        <div className="field">
+        <div className='field'>
           <span>Avatar</span>
           {currentAvatar && parse(currentAvatar)}
           <br />
           <button
             onClick={() => setIsModalOpen(true)}
-            className="choose__avatar"
-            type="button"
+            className='choose__avatar'
+            type='button'
           >
-            <span>Choose Avatar</span> <FaUserAlt className="btn-avatar" />
+            <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
           </button>
         </div>
-        <button type="submit" className="submit">
+        <button type='submit' className='submit'>
           Join Room
         </button>
       </Form>
@@ -183,7 +184,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
         onClose={() => handleClose()}
         closeIcon={
           <FaTimes
-            fill="red"
+            fill='red'
             fontSize={"2vw"}
             style={{
               margin: "1vh 0",
@@ -198,10 +199,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
           {avatars.map((avatar: string, index: number) => {
             if (avatar !== currentAvatar) {
               return (
-                <div
-                  onClick={() => setAvatarIcon(avatar)}
-                  key={(new Date().getSeconds() * Math.random()).toString()}
-                >
+                <div onClick={() => setAvatarIcon(avatar)} key={getRandomKey()}>
                   {parse(avatar)}
                 </div>
               );
@@ -209,8 +207,8 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
               return (
                 <div
                   onClick={() => setAvatarIcon(avatar)}
-                  className="current"
-                  key={(new Date().getSeconds() * Math.random()).toString()}
+                  className='current'
+                  key={getRandomKey()}
                 >
                   {parse(avatar)}
                 </div>
@@ -221,7 +219,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
         <br />
         <AvatarActionBtns>
           {loading ? (
-            <h2 className="loader">Loading . . .</h2>
+            <h2 className='loader'>Loading . . .</h2>
           ) : (
             <>
               <button
@@ -244,7 +242,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                 }}
               >
                 <span>Load New </span>
-                <AiOutlineReload className="loader2" />
+                <AiOutlineReload className='loader2' />
               </button>
             </>
           )}
@@ -255,7 +253,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
         pauseOnHover={false}
         closeOnClick={false}
       />
-      <Link to="/">
+      <Link to='/'>
         <Button>
           <span>Back To Home</span> <FaHome />
         </Button>{" "}
