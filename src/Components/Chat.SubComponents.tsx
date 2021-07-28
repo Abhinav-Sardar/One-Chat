@@ -1,15 +1,21 @@
 import { FC, memo } from "react";
 import {
-  ChatUser,
   constants,
   getRandomKey,
   HeaderProps,
   ShareProps,
   UsersInChatProps,
 } from "../Constants";
-import { MeetInfo, User } from "../Styled-components/Chat.style";
+import { MdContentCopy } from "react-icons/md";
+import copy from "clipboard-copy";
+import {
+  MeetInfo,
+  SidePanelHeader,
+  User,
+} from "../Styled-components/Chat.style";
 import { useSpring } from "@react-spring/core";
 import parse from "html-react-parser";
+import { toast } from "react-toastify";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   return (
@@ -32,3 +38,50 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(({ users, theme }) => {
     </>
   );
 });
+
+export const SharePanelInfo: FC<ShareProps> = ({ roomName, theme }) => {
+  const roomUrl = `${window.location.origin}/room/${roomName}`;
+  const joinUrl = `${window.location.origin}/join`;
+  return (
+    <>
+      <SidePanelHeader
+        style={{
+          borderBottom: `1px solid ${theme}`,
+        }}
+        onClick={() => copy(roomUrl)}
+      >
+        Share
+      </SidePanelHeader>
+      <h3>Users can join this room by :</h3>
+      <h2>
+        Go to this URL <br />
+        <a>https://one-chat-v1000.netlify.app</a>
+        <br />
+        <CopyBtn text={joinUrl} />
+        <br />
+        and filling out necessary information.
+      </h2>
+      <h2>
+        Or Simply go to this URL
+        <br />
+        <a>{roomUrl}</a>
+      </h2>
+    </>
+  );
+};
+
+const CopyBtn: FC<{ text: string }> = memo(({ text }) => {
+  return (
+    <>
+      <button className='copy' onClick={() => CopyToClipBoard(text)}>
+        <MdContentCopy />
+        Copy Link
+      </button>
+    </>
+  );
+});
+
+function CopyToClipBoard(text: string): void {
+  copy(text);
+  toast.info("Copied ✅. You can share this Url with anyone you trust");
+}

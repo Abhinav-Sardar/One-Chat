@@ -13,6 +13,7 @@ import {
   FaMoon,
   FaSun,
 } from "react-icons/fa";
+import { ToastContainer } from "react-toastify";
 import { GrShareOption } from "react-icons/gr";
 import {
   AiFillInfoCircle,
@@ -28,13 +29,18 @@ import {
   MeetControls,
   MeetInfo,
   RemainingChatArea,
+  SharePanel,
   SidePanelHeader,
   UsersSection,
 } from "../Styled-components/Chat.style";
 import JoinRoom from "./JoinRoom";
 import NotFoundPage from "./NotFound";
 import { useSpring, animated, useTransition } from "react-spring";
-import { ChatHeader, UsersPanelInfo } from "./Chat.SubComponents";
+import {
+  ChatHeader,
+  SharePanelInfo,
+  UsersPanelInfo,
+} from "./Chat.SubComponents";
 
 const Chat: FC = () => {
   //@ts-ignore
@@ -289,11 +295,11 @@ const ChatComponent: FC = () => {
     from: {
       opacity: 0,
       width: "0vw",
-      delay: 150,
     },
     enter: {
       opacity: 1,
-      width: "23vw",
+      width: "25vw",
+      delay: 350,
     },
     leave: {
       opacity: 0,
@@ -342,6 +348,18 @@ const ChatComponent: FC = () => {
               ""
             );
           })}
+          {shareTransition((style, item) => {
+            return item ? (
+              <SharePanel style={style}>
+                <SharePanelInfo
+                  theme={theme === "#232424" ? "#fff" : "#232424"}
+                  roomName={room}
+                />
+              </SharePanel>
+            ) : (
+              ""
+            );
+          })}
         </RemainingChatArea>
 
         <MeetControls style={footerAndHeaderExpander}>
@@ -356,6 +374,11 @@ const ChatComponent: FC = () => {
           </div>
         </MeetControls>
       </ChatPage>
+      <ToastContainer
+        draggable={false}
+        pauseOnHover={false}
+        closeOnClick={false}
+      />
     </>
   );
 };

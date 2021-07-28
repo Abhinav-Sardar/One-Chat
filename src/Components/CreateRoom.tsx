@@ -80,14 +80,21 @@ const CreateRoom: FunctionalComponent = () => {
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     if (name && room && name.trim() && room.trim()) {
-      const newUser: user = {
-        avatarSvg: currentAvatar,
-        name: name,
-        currentRoomName: room,
-      };
-      console.log(newUser);
-      sessionStorage.setItem(userInfoStorageKey, JSON.stringify(newUser));
-      window.location.assign(`/room/${room}`);
+      const splitted = room.split(" ");
+      if (splitted.includes("")) {
+        toast.error(
+          "Room Names should not have spaces in between. Consider seperating mutliple words with characters like '-'"
+        );
+      } else {
+        const newUser: user = {
+          avatarSvg: currentAvatar,
+          name: name,
+          currentRoomName: room,
+        };
+        console.log(newUser);
+        sessionStorage.setItem(userInfoStorageKey, JSON.stringify(newUser));
+        window.location.assign(`/room/${room}`);
+      }
     } else {
       toast.error("Invalid Username Or Room Name !");
     }

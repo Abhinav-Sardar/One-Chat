@@ -40,9 +40,9 @@ export interface UsersInChatProps {
 
 export interface ShareProps {
   roomName: string;
-  shareOpen: boolean;
   theme: string;
 }
+
 const alphabets: string[] = "abcdefghijklmnopqrstuvwxyz".split("");
 const nums: string[] = "1234567890".split("");
 const specialChars: string[] = '!@#$%^&*()_+=-";:,.<>/?'.split("");

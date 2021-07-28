@@ -13,6 +13,10 @@ export const MeetInfo = styled(animated.section)`
     font-family: "Poppins", arial, sans-serif;
     color: ${constants.appAccentColor};
     margin-left: 2vw;
+    &::selection {
+      color: white;
+      background-color: ${constants.appAccentColor};
+    }
   }
   button {
     &:hover {
@@ -147,6 +151,10 @@ export const SidePanelHeader = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  &::selection {
+    color: white;
+    background-color: ${constants.appAccentColor};
+  }
 `;
 
 export const ChatPage = styled(animated.div)`
@@ -154,4 +162,49 @@ export const ChatPage = styled(animated.div)`
   width: 100vw;
   display: flex;
   flex-direction: column;
+`;
+
+export const SharePanel = styled(animated.aside)`
+  h3 {
+    width: 100%;
+    text-align: center;
+    font-family: "Mulish", sans-serif;
+    font-size: 1.4vw;
+  }
+  h2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+    margin: 2vh 0;
+    font-size: 1.2vw;
+    letter-spacing: 1px;
+    .copy {
+      color: ${constants.appAccentColor};
+      width: 70%;
+      font-size: 1.5vw;
+      background-color: transparent;
+      &:hover {
+        color: white;
+        background-color: ${constants.appAccentColor};
+      }
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border: 1px solid ${constants.appAccentColor};
+      padding: 0.5vw 0;
+      transition: 400ms ease-in-out;
+      outline: 0;
+    }
+    a {
+      color: ${constants.appAccentColor};
+      font-size: 1.3vw;
+      margin: 0.5vw 0;
+      word-break: break-all;
+    }
+  }
 `;
