@@ -39,6 +39,7 @@ import { useSpring, animated, useTransition } from "react-spring";
 import {
   ChatHeader,
   SharePanelInfo,
+  SidePanelHeaderComponent,
   UsersPanelInfo,
 } from "./Chat.SubComponents";
 
@@ -326,7 +327,9 @@ const ChatComponent: FC = () => {
             return item ? (
               <>
                 <UsersSection style={style}>
-                  <SidePanelHeader>Users In Chat</SidePanelHeader>
+                  <SidePanelHeaderComponent onClose={() => setUsersOpen(false)}>
+                    <span> Users In Chat</span>
+                  </SidePanelHeaderComponent>
                   <div
                     className='length'
                     style={{
@@ -352,6 +355,7 @@ const ChatComponent: FC = () => {
             return item ? (
               <SharePanel style={style}>
                 <SharePanelInfo
+                  onClose={() => setShareOpen(false)}
                   theme={theme === "#232424" ? "#fff" : "#232424"}
                   roomName={room}
                 />

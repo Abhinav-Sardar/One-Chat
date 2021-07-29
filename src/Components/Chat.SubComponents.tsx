@@ -3,6 +3,7 @@ import {
   constants,
   getRandomKey,
   HeaderProps,
+  PanelHeaderProps,
   ShareProps,
   UsersInChatProps,
 } from "../Constants";
@@ -16,6 +17,7 @@ import {
 import { useSpring } from "@react-spring/core";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
+import { FaTimes } from "react-icons/fa";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   return (
@@ -39,32 +41,40 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(({ users, theme }) => {
   );
 });
 
-export const SharePanelInfo: FC<ShareProps> = ({ roomName, theme }) => {
+export const SharePanelInfo: FC<ShareProps> = ({
+  roomName,
+  theme,
+  onClose,
+}) => {
   const roomUrl = `${window.location.origin}/room/${roomName}`;
   const joinUrl = `${window.location.origin}/join`;
   return (
     <>
-      <SidePanelHeader
+      <SidePanelHeaderComponent
         style={{
           borderBottom: `1px solid ${theme}`,
         }}
-        onClick={() => copy(roomUrl)}
+        onClose={onClose}
       >
         Share
-      </SidePanelHeader>
+      </SidePanelHeaderComponent>
       <h3>Users can join this room by :</h3>
       <h2>
         Go to this URL <br />
-        <a>https://one-chat-v1000.netlify.app</a>
+        <a>{joinUrl}</a>
         <br />
         <CopyBtn text={joinUrl} />
         <br />
-        and filling out necessary information.
+        and write {roomName} as the name of the room <br />
+        and fill out the other information.
       </h2>
+      <h1 className='breaker'>OR</h1>
       <h2>
-        Or Simply go to this URL
+        Simply go to this URL
         <br />
         <a>{roomUrl}</a>
+        <br />
+        <CopyBtn text={roomUrl} />
       </h2>
     </>
   );
@@ -85,3 +95,19 @@ function CopyToClipBoard(text: string): void {
   copy(text);
   toast.info("Copied ✅. You can share this Url with anyone you trust");
 }
+
+export const SidePanelHeaderComponent: FC<PanelHeaderProps> = ({
+  children,
+  onClose,
+  style,
+}) => {
+  return (
+    <>
+      <SidePanelHeader style={style ? style : {}}>
+        <span>{children}</span>
+
+        <FaTimes onClick={onClose} />
+      </SidePanelHeader>
+    </>
+  );
+};

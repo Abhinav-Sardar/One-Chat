@@ -145,12 +145,22 @@ export const User = styled.section`
 
 export const SidePanelHeader = styled.div`
   color: ${constants.appAccentColor};
-  font-family: "Poppins", sans-serif;
-  font-size: 2vw;
+  span {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.9vw;
+    margin-left: 0.5vw;
+  }
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+
+  svg {
+    color: red;
+    font-size: 2vw;
+    margin-right: 1vw;
+  }
+
   &::selection {
     color: white;
     background-color: ${constants.appAccentColor};
@@ -165,6 +175,7 @@ export const ChatPage = styled(animated.div)`
 `;
 
 export const SharePanel = styled(animated.aside)`
+  overflow-y: auto;
   h3 {
     width: 100%;
     text-align: center;
@@ -206,5 +217,10 @@ export const SharePanel = styled(animated.aside)`
       margin: 0.5vw 0;
       word-break: break-all;
     }
+  }
+  .breaker {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.6vw;
+    text-align: center;
   }
 `;

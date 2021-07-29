@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import React, { CSSProperties, ReactChildren, ReactElement } from "react";
 import { useSpring, useTransition } from "react-spring";
 
 export const constants = {
@@ -41,8 +41,14 @@ export interface UsersInChatProps {
 export interface ShareProps {
   roomName: string;
   theme: string;
+  onClose: () => void;
 }
 
+export interface PanelHeaderProps {
+  children: string | ReactElement;
+  onClose: () => void;
+  style?: React.CSSProperties;
+}
 const alphabets: string[] = "abcdefghijklmnopqrstuvwxyz".split("");
 const nums: string[] = "1234567890".split("");
 const specialChars: string[] = '!@#$%^&*()_+=-";:,.<>/?'.split("");
