@@ -111,3 +111,9 @@ export const SidePanelHeaderComponent: FC<PanelHeaderProps> = ({
     </>
   );
 };
+
+export const MeetInfoComponent: FC = () => {
+  const startDate = new Date();
+
+  return <>{startDate.toLocaleDateString()}</>;
+};

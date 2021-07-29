@@ -82,9 +82,7 @@ const CreateRoom: FunctionalComponent = () => {
     if (name && room && name.trim() && room.trim()) {
       const splitted = room.split(" ");
       if (splitted.includes("")) {
-        toast.error(
-          "Room Names should not have spaces in between. Consider seperating mutliple words with characters like '-'"
-        );
+        toast.error("Room names can't have a space");
       } else {
         const newUser: user = {
           avatarSvg: currentAvatar,
