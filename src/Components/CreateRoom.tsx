@@ -19,6 +19,7 @@ import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
+import AvatarsComponent from "./Avatars";
 import {
   constants,
   getRandomKey,
@@ -103,6 +104,9 @@ const CreateRoom: FunctionalComponent = () => {
       setCurrentAvatar(avatars[0]);
     }
   }, [avatars]);
+  useEffect(() => {
+    setIsModalOpen(false);
+  }, [currentAvatar]);
   const appear = useSpring({
     from: {
       transform: "scale(0.4)",
@@ -183,25 +187,11 @@ const CreateRoom: FunctionalComponent = () => {
           <h1>Choose your avatar</h1>
         </AvatarActionBtns>
         <AvatarsWrapper>
-          {avatars.map((avatar: string, index: number) => {
-            if (avatar !== currentAvatar) {
-              return (
-                <div onClick={() => setAvatarIcon(avatar)} key={getRandomKey()}>
-                  {parse(avatar)}
-                </div>
-              );
-            } else {
-              return (
-                <div
-                  onClick={() => setAvatarIcon(avatar)}
-                  className='current'
-                  key={getRandomKey()}
-                >
-                  {parse(avatar)}
-                </div>
-              );
-            }
-          })}
+          <AvatarsComponent
+            avatars={avatars}
+            currentAvatar={currentAvatar}
+            setCurrentAvatar={setCurrentAvatar}
+          />
         </AvatarsWrapper>
         <br />
         <AvatarActionBtns>
@@ -209,28 +199,34 @@ const CreateRoom: FunctionalComponent = () => {
             <h2 className='loader'>Loading . . .</h2>
           ) : (
             <>
-              <button
-                onClick={() => {
-                  setLoading(true);
-                  setMaxAvatar((prev) => {
-                    return { isNew: false, number: prev.number + 24 };
-                  });
-                }}
-              >
-                <span>Load More</span>
-                <HiOutlineArrowDown />
-              </button>
-              <button
-                onClick={() => {
-                  setLoading(true);
-                  setMaxAvatar((prev) => {
-                    return { isNew: true, number: prev.number };
-                  });
-                }}
-              >
-                <span>Load New </span>
-                <AiOutlineReload className='loader2' />
-              </button>
+              {maxAvatarIndex.number < 300 ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setLoading(true);
+                      setMaxAvatar((prev) => {
+                        return { isNew: false, number: prev.number + 24 };
+                      });
+                    }}
+                  >
+                    <span>Load More</span>
+                    <HiOutlineArrowDown />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setLoading(true);
+                      setMaxAvatar((prev) => {
+                        return { isNew: true, number: prev.number };
+                      });
+                    }}
+                  >
+                    <span>Load New </span>
+                    <AiOutlineReload className='loader2' />
+                  </button>
+                </>
+              ) : (
+                ""
+              )}
             </>
           )}
         </AvatarActionBtns>

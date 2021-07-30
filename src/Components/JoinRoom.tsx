@@ -34,6 +34,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { Link } from "react-router-dom";
 import { isPropertySignature } from "typescript";
 import { useSpring } from "react-spring";
+import Avatars from "./Avatars";
 
 const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   isAuth,
@@ -196,25 +197,11 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
           <h1>Choose your avatar</h1>
         </AvatarActionBtns>
         <AvatarsWrapper>
-          {avatars.map((avatar: string, index: number) => {
-            if (avatar !== currentAvatar) {
-              return (
-                <div onClick={() => setAvatarIcon(avatar)} key={getRandomKey()}>
-                  {parse(avatar)}
-                </div>
-              );
-            } else {
-              return (
-                <div
-                  onClick={() => setAvatarIcon(avatar)}
-                  className='current'
-                  key={getRandomKey()}
-                >
-                  {parse(avatar)}
-                </div>
-              );
-            }
-          })}
+          <Avatars
+            avatars={avatars}
+            currentAvatar={currentAvatar}
+            setCurrentAvatar={setCurrentAvatar}
+          />
         </AvatarsWrapper>
         <br />
         <AvatarActionBtns>
