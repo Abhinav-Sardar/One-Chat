@@ -63,22 +63,20 @@ export function getRandomKey(): string {
   return str;
 }
 
-export function Animations() {
-  return {
-    config: {
-      from: {
-        opacity: 0,
-        width: "0vw",
-      },
-      enter: {
-        opacity: 1,
-        width: "25vw",
-        delay: 350,
-      },
-      leave: {
-        opacity: 0,
-        width: "0vw",
-      },
+export const Animations = {
+  config: {
+    from: {
+      opacity: 0,
+      width: "0vw",
     },
-  };
-}
+    enter: {
+      opacity: 1,
+      width: "25vw",
+      delay: 350,
+    },
+    leave: {
+      opacity: 0,
+      width: "0vw",
+    },
+  },
+};

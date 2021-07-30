@@ -149,6 +149,10 @@ export const SidePanelHeader = styled.div`
     font-family: "Poppins", sans-serif;
     font-size: 1.9vw;
     margin-left: 0.5vw;
+    &::selection {
+      color: white;
+      background-color: ${constants.appAccentColor};
+    }
   }
   width: 100%;
   display: flex;
@@ -159,11 +163,6 @@ export const SidePanelHeader = styled.div`
     color: red;
     font-size: 2vw;
     margin-right: 1vw;
-  }
-
-  &::selection {
-    color: white;
-    background-color: ${constants.appAccentColor};
   }
 `;
 
@@ -224,3 +223,5 @@ export const SharePanel = styled(animated.aside)`
     text-align: center;
   }
 `;
+
+export const InfoPanelComponent = styled(animated.aside)``;

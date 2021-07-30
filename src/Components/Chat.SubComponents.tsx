@@ -10,6 +10,7 @@ import {
 import { MdContentCopy } from "react-icons/md";
 import copy from "clipboard-copy";
 import {
+  InfoPanelComponent,
   MeetInfo,
   SidePanelHeader,
   User,
@@ -29,6 +30,8 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
 });
 
 export const UsersPanelInfo: FC<UsersInChatProps> = memo(({ users, theme }) => {
+  console.log("SHare panel opened!");
+
   return (
     <>
       {users.map((user) => (
@@ -110,10 +113,4 @@ export const SidePanelHeaderComponent: FC<PanelHeaderProps> = ({
       </SidePanelHeader>
     </>
   );
-};
-
-export const MeetInfoComponent: FC = () => {
-  const startDate = new Date();
-
-  return <>{startDate.toLocaleDateString()}</>;
 };

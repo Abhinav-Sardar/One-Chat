@@ -14,6 +14,7 @@ import {
   FaSun,
   FaMoon,
 } from "react-icons/fa";
+
 import { FiShare2 } from "react-icons/fi";
 import { useSpring, useTransition } from "react-spring";
 import { ToastContainer } from "react-toastify";
@@ -31,10 +32,9 @@ import {
   SidePanelHeaderComponent,
   UsersPanelInfo,
   SharePanelInfo,
-  MeetInfoComponent,
 } from "./Chat.SubComponents";
 
-const { config } = Animations();
+const { config } = Animations;
 const ChatComponent: FC = () => {
   const footerAndHeaderExpander = useSpring({
     from: {
@@ -53,7 +53,6 @@ const ChatComponent: FC = () => {
   const [svgURl, setSvgUrl] = useState<string>("");
   const [usersOpen, setUsersOpen] = useState<boolean>(false);
   const [shareOpen, setShareOpen] = useState<boolean>(false);
-  const [infoOpen, setInfoOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const dummmyUsers: ChatUser[] = [
@@ -164,19 +163,7 @@ const ChatComponent: FC = () => {
             }}
           />
         )}
-        {!infoOpen ? (
-          <AiOutlineInfoCircle
-            onClick={() => {
-              setInfoOpen(!infoOpen);
-            }}
-          />
-        ) : (
-          <AiFillInfoCircle
-            onClick={() => {
-              setInfoOpen(!infoOpen);
-            }}
-          />
-        )}
+
         {theme === "#fff" ? (
           <FaSun
             onClick={() => {
@@ -196,29 +183,20 @@ const ChatComponent: FC = () => {
   useEffect(() => {
     if (emojiOpen === true) {
       setShareOpen(false);
-      setInfoOpen(false);
       setUsersOpen(false);
     }
   }, [emojiOpen]);
   useEffect(() => {
     if (shareOpen === true) {
       setEmojiOpen(false);
-      setInfoOpen(false);
       setUsersOpen(false);
     }
   }, [shareOpen]);
-  useEffect(() => {
-    if (infoOpen === true) {
-      setShareOpen(false);
-      setEmojiOpen(false);
-      setUsersOpen(false);
-    }
-  }, [infoOpen]);
+
   useEffect(() => {
     if (usersOpen === true) {
       setShareOpen(false);
       setEmojiOpen(false);
-      setInfoOpen(false);
     }
   }, [usersOpen]);
   const backgroundAnimation = useSpring({
@@ -232,7 +210,6 @@ const ChatComponent: FC = () => {
 
   const usersTransition = useTransition(usersOpen, config);
   const shareTransition = useTransition(shareOpen, config);
-  const infoTransition = useTransition(infoOpen, config);
   const LeaveRoom = () => {
     window.location.assign("/");
   };
@@ -287,9 +264,6 @@ const ChatComponent: FC = () => {
             ) : (
               ""
             );
-          })}
-          {infoTransition((style, item) => {
-            return item ? <MeetInfoComponent /> : "";
           })}
         </RemainingChatArea>
 
