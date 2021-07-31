@@ -18,6 +18,7 @@ import {
 import { FiShare2 } from "react-icons/fi";
 import { useSpring, useTransition } from "react-spring";
 import { ToastContainer } from "react-toastify";
+import ReactTooltip from "react-tooltip";
 import { user, ChatUser, Animations, userInfoStorageKey } from "../Constants";
 import {
   ChatPage,
@@ -130,15 +131,27 @@ const ChatComponent: FC = () => {
   function Icons(): JSX.Element {
     return (
       <>
+        <ReactTooltip
+          place='top'
+          type={theme === "#232424" ? "light" : "dark"}
+          effect='solid'
+        />
         {!emojiOpen ? (
-          <FaRegSmile onClick={() => setEmojiOpen(!emojiOpen)} />
+          <FaRegSmile
+            onClick={() => setEmojiOpen(!emojiOpen)}
+            data-tip='Emojis'
+          />
         ) : (
-          <FaSmile onClick={() => setEmojiOpen(!emojiOpen)} />
+          <FaSmile
+            onClick={() => setEmojiOpen(!emojiOpen)}
+            data-tip='Close Emojis'
+          />
         )}
         <AiFillFileImage />
 
         {!usersOpen ? (
           <AiOutlineUser
+            data-tip='Users'
             onClick={() => {
               setUsersOpen(!usersOpen);
             }}
@@ -148,6 +161,7 @@ const ChatComponent: FC = () => {
             onClick={() => {
               setUsersOpen(!usersOpen);
             }}
+            data-tip='Close Users'
           />
         )}
         {!shareOpen ? (
@@ -155,26 +169,30 @@ const ChatComponent: FC = () => {
             onClick={() => {
               setShareOpen(!shareOpen);
             }}
+            data-tip='Share'
           />
         ) : (
           <FaShareAlt
             onClick={() => {
               setShareOpen(!shareOpen);
             }}
+            data-tip='Close Share'
           />
         )}
 
         {theme === "#fff" ? (
-          <FaSun
+          <FaMoon
             onClick={() => {
               setTheme("#232424");
             }}
+            data-tip='Switch To Dark Theme'
           />
         ) : (
-          <FaMoon
+          <FaSun
             onClick={() => {
               setTheme("#fff");
             }}
+            data-tip='Switch To Light Theme'
           />
         )}
       </>

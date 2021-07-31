@@ -92,6 +92,9 @@ export const MeetControls = styled(animated.footer)`
       color: ${constants.appAccentColor};
       font-size: 2vw;
       margin: 0 1.1vw;
+
+      outline: 0;
+
       color: ${constants.appAccentColor};
       transition: 400ms ease-ease-in-out;
     }

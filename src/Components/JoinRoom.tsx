@@ -35,6 +35,7 @@ import { Link } from "react-router-dom";
 import { isPropertySignature } from "typescript";
 import { useSpring } from "react-spring";
 import Avatars from "./Avatars";
+import ReactTooltip from "react-tooltip";
 
 const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   isAuth,
@@ -81,6 +82,11 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
     setLoading(false);
     console.log(maxAvatarIndex);
   }, [maxAvatarIndex]);
+  useEffect(() => {
+    if (avatars.length === 42) {
+      setCurrentAvatar(avatars[0]);
+    }
+  }, [avatars]);
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
@@ -100,10 +106,8 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   }
 
   useEffect(() => {
-    if (avatars.length === 42) {
-      setCurrentAvatar(avatars[0]);
-    }
-  }, [avatars]);
+    setIsModalOpen(false);
+  }, [currentAvatar]);
   const appear = useSpring({
     from: {
       transform: "scale(0.4)",
@@ -114,6 +118,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       opacity: 1,
     },
   });
+
   return (
     <Page style={appear}>
       <h1 className='purpose'>Join</h1>
