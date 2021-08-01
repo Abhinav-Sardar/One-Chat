@@ -72,7 +72,7 @@ export const Animations = {
     enter: {
       opacity: 1,
       width: "25vw",
-      delay: 350,
+      delay: 250,
     },
     leave: {
       opacity: 0,

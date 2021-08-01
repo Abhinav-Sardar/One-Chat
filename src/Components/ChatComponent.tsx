@@ -147,7 +147,7 @@ const ChatComponent: FC = () => {
             data-tip='Close Emojis'
           />
         )}
-        <AiFillFileImage />
+        <AiFillFileImage data-tip='Image Upload' />
 
         {!usersOpen ? (
           <AiOutlineUser
@@ -185,14 +185,14 @@ const ChatComponent: FC = () => {
             onClick={() => {
               setTheme("#232424");
             }}
-            data-tip='Switch To Dark Theme'
+            data-tip='Dark Theme'
           />
         ) : (
           <FaSun
             onClick={() => {
               setTheme("#fff");
             }}
-            data-tip='Switch To Light Theme'
+            data-tip='Light Theme'
           />
         )}
       </>

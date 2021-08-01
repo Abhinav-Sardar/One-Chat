@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import {
   constants,
   getRandomKey,
@@ -21,9 +21,35 @@ import { toast } from "react-toastify";
 import { FaTimes } from "react-icons/fa";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
+  const [hours, setHours] = useState<number>(new Date().getHours());
+  const [minutes, setMinutes] = useState<number>(new Date().getMinutes());
+  const [seconds, setSeconds] = useState<string>("");
+  function setTime() {
+    setInterval(() => {
+      const date = new Date();
+
+      setHours(date.getHours());
+      setMinutes(date.getMinutes());
+    }, 2000);
+    setInterval(() => {
+      const date = new Date();
+      const dateSeconds = date.getSeconds();
+      if (String(dateSeconds).length === 1) {
+        setSeconds(`0${dateSeconds}`);
+      } else {
+        setSeconds(String(dateSeconds));
+      }
+    }, 1000);
+  }
+
+  setTime();
+
   return (
     <MeetInfo style={{ color: constants.appAccentColor }}>
       <span className='roomName'>Room - {roomName}</span>
+      <span className='roomName'>
+        {hours}:{minutes}:{seconds}
+      </span>
       <button onClick={onClick}>Leave Room</button>
     </MeetInfo>
   );

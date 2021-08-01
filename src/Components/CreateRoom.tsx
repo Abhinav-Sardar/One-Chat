@@ -104,9 +104,7 @@ const CreateRoom: FunctionalComponent = () => {
       setCurrentAvatar(avatars[0]);
     }
   }, [avatars]);
-  useEffect(() => {
-    setIsModalOpen(false);
-  }, [currentAvatar]);
+
   const appear = useSpring({
     from: {
       transform: "scale(0.4)",
@@ -211,17 +209,6 @@ const CreateRoom: FunctionalComponent = () => {
                   >
                     <span>Load More</span>
                     <HiOutlineArrowDown />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setLoading(true);
-                      setMaxAvatar((prev) => {
-                        return { isNew: true, number: prev.number };
-                      });
-                    }}
-                  >
-                    <span>Load New </span>
-                    <AiOutlineReload className='loader2' />
                   </button>
                 </>
               ) : (
