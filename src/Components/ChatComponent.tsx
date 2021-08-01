@@ -33,6 +33,7 @@ import {
   SidePanelHeaderComponent,
   UsersPanelInfo,
   SharePanelInfo,
+  EmojiPanelComponent,
 } from "./Chat.SubComponents";
 
 const { config } = Animations;
@@ -228,6 +229,7 @@ const ChatComponent: FC = () => {
 
   const usersTransition = useTransition(usersOpen, config);
   const shareTransition = useTransition(shareOpen, config);
+  const emojiTransition = useTransition(emojiOpen, config);
   const LeaveRoom = () => {
     window.location.assign("/");
   };
@@ -279,6 +281,15 @@ const ChatComponent: FC = () => {
                   roomName={room}
                 />
               </SharePanel>
+            ) : (
+              ""
+            );
+          })}
+          {emojiTransition((style, item) => {
+            item ? (
+              <EmojiPanel style={style}>
+                <SidePanelHeaderComponent>Emojis</SidePanelHeaderComponent>
+              </EmojiPanel>
             ) : (
               ""
             );

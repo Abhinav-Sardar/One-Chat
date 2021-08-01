@@ -227,4 +227,5 @@ export const SharePanel = styled(animated.aside)`
   }
 `;
 
-export const InfoPanelComponent = styled(animated.aside)``;
+export const EmojiPanel = styled(animated.aside)`
+`;
