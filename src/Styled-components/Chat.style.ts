@@ -228,4 +228,11 @@ export const SharePanel = styled(animated.aside)`
 `;
 
 export const EmojiPanel = styled(animated.aside)`
+  span {
+    font-size: 2rem;
+    margin: 1vw;
+  }
+  width: 95%;
+  display: flex;
+  flex-direction: column;
 `;

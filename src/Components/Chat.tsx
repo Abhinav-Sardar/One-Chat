@@ -13,12 +13,7 @@ const Chat: FC = () => {
   const [userStatus, setStatus] = useState<
     "NoInfo" | null | user | "WrongRoom" | "AllFine"
   >(null);
-  useEffect(() => {
-    document.getElementById(
-      "icon"
-      //@ts-ignore
-    )!.href = `${window.location.origin}/comments-solid.svg`;
-  }, []);
+
   useEffect(() => {
     const userInfo = sessionStorage.getItem(userInfoStorageKey);
     //@ts-ignore

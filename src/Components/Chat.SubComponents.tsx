@@ -11,7 +11,6 @@ import { MdContentCopy } from "react-icons/md";
 import copy from "clipboard-copy";
 import {
   EmojiPanel,
-  InfoPanelComponent,
   MeetInfo,
   SidePanelHeader,
   User,
@@ -20,8 +19,7 @@ import { useSpring } from "@react-spring/core";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
 import { FaTimes } from "react-icons/fa";
-//@ts-ignore
-import Picker from "react-emojipicker";
+import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "./Emojis";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
@@ -144,11 +142,10 @@ export const SidePanelHeaderComponent: FC<PanelHeaderProps> = ({
   );
 };
 
-export const EmojiPanelComponent: FC = () => {
+export const EmojiPanelInfo: FC = () => {
   return (
     <EmojiPanel>
-      <SidePanelHeaderComponent>Emojis</SidePanelHeaderComponent>
-      <Picker />
+      <h1>{Animals.length}</h1>
     </EmojiPanel>
   );
 };

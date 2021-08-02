@@ -1,10 +1,11 @@
-import { FC, useState, useEffect, FormEvent } from "react";
+import { FC, useState, useEffect, FormEvent, useRef } from "react";
 import {
   AiFillFileImage,
   AiOutlineUser,
   AiOutlineInfoCircle,
   AiFillInfoCircle,
 } from "react-icons/ai";
+
 import { BiSend } from "react-icons/bi";
 import {
   FaRegSmile,
@@ -27,13 +28,14 @@ import {
   UsersSection,
   SharePanel,
   MeetControls,
+  EmojiPanel,
 } from "../Styled-components/Chat.style";
 import {
   ChatHeader,
   SidePanelHeaderComponent,
   UsersPanelInfo,
   SharePanelInfo,
-  EmojiPanelComponent,
+  EmojiPanelInfo,
 } from "./Chat.SubComponents";
 
 const { config } = Animations;
@@ -128,7 +130,7 @@ const ChatComponent: FC = () => {
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
   }
-
+  const inpRef = useRef<HTMLInputElement | null>(null);
   function Icons(): JSX.Element {
     return (
       <>
@@ -286,9 +288,12 @@ const ChatComponent: FC = () => {
             );
           })}
           {emojiTransition((style, item) => {
-            item ? (
+            return item ? (
               <EmojiPanel style={style}>
-                <SidePanelHeaderComponent>Emojis</SidePanelHeaderComponent>
+                <SidePanelHeaderComponent onClose={() => setEmojiOpen(false)}>
+                  Emojis
+                </SidePanelHeaderComponent>
+                <EmojiPanelInfo />
               </EmojiPanel>
             ) : (
               ""
@@ -298,7 +303,7 @@ const ChatComponent: FC = () => {
 
         <MeetControls style={footerAndHeaderExpander}>
           <form className='input' onSubmit={(e) => handleSubmit(e)}>
-            <input type='text' name='' id='' spellCheck={false} />
+            <input type='text' name='' id='' spellCheck={false} ref={inpRef} />
             <button type='submit'>
               <BiSend />
             </button>

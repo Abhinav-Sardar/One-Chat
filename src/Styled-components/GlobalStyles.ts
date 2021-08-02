@@ -25,6 +25,7 @@ svg:root {
   background-color:${constants.appAccentColor}
 
 }
+
 .tagline::selection {
   color:white ; 
   background-color:${constants.appAccentColor}

@@ -6,9 +6,10 @@
       name="description"
       content="One-Chat : Best Place For One-Time Chats"
     />
-    <link rel="icon" type="image/svg" href="./comments-solid.svg" id="icon" />
+    <link rel="stylesheet" href="" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap");
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
@@ -56,9 +57,40 @@
         width: 100%;
       }
     </style>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/images/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="One-Chat :- Best Place For One-Time  Chats with anyone in the world"
+    />
+    <meta name="theme-color" content="dark" />
+    <link
+      rel="apple-touch-icon"
+      href="%PUBLIC_URL%/images/apple-touch-icon.png"
+    />
+
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>One-Chat</title>
   </head>
   <body>
     <div id="root"></div>
+    <noscript
+      >One Chat Cant Run Without Javascript. Please Enable Javascript
+      🙏</noscript
+    >
   </body>
+  <script>
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker
+        .register(`${window.location.origin}/sw.js`)
+        .then((reg) => {
+          console.log("Opened service worker");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  </script>
 </html>
