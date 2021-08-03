@@ -1,6 +1,6 @@
 {
   "short_name": "One-Chat",
-  "name": "Best Place For One-Time Chats",
+  "name": "One-Chat",
   "icons": [
     {
       "src": "images/favicon.ico",
@@ -20,7 +20,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#BB29BB",
   "background_color": "#bd14ca",
   "scope": "/"
 }
