@@ -123,7 +123,7 @@ const CopyBtn: FC<{ text: string }> = memo(({ text }) => {
 
 function CopyToClipBoard(text: string): void {
   copy(text);
-  toast.info("Copied ✅. You can share this Url with anyone you trust");
+  toast.info("Copied ✅. Share this Url with anyone you trust");
 }
 
 export const SidePanelHeaderComponent: FC<PanelHeaderProps> = ({
