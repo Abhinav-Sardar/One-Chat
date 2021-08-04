@@ -7,6 +7,7 @@ import {
   ShareProps,
   UsersInChatProps,
 } from "../Constants";
+
 import { MdContentCopy } from "react-icons/md";
 import copy from "clipboard-copy";
 import {
@@ -15,12 +16,12 @@ import {
   SidePanelHeader,
   User,
 } from "../Styled-components/Chat.style";
-import { useSpring } from "@react-spring/core";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
 import { FaTimes } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "./Emojis";
 
+import Emojis from "./Images/Accumulator";
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
   const [minutes, setMinutes] = useState<number>(new Date().getMinutes());
@@ -141,11 +142,111 @@ export const SidePanelHeaderComponent: FC<PanelHeaderProps> = ({
     </>
   );
 };
-
+const { apple, car, heart, fox, smile } = Emojis;
 export const EmojiPanelInfo: FC = () => {
+  const [emojiResourceType, setEmojiResourceType] = useState<
+    "human" | "food" | "animals" | "objects" | "signs"
+  >("human");
   return (
     <EmojiPanel>
-      <h1>{Animals.length}</h1>
+      <div className='images_wrapper'>
+        <img
+          src={smile.src}
+          alt={smile.alt}
+          onClick={() => setEmojiResourceType("human")}
+          style={{
+            opacity: emojiResourceType === "human" ? 1 : 0.5,
+          }}
+        />
+        <img
+          src={fox.src}
+          alt={fox.alt}
+          onClick={() => setEmojiResourceType("animals")}
+          style={{
+            opacity: emojiResourceType === "animals" ? 1 : 0.5,
+          }}
+        />
+
+        <img
+          src={apple.src}
+          alt={apple.alt}
+          onClick={() => setEmojiResourceType("food")}
+          style={{
+            opacity: emojiResourceType === "food" ? 1 : 0.5,
+          }}
+        />
+        <img
+          src={car.src}
+          alt={car.alt}
+          onClick={() => setEmojiResourceType("objects")}
+          style={{
+            opacity: emojiResourceType === "objects" ? 1 : 0.5,
+          }}
+        />
+        <img
+          src={heart.src}
+          alt={heart.alt}
+          onClick={() => setEmojiResourceType("signs")}
+          style={{
+            opacity: emojiResourceType === "signs" ? 1 : 0.5,
+          }}
+        />
+      </div>
+      <div className='emojis__wrapper'>
+        {emojiResourceType === "human" && <HumansComponent />}
+        {emojiResourceType === "animals" && <AnimalComponent />}
+        {emojiResourceType === "food" && <FoodComponent />}
+        {emojiResourceType === "objects" && <ObjectsComponent />}
+        {emojiResourceType === "signs" && <SignsComponent />}
+      </div>
     </EmojiPanel>
   );
 };
+
+const HumansComponent: FC = memo(() => {
+  return (
+    <>
+      {HumanRelatedEmojis.map((h) => (
+        <span className='emoji'>{h}</span>
+      ))}
+    </>
+  );
+});
+const SignsComponent: FC = memo(() => {
+  return (
+    <>
+      {Symbols.map((h) => (
+        <span className='emoji'>{h}</span>
+      ))}
+    </>
+  );
+});
+const ObjectsComponent: FC = memo(() => {
+  return (
+    <>
+      {Objects.map((h) => (
+        <span className='emoji'>{h}</span>
+      ))}
+    </>
+  );
+});
+
+const AnimalComponent: FC = memo(() => {
+  return (
+    <>
+      {Animals.map((h) => (
+        <span className='emoji'>{h}</span>
+      ))}
+    </>
+  );
+});
+
+const FoodComponent: FC = memo(() => {
+  return (
+    <>
+      {Food.map((h) => (
+        <span className='emoji'>{h}</span>
+      ))}
+    </>
+  );
+});

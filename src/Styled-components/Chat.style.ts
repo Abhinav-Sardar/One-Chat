@@ -218,7 +218,7 @@ export const SharePanel = styled(animated.aside)`
       font-size: 1.3vw;
       margin: 0.5vw 0;
       word-break: break-all;
-      width: 80%;
+      width: 90%;
     }
   }
   .breaker {
@@ -229,11 +229,34 @@ export const SharePanel = styled(animated.aside)`
 `;
 
 export const EmojiPanel = styled(animated.aside)`
-  span {
-    font-size: 2rem;
-    margin: 1vw;
-  }
-  width: 95%;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  .images_wrapper {
+    margin-top: 1vw;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    img {
+      height: 2.5vw;
+      width: 2.5vw;
+      &::selection {
+        background: transparent;
+      }
+    }
+  }
+  .emojis__wrapper {
+    border: 1px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    span {
+      font-size: 2vw;
+      margin: 0.5vw;
+      width: 2vw;
+      height: 2vw;
+    }
+  }
 `;

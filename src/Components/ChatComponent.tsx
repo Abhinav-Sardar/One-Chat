@@ -305,7 +305,14 @@ const ChatComponent: FC = () => {
           {emojiTransition((style, item) => {
             return item ? (
               <EmojiPanel style={style}>
-                <SidePanelHeaderComponent onClose={() => setEmojiOpen(false)}>
+                <SidePanelHeaderComponent
+                  onClose={() => setEmojiOpen(false)}
+                  style={{
+                    borderBottom: `1px solid ${
+                      theme === "#232424" ? "#fff" : "#232424"
+                    }`,
+                  }}
+                >
                   Emojis
                 </SidePanelHeaderComponent>
                 <EmojiPanelInfo />
