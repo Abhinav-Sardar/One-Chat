@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactChildren, ReactElement } from "react";
+import React, { CSSProperties, FC, ReactChildren, ReactElement } from "react";
 import { useSpring, useTransition } from "react-spring";
 
 export const constants = {
@@ -79,22 +79,4 @@ export const Animations = {
       width: "0vw",
     },
   },
-};
-
-export const fullsScreen = (refContainer: HTMLInputElement) => {
-  if (refContainer.requestFullscreen) {
-    refContainer.requestFullscreen();
-  }
-  //@ts-ignore
-  else if (refContainer.webkitRequestFullscreen) {
-    /* Safari */
-    //@ts-ignore
-
-    refContainer.webkitRequestFullscreen();
-    //@ts-ignore
-  } else if (refContainer.msRequestFullscreen) {
-    /* IE11 */
-    //@ts-ignore
-    refContainer.msRequestFullscreen();
-  }
 };

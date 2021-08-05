@@ -254,7 +254,7 @@ export const EmojiPanel = styled(animated.aside)`
     flex-wrap: wrap;
     span {
       font-size: 2vw;
-      margin: 0.5vw;
+      margin: 0.7vw;
       width: 2vw;
       height: 2vw;
     }

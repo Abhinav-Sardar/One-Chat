@@ -22,13 +22,7 @@ import { useSpring, useTransition } from "react-spring";
 import { ToastContainer } from "react-toastify";
 import ReactTooltip from "react-tooltip";
 import { SelfClientContext } from "../App";
-import {
-  user,
-  ChatUser,
-  Animations,
-  userInfoStorageKey,
-  fullsScreen,
-} from "../Constants";
+import { user, ChatUser, Animations, userInfoStorageKey } from "../Constants";
 import {
   ChatPage,
   RemainingChatArea,
@@ -250,8 +244,6 @@ const ChatComponent: FC = () => {
 
         ref={PageRef}
         //@ts-ignore
-
-        onDoubleClick={() => fullsScreen(PageRef.current)}
       >
         <ChatHeader roomName={room} onClick={LeaveRoom} />
         <RemainingChatArea style={colorSetter}>

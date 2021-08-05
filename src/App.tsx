@@ -19,6 +19,7 @@ export const SelfClientContext = createContext<[user, any]>([
   },
   "",
 ]);
+
 const App: FC = () => {
   const users = useState<user>({
     avatarSvg: "",

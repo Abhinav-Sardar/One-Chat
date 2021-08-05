@@ -207,7 +207,9 @@ const HumansComponent: FC = memo(() => {
   return (
     <>
       {HumanRelatedEmojis.map((h) => (
-        <span className='emoji'>{h}</span>
+        <span className='emoji' key={getRandomKey()}>
+          {h}
+        </span>
       ))}
     </>
   );
@@ -216,7 +218,9 @@ const SignsComponent: FC = memo(() => {
   return (
     <>
       {Symbols.map((h) => (
-        <span className='emoji'>{h}</span>
+        <span className='emoji' key={getRandomKey()}>
+          {h}
+        </span>
       ))}
     </>
   );
@@ -225,7 +229,9 @@ const ObjectsComponent: FC = memo(() => {
   return (
     <>
       {Objects.map((h) => (
-        <span className='emoji'>{h}</span>
+        <span className='emoji' key={getRandomKey()}>
+          {h}
+        </span>
       ))}
     </>
   );
@@ -235,7 +241,9 @@ const AnimalComponent: FC = memo(() => {
   return (
     <>
       {Animals.map((h) => (
-        <span className='emoji'>{h}</span>
+        <span className='emoji' key={getRandomKey()}>
+          {h}
+        </span>
       ))}
     </>
   );
@@ -245,8 +253,37 @@ const FoodComponent: FC = memo(() => {
   return (
     <>
       {Food.map((h) => (
-        <span className='emoji'>{h}</span>
+        <span className='emoji' key={getRandomKey()}>
+          {h}
+        </span>
       ))}
     </>
   );
 });
+
+export function ToggleFullScreen(): JSX.Element {
+  let isFullScreen: boolean = false;
+  const root = document.getElementById("root")!;
+  root.ondblclick = () => {
+    if (isFullScreen) {
+      document.exitFullscreen();
+      isFullScreen = false;
+    } else {
+      root.requestFullscreen();
+      isFullScreen = true;
+    }
+  };
+
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "f") {
+      if (isFullScreen) {
+        document.exitFullscreen();
+        isFullScreen = false;
+      } else {
+        root.requestFullscreen();
+        isFullScreen = true;
+      }
+    }
+  });
+  return <div></div>;
+}
