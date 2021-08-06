@@ -6,7 +6,7 @@ import {
   AiOutlineInfoCircle,
   AiFillInfoCircle,
 } from "react-icons/ai";
-
+import { FiMaximize, FiMinimize } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
 import {
   FaRegSmile,
@@ -22,7 +22,14 @@ import { useSpring, useTransition } from "react-spring";
 import { ToastContainer } from "react-toastify";
 import ReactTooltip from "react-tooltip";
 import { SelfClientContext } from "../App";
-import { user, ChatUser, Animations, userInfoStorageKey } from "../Constants";
+import {
+  user,
+  ChatUser,
+  Animations,
+  userInfoStorageKey,
+  exitFullScreen,
+  goFullScreen,
+} from "../Constants";
 import {
   ChatPage,
   RemainingChatArea,
@@ -59,6 +66,7 @@ const ChatComponent: FC = () => {
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const [user, setUser] = useContext(SelfClientContext);
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const dummmyUsers: ChatUser[] = [
     {
       name: name,
@@ -132,6 +140,7 @@ const ChatComponent: FC = () => {
     e.preventDefault();
   }
   const inpRef = useRef<HTMLInputElement | null>(null);
+
   function Icons(): JSX.Element {
     return (
       <>
@@ -197,6 +206,23 @@ const ChatComponent: FC = () => {
               setTheme("#fff");
             }}
             data-tip='Light Theme'
+          />
+        )}
+        {isFullScreen ? (
+          <FiMinimize
+            data-tip='Minimize'
+            onClick={() => {
+              setIsFullScreen(false);
+              exitFullScreen();
+            }}
+          />
+        ) : (
+          <FiMaximize
+            data-tip='Maximize'
+            onClick={() => {
+              setIsFullScreen(true);
+              goFullScreen();
+            }}
           />
         )}
       </>

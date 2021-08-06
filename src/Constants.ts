@@ -80,3 +80,42 @@ export const Animations = {
     },
   },
 };
+export const goFullScreen: () => void = () => {
+  const root = document.getElementById("root")!;
+  if (root.requestFullscreen) {
+    root.requestFullscreen();
+  }
+  //@ts-ignore
+  else if (root.webkitRequestFullscreen) {
+    //@ts-ignore
+
+    root.webkitRequestFullscreen();
+  } else if (
+    //@ts-ignore
+
+    root.msRequestFullscreen
+  ) {
+    //@ts-ignore
+
+    root.msRequestFullscreen();
+  }
+};
+
+export const exitFullScreen: () => void = () => {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  }
+  //@ts-ignore
+  else if (document.webkitExitFullscreen) {
+    //@ts-ignore
+
+    document.webkitExitFullscreen();
+  }
+  //@ts-ignore
+  else if (document.msExitFullscreen) {
+    /* IE11 */
+    //@ts-ignore
+
+    document.msExitFullscreen();
+  }
+};
