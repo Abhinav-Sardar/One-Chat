@@ -32,6 +32,28 @@ svg:root {
   
 }
 
+
+::-webkit-scrollbar {
+  width: 0.7vw ; 
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border:1px solid lightgray ; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background:${constants.appAccentColor} ; 
+  
+  border-radius:20px ; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 `;
 export const Wrapper = styled.div`
   display: flex;

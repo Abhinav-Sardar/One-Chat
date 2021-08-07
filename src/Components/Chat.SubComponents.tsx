@@ -1,5 +1,6 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useEffect, useState, useContext } from "react";
 import {
+  ChatUser,
   constants,
   getRandomKey,
   HeaderProps,
@@ -7,7 +8,8 @@ import {
   ShareProps,
   UsersInChatProps,
 } from "../Constants";
-
+import io from "socket.io-client";
+import { SelfClientContext } from "../App";
 import { MdContentCopy } from "react-icons/md";
 import copy from "clipboard-copy";
 import {
@@ -20,8 +22,8 @@ import parse from "html-react-parser";
 import { toast } from "react-toastify";
 import { FaTimes } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "./Emojis";
-
 import Emojis from "./Images/Accumulator";
+const socket = io(constants.serverName);
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
   const [minutes, setMinutes] = useState<number>(new Date().getMinutes());
@@ -57,11 +59,17 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   );
 });
 
-export const UsersPanelInfo: FC<UsersInChatProps> = memo(({ users, theme }) => {
-  console.log("SHare panel opened!");
-
+export const UsersPanelInfo: FC<UsersInChatProps> = memo(({ theme, users }) => {
   return (
     <>
+      <div
+        className='length'
+        style={{
+          borderTop: `1px solid ${theme}`,
+        }}
+      >
+        Number Of Users :{users.length}
+      </div>
       {users.map((user) => (
         <User theme={theme} key={getRandomKey()}>
           {parse(user.profilePic)}

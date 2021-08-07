@@ -5,7 +5,7 @@ import { constants } from "../Constants";
 import { MainContent } from "../Styled-components/Mainpage.styled";
 import { BsFillChatSquareFill } from "react-icons/bs";
 import { TiPlus } from "react-icons/ti";
-import { FaBrush } from "react-icons/fa";
+import { FaBrush, FaComments } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import {
   ActionButton,
@@ -30,12 +30,12 @@ const MainPage: FC = () => {
 function ThisHeader(): JSX.Element {
   return (
     <StyledStickyHeader>
-      <div className="logo">
-        <IoChatboxSharp fill={constants.appAccentColor} fontSize={"3vw"} />
+      <div className='logo'>
+        <FaComments fill={constants.appAccentColor} fontSize={"3vw"} />
         <span>One-Chat</span>
       </div>
 
-      <span className="tagline">Best place for One Time Chats</span>
+      <span className='tagline'>Best place for One Time Chats</span>
     </StyledStickyHeader>
   );
 }
@@ -43,11 +43,11 @@ function ThisHeader(): JSX.Element {
 function ThisMain(): JSX.Element {
   return (
     <MainContent>
-      <div className="logo">
-        <IoChatboxSharp />
+      <div className='logo'>
+        <FaComments />
       </div>
-      <div className="info">
-        <h1 className="company__name">One-Chat</h1>
+      <div className='info'>
+        <h1 className='company__name'>One-Chat</h1>
         <h2>Best place for One Time Chats with anyone in the world</h2>
       </div>
     </MainContent>
@@ -57,17 +57,17 @@ function ThisMain(): JSX.Element {
 function ThisButtons(): JSX.Element {
   return (
     <ActionsButtonWrapper>
-      <Link to="/create">
+      <Link to='/create'>
         <ActionButton>
-          Create a room <TiPlus className="plus" />
+          Create a room <TiPlus className='plus' />
         </ActionButton>
       </Link>
-      <Link to="/join">
+      <Link to='/join'>
         <ActionButton>
-          Join a room <BsFillChatSquareFill />
+          Join a room <FaComments />
         </ActionButton>
       </Link>
-      <Link to="/customize">
+      <Link to='/customize'>
         <ActionButton>
           Customize <FaBrush />
         </ActionButton>

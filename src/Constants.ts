@@ -3,6 +3,7 @@ import { useSpring, useTransition } from "react-spring";
 
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
+  serverName: "localhost:1919",
 };
 
 export function accentColorChecker(): void {
@@ -34,8 +35,8 @@ export interface HeaderProps {
 }
 
 export interface UsersInChatProps {
-  users: ChatUser[];
   theme: string;
+  users: ChatUser[];
 }
 
 export interface ShareProps {

@@ -1,13 +1,9 @@
 import { useContext } from "react";
 import { FC, useState, useEffect, FormEvent, useRef } from "react";
-import {
-  AiFillFileImage,
-  AiOutlineUser,
-  AiOutlineInfoCircle,
-  AiFillInfoCircle,
-} from "react-icons/ai";
+import { AiFillFileImage, AiOutlineUser } from "react-icons/ai";
 import { FiMaximize, FiMinimize } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
+import io from "socket.io-client";
 import {
   FaRegSmile,
   FaSmile,
@@ -29,6 +25,7 @@ import {
   userInfoStorageKey,
   exitFullScreen,
   goFullScreen,
+  constants,
 } from "../Constants";
 import {
   ChatPage,
@@ -48,6 +45,9 @@ import {
 } from "./Chat.SubComponents";
 
 const { config } = Animations;
+const socket = io(constants.serverName);
+console.log(socket);
+
 const ChatComponent: FC = () => {
   const footerAndHeaderExpander = useSpring({
     from: {
@@ -57,82 +57,31 @@ const ChatComponent: FC = () => {
       width: "100vw",
     },
   });
-  const PageRef = useRef();
-  const [name, setName] = useState<string>("");
-  const [room, setRoom] = useState<string>("");
-  const [svgURl, setSvgUrl] = useState<string>("");
-  const [usersOpen, setUsersOpen] = useState<boolean>(false);
+
+  const [usersOpen, setUsersOpen] = useState<boolean>(true);
   const [shareOpen, setShareOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const [user, setUser] = useContext(SelfClientContext);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
-  const dummmyUsers: ChatUser[] = [
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-    {
-      name: name,
-      profilePic: svgURl,
-    },
-  ];
+  const [users, setUsers] = useState<ChatUser[]>([]);
+  const PageRef = useRef(null);
+  const socketCode = () => {
+    socket.emit("new-user", {
+      name: user.name,
+      roomName: user.currentRoomName,
+      profilePic: user.avatarSvg,
+    });
+    socket.on("room-info", (newUsers) => {
+      setUsers(newUsers);
+    });
+    socket.on("user-left", (leftUser, newUsers) => {
+      alert(`${leftUser} has left the chat`);
+      setUsers(newUsers);
+    });
+  };
   useEffect(() => {
-    setName(user.name);
-    setRoom(user.currentRoomName);
-    setSvgUrl(user.avatarSvg);
+    socketCode();
     //eslint-disable-next-line
   }, []);
 
@@ -271,11 +220,11 @@ const ChatComponent: FC = () => {
         ref={PageRef}
         //@ts-ignore
       >
-        <ChatHeader roomName={room} onClick={LeaveRoom} />
+        <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
         <RemainingChatArea style={colorSetter}>
           <ChatArea theme={theme === "#232424" ? "#fff" : "#232424"}>
             <div className='mainChat'>
-              <h1>{room}</h1>
+              <h1>{user.currentRoomName}</h1>
             </div>
           </ChatArea>
 
@@ -286,19 +235,9 @@ const ChatComponent: FC = () => {
                   <SidePanelHeaderComponent onClose={() => setUsersOpen(false)}>
                     <span> Users In Chat</span>
                   </SidePanelHeaderComponent>
-                  <div
-                    className='length'
-                    style={{
-                      borderTop: `1px solid ${
-                        theme === "#232424" ? "#fff" : "#232424"
-                      }`,
-                    }}
-                  >
-                    Number Of Users :{dummmyUsers.length}
-                  </div>
 
                   <UsersPanelInfo
-                    users={dummmyUsers}
+                    users={users}
                     theme={theme === "#232424" ? "#fff" : "#232424"}
                   />
                 </UsersSection>
@@ -313,7 +252,7 @@ const ChatComponent: FC = () => {
                 <SharePanelInfo
                   onClose={() => setShareOpen(false)}
                   theme={theme === "#232424" ? "#fff" : "#232424"}
-                  roomName={room}
+                  roomName={user.currentRoomName}
                 />
               </SharePanel>
             ) : (

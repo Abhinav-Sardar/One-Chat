@@ -11,7 +11,7 @@ import { useState } from "react";
 import { constants } from "../Constants";
 
 import { AiOutlineSave } from "react-icons/ai";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaLightbulb } from "react-icons/fa";
 import { useSpring } from "react-spring";
 import { BsReverseLayoutSidebarInsetReverse } from "react-icons/bs";
 
@@ -33,7 +33,6 @@ const Customize: FC = () => {
   return (
     <CustomizePage style={bgColorChanger}>
       <Title>Customize</Title>
-
       <hr
         style={{
           width: "30vw",
@@ -43,12 +42,14 @@ const Customize: FC = () => {
           backgroundColor: "white",
         }}
       />
+      <div className='note'>
+        <FaLightbulb /> A lighter color is recommended.
+      </div>
       <HexColorPicker
         color={color}
         onChange={(newColor) => setColor(newColor)}
       />
       <h2>Color:{color}</h2>
-
       <ButtonsWrapper>
         {saved === false ? (
           <Button

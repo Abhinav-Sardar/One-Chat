@@ -9,6 +9,21 @@ export const Title = styled.h6`
 `;
 
 export const CustomizePage = styled(animated.div)`
+  .note {
+    color: white;
+    display: flex;
+    align-items: center;
+    font-size: 2vw;
+    font-family: "Poppins", sans-serif;
+    margin-top: 1vw;
+    svg {
+      font-size: 2vw;
+    }
+  }
+  > *::selection {
+    background-color: white;
+    color: ${constants.appAccentColor};
+  }
   height: 100vh;
   width: 100vw;
   display: flex;
