@@ -1,9 +1,11 @@
 import React, { CSSProperties, FC, ReactChildren, ReactElement } from "react";
 import { useSpring, useTransition } from "react-spring";
 
+const devUrl = "http://localhost:1919/";
+const prodUrl = "https://one-chat-server.herokuapp.com";
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
-  serverName: "localhost:1919",
+  serverName: process.env.NODE_ENV === "development" ? devUrl : prodUrl,
 };
 
 export function accentColorChecker(): void {
@@ -119,4 +121,23 @@ export const exitFullScreen: () => void = () => {
 
     document.msExitFullscreen();
   }
+};
+
+export const setUrl: () => void = () => {
+  const { href } = window.location;
+  if (href === `${window.location.origin}/create`) {
+    document.title = "Create a room";
+  } else if (href === `${window.location.origin}/join`) {
+    document.title = "Join a room";
+  } else if (href === `${window.location.origin}/customize`) {
+    document.title = "Customize";
+  } else if (href === `${window.location.origin}`) {
+    document.title = "One-Chat";
+  }
+};
+
+export type Message = {
+  children: string;
+  type: "tooltip" | "Outgoing" | "Incoming" | "Image";
+  backgroundColor?: string;
 };

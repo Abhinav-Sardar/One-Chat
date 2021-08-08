@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
 
 import CreateRoom from "./Components/CreateRoom";
-import { accentColorChecker, user } from "./Constants";
+import { accentColorChecker, setUrl, user } from "./Constants";
 import Customize from "./Components/Customize";
 import "react-responsive-modal/styles.css";
 import Chat from "./Components/Chat";
@@ -26,6 +26,10 @@ const App: FC = () => {
     currentRoomName: "",
     name: "",
   });
+
+  useEffect(() => {
+    accentColorChecker();
+  }, []);
   const fade = useSpring({ from: { opacity: 0 }, to: { opacity: 1 } });
   return (
     <Fragment>
@@ -55,7 +59,7 @@ const App: FC = () => {
             </Route>
             <Route path='/*'>
               <animated.div style={fade}>
-                <NotFoundPage isRoomError={false} />
+                <NotFoundPage />
               </animated.div>
             </Route>
           </Switch>

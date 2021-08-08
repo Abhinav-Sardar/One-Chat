@@ -104,9 +104,8 @@ export const MeetControls = styled(animated.footer)`
 export const ChatArea = styled.div`
   flex: 1;
   flex-direction: column;
-  h1 {
-    margin-left: 50%;
-  }
+  overflow-y: auto;
+  position: relative;
   border-right: 1px solid ${(pr) => pr.theme};
 `;
 

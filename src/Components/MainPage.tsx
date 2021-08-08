@@ -1,7 +1,7 @@
 import { FC, Fragment, useEffect, memo } from "react";
 import { StyledStickyHeader } from "../Styled-components/Mainpage.styled";
 import { IoChatboxSharp } from "react-icons/io5";
-import { constants } from "../Constants";
+import { constants, setUrl } from "../Constants";
 import { MainContent } from "../Styled-components/Mainpage.styled";
 import { BsFillChatSquareFill } from "react-icons/bs";
 import { TiPlus } from "react-icons/ti";
@@ -18,6 +18,7 @@ const MainPage: FC = () => {
       "root"
     )!.style.background = `linear-gradient(60deg, ${constants.appAccentColor}, #fff)`;
   }, []);
+  document.title = "One-Chat";
   return (
     <Fragment>
       <ThisHeader />

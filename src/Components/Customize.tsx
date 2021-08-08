@@ -1,4 +1,4 @@
-import { FC, Fragment, memo } from "react";
+import { FC, Fragment, memo, useEffect } from "react";
 import {
   Button,
   ButtonsWrapper,
@@ -8,7 +8,7 @@ import {
 import { FaHome } from "react-icons/fa";
 import { HexColorPicker } from "react-colorful";
 import { useState } from "react";
-import { constants } from "../Constants";
+import { constants, setUrl } from "../Constants";
 
 import { AiOutlineSave } from "react-icons/ai";
 import { FaCheck, FaLightbulb } from "react-icons/fa";
@@ -30,6 +30,9 @@ const Customize: FC = () => {
   const bgColorChanger = useSpring({
     background: color,
   });
+  useEffect(() => {
+    setUrl();
+  }, []);
   return (
     <CustomizePage style={bgColorChanger}>
       <Title>Customize</Title>

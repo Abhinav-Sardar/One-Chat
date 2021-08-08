@@ -23,6 +23,7 @@ import {
   constants,
   getRandomKey,
   maxAvatarType,
+  setUrl,
   user,
   userInfoStorageKey,
 } from "../Constants";
@@ -32,7 +33,6 @@ import { Button } from "../Styled-components/Customize.style";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { Link } from "react-router-dom";
-import { isPropertySignature } from "typescript";
 import { useSpring } from "react-spring";
 import Avatars from "./Avatars";
 import ReactTooltip from "react-tooltip";
@@ -52,6 +52,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
+
   useEffect(() => {
     if (isModalOpen === true) {
       //@ts-ignore
@@ -84,7 +85,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       setCurrentAvatar(avatars[0]);
     }
   }, [avatars]);
-
+  useEffect(() => {
+    setUrl();
+  });
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     const newRoom = isAuth ? roomName : room;
@@ -101,6 +104,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
     } else {
       toast.error("Invalid Username Or Room Name !");
     }
+  }
+  if (isAuth) {
+    document.title = "Join a room";
   }
 
   const appear = useSpring({
@@ -129,6 +135,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             spellCheck
             required
             placeholder='Your Name'
+            autoFocus
           />
         </div>
         {isAuth ? (
@@ -155,6 +162,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
               spellCheck
               required
               placeholder='Name Your Room'
+              autoFocus={isAuth ? true : false}
             />
           </div>
         )}

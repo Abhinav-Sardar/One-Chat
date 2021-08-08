@@ -6,15 +6,14 @@ import ChatComponent from "./ChatComponent";
 import { SelfClientContext } from "../App";
 
 import JoinRoom from "./JoinRoom";
-import NotFoundPage from "./NotFound";
 
 const Chat: FC = () => {
   const [user, _] = useContext(SelfClientContext);
   //@ts-ignore
   const { roomId } = useParams();
-  const [userStatus, setStatus] = useState<
-    "NoInfo" | null | user | "WrongRoom" | "AllFine"
-  >(null);
+  const [userStatus, setStatus] = useState<"NoInfo" | null | user | "AllFine">(
+    null
+  );
 
   useEffect(() => {
     if (user.avatarSvg && user.currentRoomName && user.name) {
@@ -29,8 +28,6 @@ const Chat: FC = () => {
       {userStatus === "NoInfo" ? (
         //@ts-ignore
         <JoinRoom isAuth={true} roomName={roomId} />
-      ) : userStatus === "WrongRoom" ? (
-        <NotFoundPage isRoomError={true} />
       ) : userStatus === "AllFine" ? (
         <ChatComponent />
       ) : (

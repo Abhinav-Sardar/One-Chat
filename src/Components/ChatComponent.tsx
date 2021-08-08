@@ -15,7 +15,7 @@ import {
 
 import { FiShare2 } from "react-icons/fi";
 import { useSpring, useTransition } from "react-spring";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import ReactTooltip from "react-tooltip";
 import { SelfClientContext } from "../App";
 import {
@@ -26,6 +26,7 @@ import {
   exitFullScreen,
   goFullScreen,
   constants,
+  Message,
 } from "../Constants";
 import {
   ChatPage,
@@ -43,6 +44,7 @@ import {
   SharePanelInfo,
   EmojiPanelInfo,
 } from "./Chat.SubComponents";
+import Messages from "./Messages";
 
 const { config } = Animations;
 const socket = io(constants.serverName);
@@ -65,6 +67,7 @@ const ChatComponent: FC = () => {
   const [user, setUser] = useContext(SelfClientContext);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [users, setUsers] = useState<ChatUser[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const PageRef = useRef(null);
   const socketCode = () => {
     socket.emit("new-user", {
@@ -79,14 +82,36 @@ const ChatComponent: FC = () => {
       alert(`${leftUser} has left the chat`);
       setUsers(newUsers);
     });
+    socket.on("message", (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+    });
   };
   useEffect(() => {
+    document.title = `Room - ${user.currentRoomName}`;
     socketCode();
     //eslint-disable-next-line
   }, []);
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
+    //@ts-ignore
+    if (inpRef.current.value === "") {
+      toast.error("Invalid message!");
+    }
+    setMessages([
+      ...messages,
+      {
+        //@ts-ignore
+        children: inpRef.current.value,
+        type: "Outgoing",
+      },
+    ]);
+
+    socket.emit("message", {
+      //@ts-ignore
+      children: inpRef.current.value,
+      type: "Outgoing",
+    });
   }
   const inpRef = useRef<HTMLInputElement | null>(null);
 
@@ -224,7 +249,7 @@ const ChatComponent: FC = () => {
         <RemainingChatArea style={colorSetter}>
           <ChatArea theme={theme === "#232424" ? "#fff" : "#232424"}>
             <div className='mainChat'>
-              <h1>{user.currentRoomName}</h1>
+              <Messages messages={messages} />
             </div>
           </ChatArea>
 

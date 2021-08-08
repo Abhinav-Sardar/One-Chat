@@ -24,6 +24,7 @@ import {
   constants,
   getRandomKey,
   maxAvatarType,
+  setUrl,
   user,
   userInfoStorageKey,
 } from "../Constants";
@@ -62,6 +63,9 @@ const CreateRoom: FunctionalComponent = () => {
     handleClose();
     setCurrentAvatar(avatar);
   }
+  useEffect(() => {
+    setUrl();
+  }, []);
   useEffect(() => {
     if (maxAvatarIndex.isNew) {
       let acc = [];
