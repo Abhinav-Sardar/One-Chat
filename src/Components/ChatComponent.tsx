@@ -26,7 +26,6 @@ import {
   exitFullScreen,
   goFullScreen,
   constants,
-  Message,
 } from "../Constants";
 import {
   ChatPage,
@@ -44,8 +43,7 @@ import {
   SharePanelInfo,
   EmojiPanelInfo,
 } from "./Chat.SubComponents";
-import Messages from "./Messages";
-
+import { MessageGenerator } from "../Constants";
 const { config } = Animations;
 const socket = io(constants.serverName);
 console.log(socket);
@@ -60,14 +58,15 @@ const ChatComponent: FC = () => {
     },
   });
 
-  const [usersOpen, setUsersOpen] = useState<boolean>(true);
+  const [usersOpen, setUsersOpen] = useState<boolean>(false);
   const [shareOpen, setShareOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const [user, setUser] = useContext(SelfClientContext);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [users, setUsers] = useState<ChatUser[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+
+  const MsgsRef = useRef<HTMLDivElement>(null);
   const PageRef = useRef(null);
   const socketCode = () => {
     socket.emit("new-user", {
@@ -83,7 +82,13 @@ const ChatComponent: FC = () => {
       setUsers(newUsers);
     });
     socket.on("message", (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
+      console.log(newMessage);
+      //@ts-ignore
+      MsgsRef.current.innerHTML += MessageGenerator(
+        //@ts-ignore
+        "Sup BOIII",
+        "Incoming"
+      );
     });
   };
   useEffect(() => {
@@ -97,21 +102,22 @@ const ChatComponent: FC = () => {
     //@ts-ignore
     if (inpRef.current.value === "") {
       toast.error("Invalid message!");
-    }
-    setMessages([
-      ...messages,
-      {
+    } else {
+      // @ts-ignore
+      MsgsRef.current.innerHTML += MessageGenerator(
+        //@ts-ignore
+        inpRef.current.value,
+        "Outgoing"
+      );
+      socket.emit("message", {
         //@ts-ignore
         children: inpRef.current.value,
-        type: "Outgoing",
-      },
-    ]);
-
-    socket.emit("message", {
-      //@ts-ignore
-      children: inpRef.current.value,
-      type: "Outgoing",
-    });
+        author: user.name,
+        dateSentAt: new Date().toLocaleDateString(),
+      });
+      // @ts-ignore
+      inpRef.current.value = "";
+    }
   }
   const inpRef = useRef<HTMLInputElement | null>(null);
 
@@ -248,9 +254,7 @@ const ChatComponent: FC = () => {
         <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
         <RemainingChatArea style={colorSetter}>
           <ChatArea theme={theme === "#232424" ? "#fff" : "#232424"}>
-            <div className='mainChat'>
-              <Messages messages={messages} />
-            </div>
+            <div className='mainChat' ref={MsgsRef}></div>
           </ChatArea>
 
           {usersTransition((style, item) => {

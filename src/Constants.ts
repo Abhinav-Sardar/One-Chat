@@ -5,7 +5,7 @@ const devUrl = "http://localhost:1919/";
 const prodUrl = "https://one-chat-server.herokuapp.com";
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
-  serverName: process.env.NODE_ENV === "development" ? devUrl : prodUrl,
+  serverName: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
 };
 
 export function accentColorChecker(): void {
@@ -136,8 +136,13 @@ export const setUrl: () => void = () => {
   }
 };
 
-export type Message = {
-  children: string;
-  type: "tooltip" | "Outgoing" | "Incoming" | "Image";
-  backgroundColor?: string;
+export const MessageGenerator: (
+  messageContent: string,
+  className: string
+) => string = (messageContent: string, className: string) => {
+  return `
+<div class = ${className}>
+${messageContent}
+</div>
+`;
 };

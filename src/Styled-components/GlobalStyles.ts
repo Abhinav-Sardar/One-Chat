@@ -54,6 +54,21 @@ svg:root {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+
+
+.Outgoing {
+border:1px solid black; 
+width:40% ; 
+font-size:150% ;
+height:3vw ;  
+} ; 
+.Incoming {
+
+} ; 
+.tooltip {
+
+}
 `;
 export const Wrapper = styled.div`
   display: flex;
