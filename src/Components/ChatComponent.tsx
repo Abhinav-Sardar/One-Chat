@@ -106,7 +106,7 @@ const ChatComponent: FC = () => {
       Pop.play();
       //@ts-ignore
       inputRef.current.focus();
-      setText((p) => p);
+      setText((p: string) => p);
     });
   };
   useEffect(() => {
