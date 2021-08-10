@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { FaTimes } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "./Emojis";
 import Emojis from "./Images/Accumulator";
+import { MessageContext } from "./ChatComponent";
 const socket = io(constants.serverName);
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
@@ -212,10 +213,16 @@ export const EmojiPanelInfo: FC = () => {
 };
 
 const HumansComponent: FC = memo(() => {
+  const setMessage = useContext(MessageContext);
   return (
     <>
       {HumanRelatedEmojis.map((h) => (
-        <span className='emoji' key={getRandomKey()}>
+        <span
+          className='emoji'
+          //@ts-ignore
+          onClick={() => setMessage((prev) => prev + h)}
+          key={getRandomKey()}
+        >
           {h}
         </span>
       ))}
@@ -223,10 +230,16 @@ const HumansComponent: FC = memo(() => {
   );
 });
 const SignsComponent: FC = memo(() => {
+  const setMessage = useContext(MessageContext);
   return (
     <>
       {Symbols.map((h) => (
-        <span className='emoji' key={getRandomKey()}>
+        <span
+          className='emoji'
+          //@ts-ignore
+          onClick={() => setMessage((prev) => prev + h)}
+          key={getRandomKey()}
+        >
           {h}
         </span>
       ))}
@@ -234,10 +247,16 @@ const SignsComponent: FC = memo(() => {
   );
 });
 const ObjectsComponent: FC = memo(() => {
+  const setMessage = useContext(MessageContext);
   return (
     <>
       {Objects.map((h) => (
-        <span className='emoji' key={getRandomKey()}>
+        <span
+          className='emoji'
+          //@ts-ignore
+          onClick={() => setMessage((prev) => prev + h)}
+          key={getRandomKey()}
+        >
           {h}
         </span>
       ))}
@@ -246,10 +265,16 @@ const ObjectsComponent: FC = memo(() => {
 });
 
 const AnimalComponent: FC = memo(() => {
+  const setMessage = useContext(MessageContext);
   return (
     <>
       {Animals.map((h) => (
-        <span className='emoji' key={getRandomKey()}>
+        <span
+          className='emoji'
+          //@ts-ignore
+          onClick={() => setMessage((prev) => prev + h)}
+          key={getRandomKey()}
+        >
           {h}
         </span>
       ))}
@@ -258,40 +283,19 @@ const AnimalComponent: FC = memo(() => {
 });
 
 const FoodComponent: FC = memo(() => {
+  const setMessage = useContext(MessageContext);
   return (
     <>
       {Food.map((h) => (
-        <span className='emoji' key={getRandomKey()}>
+        <span
+          className='emoji'
+          //@ts-ignore
+          onClick={() => setMessage((prev) => prev + h)}
+          key={getRandomKey()}
+        >
           {h}
         </span>
       ))}
     </>
   );
 });
-
-export function ToggleFullScreen(): JSX.Element {
-  let isFullScreen: boolean = false;
-  const root = document.getElementById("root")!;
-  root.ondblclick = () => {
-    if (isFullScreen) {
-      document.exitFullscreen();
-      isFullScreen = false;
-    } else {
-      root.requestFullscreen();
-      isFullScreen = true;
-    }
-  };
-
-  document.addEventListener("keyup", (e) => {
-    if (e.key === "f") {
-      if (isFullScreen) {
-        document.exitFullscreen();
-        isFullScreen = false;
-      } else {
-        root.requestFullscreen();
-        isFullScreen = true;
-      }
-    }
-  });
-  return <div></div>;
-}

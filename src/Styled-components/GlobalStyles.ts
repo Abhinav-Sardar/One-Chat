@@ -16,6 +16,7 @@ body {
     background:white ; 
     color:${constants.appAccentColor}
 }
+
 }
 svg:root {
   color:white ; 
@@ -37,37 +38,53 @@ svg:root {
   width: 0.7vw ; 
 }
 
-/* Track */
+
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border:1px solid lightgray ; 
+  background: transparent ; 
+
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background:${constants.appAccentColor} ; 
   
-  border-radius:20px ; 
+  border-radius:30px ; 
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-
-
+  background: gray ; 
+}  ; 
 .Outgoing {
-border:1px solid black; 
-width:40% ; 
-font-size:150% ;
-height:3vw ;  
-} ; 
-.Incoming {
+  margin:1vw 0 ; 
+  margin-left: 1vw ; 
+  .info {
 
-} ; 
-.tooltip {
+    display:flex ; 
+    align-items: center;
 
+    svg {
+      height:4vw ; 
+      width:4vw ; 
+      border-radius:50% ; 
+      border:2px solid ${constants.appAccentColor} ; 
+    }
+    span {
+      font-size:2vw ; 
+      font-family:"Quicksand", sans-serif;
+      margin 0 1.3vw ; 
+      color:#2f9ee0 ; 
+    }
+  }
+  .content {
+    color:white ;
+  border-radius:10px ; 
+
+    background:${constants.appAccentColor} ; 
+    width:50% ; 
+    font-size:1.8vw ; 
+    font-family: "Poppins" , sans-serif;
+    word-break: break-all;
+    padding:0.5vw ; 
+  }
 }
 `;
 export const Wrapper = styled.div`

@@ -53,6 +53,7 @@ export const MeetControls = styled(animated.footer)`
     display: flex;
     height: 100%;
     align-items: center;
+    cusrsor: pointer;
     button {
       &:active {
         transform: scale(0.9);

@@ -1,9 +1,18 @@
-import { useContext } from "react";
-import { FC, useState, useEffect, FormEvent, useRef } from "react";
+import { memo, useContext } from "react";
+import {
+  FC,
+  useState,
+  useEffect,
+  FormEvent,
+  useRef,
+  createContext,
+} from "react";
 import { AiFillFileImage, AiOutlineUser } from "react-icons/ai";
 import { FiMaximize, FiMinimize } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
 import io from "socket.io-client";
+//@ts-ignore
+import AutoScroll from "react-scroll-to-bottom";
 import {
   FaRegSmile,
   FaSmile,
@@ -11,6 +20,7 @@ import {
   FaShareAlt,
   FaSun,
   FaMoon,
+  FaMusic,
 } from "react-icons/fa";
 
 import { FiShare2 } from "react-icons/fi";
@@ -44,10 +54,11 @@ import {
   EmojiPanelInfo,
 } from "./Chat.SubComponents";
 import { MessageGenerator } from "../Constants";
+import { Pop } from "./Images/Accumulator";
 const { config } = Animations;
 const socket = io(constants.serverName);
 console.log(socket);
-
+export const MessageContext = createContext<any>(null);
 const ChatComponent: FC = () => {
   const footerAndHeaderExpander = useSpring({
     from: {
@@ -65,9 +76,10 @@ const ChatComponent: FC = () => {
   const [user, setUser] = useContext(SelfClientContext);
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [users, setUsers] = useState<ChatUser[]>([]);
-
+  const [text, setText] = useState<any>("");
   const MsgsRef = useRef<HTMLDivElement>(null);
-  const PageRef = useRef(null);
+  const inputRef = useRef(null);
+
   const socketCode = () => {
     socket.emit("new-user", {
       name: user.name,
@@ -78,17 +90,22 @@ const ChatComponent: FC = () => {
       setUsers(newUsers);
     });
     socket.on("user-left", (leftUser, newUsers) => {
-      alert(`${leftUser} has left the chat`);
       setUsers(newUsers);
     });
     socket.on("message", (newMessage) => {
-      console.log(newMessage);
-      //@ts-ignore
+      // @ts-ignore
       MsgsRef.current.innerHTML += MessageGenerator(
+        newMessage.children,
+        "Outgoing",
+
         //@ts-ignore
-        "Sup BOIII",
-        "Incoming"
+        newMessage.profilePic,
+        new Date(newMessage.dateSentAt),
+        newMessage.author
       );
+      Pop.play();
+      //@ts-ignore
+      inputRef.current.focus();
     });
   };
   useEffect(() => {
@@ -100,26 +117,30 @@ const ChatComponent: FC = () => {
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     //@ts-ignore
-    if (inpRef.current.value === "") {
+    if (text === "") {
       toast.error("Invalid message!");
     } else {
       // @ts-ignore
       MsgsRef.current.innerHTML += MessageGenerator(
-        //@ts-ignore
-        inpRef.current.value,
-        "Outgoing"
+        text,
+        "Outgoing",
+        user.avatarSvg,
+        new Date(),
+        "You"
       );
+      Pop.play();
+
       socket.emit("message", {
         //@ts-ignore
-        children: inpRef.current.value,
+        children: text,
         author: user.name,
         dateSentAt: new Date().toLocaleDateString(),
+        profilePic: user.avatarSvg,
       });
+      setText("");
       // @ts-ignore
-      inpRef.current.value = "";
     }
   }
-  const inpRef = useRef<HTMLInputElement | null>(null);
 
   function Icons(): JSX.Element {
     return (
@@ -141,6 +162,7 @@ const ChatComponent: FC = () => {
           />
         )}
         <AiFillFileImage data-tip='Image Upload' />
+        <FaMusic data-tip='Audio Upload' />
 
         {!usersOpen ? (
           <AiOutlineUser
@@ -228,7 +250,14 @@ const ChatComponent: FC = () => {
     }
   }, [usersOpen]);
   const backgroundAnimation = useSpring({
-    backgroundColor: theme,
+    from: {
+      opacity: 0,
+      backgroundColor: "white",
+    },
+    to: {
+      opacity: 1,
+      backgroundColor: theme,
+    },
   });
   const colorSetter = useSpring({
     color: theme === "#232424" ? "#fff" : "#232424",
@@ -244,17 +273,13 @@ const ChatComponent: FC = () => {
   };
   return (
     <>
-      <ChatPage
-        style={backgroundAnimation}
-        //@ts-ignore
-
-        ref={PageRef}
-        //@ts-ignore
-      >
+      <ChatPage style={backgroundAnimation}>
         <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
         <RemainingChatArea style={colorSetter}>
           <ChatArea theme={theme === "#232424" ? "#fff" : "#232424"}>
-            <div className='mainChat' ref={MsgsRef}></div>
+            <AutoScroll>
+              <div className='mainChat' ref={MsgsRef}></div>
+            </AutoScroll>
           </ChatArea>
 
           {usersTransition((style, item) => {
@@ -301,7 +326,9 @@ const ChatComponent: FC = () => {
                 >
                   Emojis
                 </SidePanelHeaderComponent>
-                <EmojiPanelInfo />
+                <MessageContext.Provider value={setText}>
+                  <EmojiPanelInfo />
+                </MessageContext.Provider>
               </EmojiPanel>
             ) : (
               ""
@@ -311,7 +338,16 @@ const ChatComponent: FC = () => {
 
         <MeetControls style={footerAndHeaderExpander}>
           <form className='input' onSubmit={(e) => handleSubmit(e)}>
-            <input type='text' name='' id='' spellCheck={false} ref={inpRef} />
+            <input
+              type='text'
+              name=''
+              id=''
+              spellCheck={false}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              //@ts-ignore
+              ref={inputRef}
+            />
             <button type='submit'>
               <BiSend />
             </button>

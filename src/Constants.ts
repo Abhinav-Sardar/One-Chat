@@ -138,11 +138,65 @@ export const setUrl: () => void = () => {
 
 export const MessageGenerator: (
   messageContent: string,
-  className: string
-) => string = (messageContent: string, className: string) => {
+  className: string,
+  avatar: string,
+  date: Date,
+  author: string
+) => string = (
+  messageContent: string,
+  className: string,
+  avatar: string,
+  date: Date,
+  author: string
+) => {
   return `
-<div class = ${className}>
-${messageContent}
-</div>
+  <div class = ${className}>
+  <div class = "info">
+  ${avatar}  <span>${author} - ${ReturnFormattedDate(date)}</span>
+  </div>
+  <div class = "content">
+  ${messageContent}
+  </div>
+  </div>
 `;
+};
+
+const ReturnFormattedDate: (date: Date) => string = (date: Date) => {
+  if (String(date.getMinutes()).length === 1) {
+    if (date.getHours() >= 0 && date.getHours() <= 11) {
+      if (date.getHours() === 0) {
+        return `12:0${date.getMinutes()} AM`;
+      } else {
+        return `0${date.getHours()}:0${date.getMinutes()} AM`;
+      }
+    } else {
+      if (date.getHours() === 12) {
+        return `12:0${date.getMinutes()} PM`;
+      } else {
+        if (date.getHours() <= 21) {
+          return `0${date.getHours() - 12}:0${date.getMinutes()} PM`;
+        } else {
+          return `${date.getHours() - 12}:0${date.getMinutes()} PM`;
+        }
+      }
+    }
+  } else {
+    if (date.getHours() >= 0 && date.getHours() <= 11) {
+      if (date.getHours() === 0) {
+        return `12:${date.getMinutes()} AM`;
+      } else {
+        return `0${date.getHours()}:${date.getMinutes()} AM`;
+      }
+    } else {
+      if (date.getHours() === 12) {
+        return `12:${date.getMinutes()} PM`;
+      } else {
+        if (date.getHours() <= 21) {
+          return `0${date.getHours() - 12}:${date.getMinutes()} PM`;
+        } else {
+          return `${date.getHours() - 12}:${date.getMinutes()} PM`;
+        }
+      }
+    }
+  }
 };

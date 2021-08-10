@@ -3,6 +3,8 @@ import Fox from "./Fox.png";
 import GreenApple from "./GreenApple.png";
 import Heart from "./Heart.png";
 import Smile from "./Smile.png";
+//@ts-ignore
+import PopSound from "./Pop Sound 🎉.mp3";
 
 const obj = {
   car: {
@@ -28,3 +30,4 @@ const obj = {
 };
 
 export default obj;
+export const Pop = new Audio(PopSound);
