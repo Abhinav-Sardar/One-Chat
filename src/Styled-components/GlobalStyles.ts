@@ -6,7 +6,10 @@ export const GlobalStyles = createGlobalStyle`
     padding:0 ; 
     margin:0 ; 
 }
-
+.mainChat {
+  display:flex ; 
+  flex-direction:column ;
+}
 body {
   height:100vh ; 
   width:100vw; 
@@ -54,10 +57,12 @@ svg:root {
   background: gray ; 
 }  ; 
 .Outgoing {
-  margin:1vw 0 ; 
-  margin-left: 1vw ; 
-  .info {
+  
 
+  margin:1vw 0 ; 
+  margin-left:1vw ; 
+  .info {
+    margin:0.1vw 0 ; 
     display:flex ; 
     align-items: center;
 
@@ -84,6 +89,44 @@ svg:root {
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
     padding:0.5vw ; 
+  }
+}
+.Incoming {
+  margin:1vw 0 ; 
+  margin-right: 1vw ; 
+  display:flex ; 
+  flex-direction: column ;
+  align-items:flex-end ; 
+  .info {
+    margin:0.1vw 0 ; 
+    display:flex ; 
+    align-items: center;
+
+    svg {
+      height:4vw ; 
+      width:4vw ; 
+      border-radius:50% ; 
+      border:2px solid ${constants.appAccentColor} ; 
+    }
+    span {
+      font-size:2vw ; 
+      font-family:"Quicksand", sans-serif;
+      margin 0 1.3vw ; 
+      color:#2f9ee0 ; 
+    }
+  }
+  .content {
+    color:black ; 
+  border-radius:10px ; 
+
+    background:whitesmoke; 
+    width:50% ; 
+    font-size:1.8vw ; 
+    font-family: "Poppins" , sans-serif;
+    word-break: break-all;
+    padding:0.5vw ; 
+    border:1px solid #232424 ; 
+
   }
 }
 `;

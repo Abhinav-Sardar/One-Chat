@@ -11,8 +11,8 @@ import { AiFillFileImage, AiOutlineUser } from "react-icons/ai";
 import { FiMaximize, FiMinimize } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
 import io from "socket.io-client";
-//@ts-ignore
-import AutoScroll from "react-scroll-to-bottom";
+
+import { ScrollWrapper as Scroll } from "react-bottom-scroll";
 import {
   FaRegSmile,
   FaSmile,
@@ -96,7 +96,7 @@ const ChatComponent: FC = () => {
       // @ts-ignore
       MsgsRef.current.innerHTML += MessageGenerator(
         newMessage.children,
-        "Outgoing",
+        "Incoming",
 
         //@ts-ignore
         newMessage.profilePic,
@@ -162,8 +162,7 @@ const ChatComponent: FC = () => {
           />
         )}
         <AiFillFileImage data-tip='Image Upload' />
-        <FaMusic data-tip='Audio Upload' />
-
+        ``
         {!usersOpen ? (
           <AiOutlineUser
             data-tip='Users'
@@ -194,7 +193,6 @@ const ChatComponent: FC = () => {
             data-tip='Close Share'
           />
         )}
-
         {theme === "#fff" ? (
           <FaMoon
             onClick={() => {
@@ -277,9 +275,16 @@ const ChatComponent: FC = () => {
         <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
         <RemainingChatArea style={colorSetter}>
           <ChatArea theme={theme === "#232424" ? "#fff" : "#232424"}>
-            <AutoScroll>
+            <Scroll
+              wrapperStyle={{
+                width: "100%",
+                overflowY: "auto",
+                height: "100%",
+              }}
+              smoothBehavior
+            >
               <div className='mainChat' ref={MsgsRef}></div>
-            </AutoScroll>
+            </Scroll>
           </ChatArea>
 
           {usersTransition((style, item) => {
