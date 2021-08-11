@@ -106,6 +106,7 @@ const ChatComponent: FC = () => {
       Pop.play();
       //@ts-ignore
       inputRef.current.focus();
+      //@ts-ignore
       ScrollRef.current.scrollTop = ScrollRef.current.scrollHeight;
     });
   };
