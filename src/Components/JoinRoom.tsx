@@ -36,7 +36,7 @@ import { Link } from "react-router-dom";
 import { useSpring } from "react-spring";
 import Avatars from "./Avatars";
 import ReactTooltip from "react-tooltip";
-
+const socket = io(constants.serverName);
 const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   isAuth,
   roomName,
@@ -92,15 +92,26 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
     e.preventDefault();
     const newRoom = isAuth ? roomName : room;
     if (name && newRoom && name.trim() && newRoom.trim()) {
-      const newUser: user = {
-        avatarSvg: currentAvatar,
-        name: name,
-        currentRoomName: newRoom,
-      };
-      console.log("Reached here!");
-      setUser(newUser);
-      //@ts-ignore
-      linkRef.current.click();
+      socket.emit("rooms");
+      socket.on("rooms-back", (rooms: any[]) => {
+        const particularRoom = rooms.find((r: any) => r.name === newRoom);
+        if (!particularRoom) {
+          toast.error("A room with that name doesn't exists!");
+          //@ts-ignore
+          socket.removeAllListeners("rooms-back");
+        } else {
+          const newUser: user = {
+            avatarSvg: currentAvatar,
+            name: name,
+            currentRoomName: room,
+          };
+          console.log(newUser);
+          setUser(newUser);
+          socket.disconnect();
+          // @ts-ignore
+          linkRef?.current.click();
+        }
+      });
     } else {
       toast.error("Invalid Username Or Room Name !");
     }

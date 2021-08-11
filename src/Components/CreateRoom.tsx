@@ -50,6 +50,7 @@ const CreateRoom: FunctionalComponent = () => {
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
   const linkRef = useRef<HTMLAnchorElement>(null);
+  const socket = io(constants.serverName);
   useEffect(() => {
     if (isModalOpen === true) {
       //@ts-ignore
@@ -90,15 +91,26 @@ const CreateRoom: FunctionalComponent = () => {
       if (room.includes(" ")) {
         toast.error("Room names can't have a space");
       } else {
-        const newUser: user = {
-          avatarSvg: currentAvatar,
-          name: name,
-          currentRoomName: room,
-        };
-        console.log(newUser);
-        setUser(newUser);
-        // @ts-ignore
-        linkRef?.current.click();
+        socket.emit("rooms");
+        socket.on("rooms-back", (rooms) => {
+          const particularRoom = rooms.find((r: any) => r.name === room);
+          if (particularRoom) {
+            toast.error("A room with the same name already exists!");
+            //@ts-ignore
+            socket.removeAllListeners("rooms-back");
+          } else {
+            const newUser: user = {
+              avatarSvg: currentAvatar,
+              name: name,
+              currentRoomName: room,
+            };
+            console.log(newUser);
+            setUser(newUser);
+            socket.disconnect();
+            // @ts-ignore
+            linkRef?.current.click();
+          }
+        });
       }
     } else {
       toast.error("Invalid Username Or Room Name !");
@@ -137,6 +149,7 @@ const CreateRoom: FunctionalComponent = () => {
             spellCheck
             required
             placeholder='Your Name'
+            autoFocus
           />
         </div>
         <div className='field'>
