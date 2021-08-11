@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "One-Chat",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -20,7 +20,6 @@
     "react-bottom-scroll": "^1.1.2",
     "react-colorful": "^5.3.0",
     "react-dom": "^17.0.2",
-    "react-emojipicker": "^1.1.1",
     "react-icons": "^4.2.0",
     "react-responsive-modal": "^6.1.0",
     "react-router-dom": "^5.2.0",

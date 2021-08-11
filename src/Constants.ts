@@ -150,13 +150,15 @@ export const MessageGenerator: (
   author: string
 ) => {
   return `
-  <div class = ${className}>
-  <div class = "info">
-  ${avatar}  <span>${author} - ${ReturnFormattedDate(date)}</span>
-  </div>
-  <div class = "content">
-  ${messageContent}
-  </div>
+  <section class = ${className}>
+ <div>
+ <div class = "info">
+ ${avatar}  <span>${author} - ${ReturnFormattedDate(date)}</span>
+ </div>
+ <div class = "content">
+ ${messageContent}
+ </div>
+ </div>
   </div>
 `;
 };

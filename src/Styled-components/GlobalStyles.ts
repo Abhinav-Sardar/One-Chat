@@ -84,7 +84,7 @@ svg:root {
   border-radius:10px ; 
 
     background:${constants.appAccentColor} ; 
-    width:50% ; 
+    width:45vw ;  ; 
     font-size:1.8vw ; 
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
@@ -93,15 +93,16 @@ svg:root {
 }
 .Incoming {
   margin:1vw 0 ; 
-  margin-right: 1vw ; 
-  display:flex ; 
+    display:flex ; 
   flex-direction: column ;
   align-items:flex-end ; 
+  div {
+  margin-right: 0.5vw ; 
+    
   .info {
     margin:0.1vw 0 ; 
     display:flex ; 
     align-items: center;
-
     svg {
       height:4vw ; 
       width:4vw ; 
@@ -120,13 +121,14 @@ svg:root {
   border-radius:10px ; 
 
     background:whitesmoke; 
-    width:50% ; 
+    width:45vw ;  ; 
     font-size:1.8vw ; 
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
     padding:0.5vw ; 
     border:1px solid #232424 ; 
 
+  }
   }
 }
 `;

@@ -11,8 +11,7 @@ import { AiFillFileImage, AiOutlineUser } from "react-icons/ai";
 import { FiMaximize, FiMinimize } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
 import io from "socket.io-client";
-
-import { ScrollWrapper as Scroll } from "react-bottom-scroll";
+import { ScrollWrapper } from "react-bottom-scroll";
 import {
   FaRegSmile,
   FaSmile,
@@ -78,6 +77,7 @@ const ChatComponent: FC = () => {
   const [users, setUsers] = useState<ChatUser[]>([]);
   const [text, setText] = useState<any>("");
   const MsgsRef = useRef<HTMLDivElement>(null);
+  const ScrollRef = useRef(null);
   const inputRef = useRef(null);
 
   const socketCode = () => {
@@ -112,7 +112,6 @@ const ChatComponent: FC = () => {
   useEffect(() => {
     document.title = `Room - ${user.currentRoomName}`;
     socketCode();
-    //eslint-disable-next-line
   }, []);
 
   function handleSubmit(e: FormEvent): void {
@@ -140,6 +139,7 @@ const ChatComponent: FC = () => {
       });
       setText("");
       // @ts-ignore
+      ScrollRef.current.scrollTop = ScrollRef.current.scrollHeight;
     }
   }
 
@@ -163,7 +163,7 @@ const ChatComponent: FC = () => {
           />
         )}
         <AiFillFileImage data-tip='Image Upload' />
-        ``
+
         {!usersOpen ? (
           <AiOutlineUser
             data-tip='Users'
@@ -275,17 +275,22 @@ const ChatComponent: FC = () => {
       <ChatPage style={backgroundAnimation}>
         <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
         <RemainingChatArea style={colorSetter}>
-          <ChatArea theme={theme === "#232424" ? "#fff" : "#232424"}>
-            <Scroll
+          <ChatArea
+            theme={theme === "#232424" ? "#fff" : "#232424"}
+            ref={ScrollRef}
+          >
+            {/* <ScrollWrapper
               wrapperStyle={{
                 width: "100%",
-                overflowY: "auto",
                 height: "100%",
+                overflowY: "auto",
               }}
               smoothBehavior
-            >
-              <div className='mainChat' ref={MsgsRef}></div>
-            </Scroll>
+            > */}
+            <div className='mainChat' ref={MsgsRef}>
+              <span>bottom</span>
+            </div>
+            {/* </ScrollWrapper> */}
           </ChatArea>
 
           {usersTransition((style, item) => {
