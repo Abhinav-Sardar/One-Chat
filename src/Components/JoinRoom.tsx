@@ -96,20 +96,29 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       socket.on("rooms-back", (rooms: any[]) => {
         const particularRoom = rooms.find((r: any) => r.name === newRoom);
         if (!particularRoom) {
-          toast.error("A room with that name doesn't exists!");
+          toast.error("A room with that name doesn't already exists!");
           //@ts-ignore
           socket.removeAllListeners("rooms-back");
         } else {
-          const newUser: user = {
-            avatarSvg: currentAvatar,
-            name: name,
-            currentRoomName: room,
-          };
-          console.log(newUser);
-          setUser(newUser);
-          socket.disconnect();
-          // @ts-ignore
-          linkRef?.current.click();
+          if (isAuth) {
+            const newUser: user = {
+              avatarSvg: currentAvatar,
+              name: name,
+              currentRoomName: newRoom,
+            };
+            console.log(newUser);
+            setUser(newUser);
+          } else {
+            const newUser: user = {
+              avatarSvg: currentAvatar,
+              name: name,
+              currentRoomName: newRoom,
+            };
+            console.log(newUser);
+            setUser(newUser);
+            //@ts-ignore
+            linkRef.current.click();
+          }
         }
       });
     } else {

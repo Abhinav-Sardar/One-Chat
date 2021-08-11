@@ -16,7 +16,11 @@ const Chat: FC = () => {
   );
 
   useEffect(() => {
-    if (user.avatarSvg && user.currentRoomName && user.name) {
+    if (
+      user.avatarSvg !== "" &&
+      user.currentRoomName !== "" &&
+      user.name !== ""
+    ) {
       setStatus("AllFine");
     } else {
       setStatus("NoInfo");
