@@ -163,42 +163,45 @@ export const MessageGenerator: (
 `;
 };
 
-const ReturnFormattedDate: (date: Date) => string = (date: Date) => {
-  if (String(date.getMinutes()).length === 1) {
-    if (date.getHours() >= 0 && date.getHours() <= 11) {
-      if (date.getHours() === 0) {
-        return `12:0${date.getMinutes()} AM`;
-      } else {
-        return `0${date.getHours()}:0${date.getMinutes()} AM`;
-      }
+export const ReturnFormattedDate: (date: Date) => string = (date: Date) => {
+  if (date.getHours() === 0) {
+    if (String(date.getMinutes()).length === 1) {
+      return `0${date.getHours()}:0${date.getMinutes()} AM`;
     } else {
-      if (date.getHours() === 12) {
-        return `12:0${date.getMinutes()} PM`;
-      } else {
-        if (date.getHours() <= 21) {
-          return `0${date.getHours() - 12}:0${date.getMinutes()} PM`;
-        } else {
-          return `${date.getHours() - 12}:0${date.getMinutes()} PM`;
-        }
-      }
+      return `${date.getHours()}:${date.getMinutes()} AM`;
     }
   } else {
-    if (date.getHours() >= 0 && date.getHours() <= 11) {
-      if (date.getHours() === 0) {
-        return `12:${date.getMinutes()} AM`;
+    if (date.getHours() <= 11) {
+      if (String(date.getHours()).length === 1) {
+        if (date.getMinutes() <= 9) {
+          return `0${date.getHours()}:0${date.getMinutes()} AM`;
+        } else {
+          return `0${date.getHours()}:${date.getMinutes()} AM`;
+        }
       } else {
-        return `0${date.getHours()}:${date.getMinutes()} AM`;
+        if (date.getMinutes() <= 9) {
+          return `${date.getHours()}:0${date.getMinutes()} AM`;
+        } else {
+          return `${date.getHours()}:${date.getMinutes()} AM`;
+        }
       }
     } else {
-      if (date.getHours() === 12) {
-        return `12:${date.getMinutes()} PM`;
+      //12 , 13 , 14 ,
+      if (String(date.getMinutes()).length === 1) {
+        return `${date.getHours()}:0${date.getMinutes()} PM`;
       } else {
-        if (date.getHours() <= 21) {
-          return `0${date.getHours() - 12}:${date.getMinutes()} PM`;
-        } else {
-          return `${date.getHours() - 12}:${date.getMinutes()} PM`;
-        }
+        return `${date.getHours()}:${date.getMinutes()} PM`;
       }
     }
   }
+};
+
+export type Message = {
+  profilePic: string;
+  accentColor: string;
+  content: string;
+  type: "text" | "image";
+  created_at: Date;
+  author: string;
+  className: "Incoming" | "Outgoing";
 };

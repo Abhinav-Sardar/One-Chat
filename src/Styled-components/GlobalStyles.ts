@@ -131,6 +131,26 @@ svg:root {
   }
   }
 }
+
+.rstb {
+  border: 1px solid black;
+	height:100% ; 
+	width: 100%;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	overflow-y:auto ; 
+	overflow-x: hidden;
+}
+.react-scroll-to-bottom--css-fhmve-1tj0vk3 {
+  height:2vw !important ; 
+  width:2vw !important ; 
+  border-radius:50% !important ;  
+  background-color:${constants.appAccentColor} !important ; 
+  &:hover {
+    opacity:0.9 !important ; 
+  }
+}
 `;
 export const Wrapper = styled.div`
   display: flex;

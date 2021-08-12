@@ -104,10 +104,11 @@ export const MeetControls = styled(animated.footer)`
 
 export const ChatArea = styled.div`
   flex: 1;
-  flex-direction: column;
+
   overflow-y: auto;
   position: relative;
   border-right: 1px solid ${(pr) => pr.theme};
+  overflow: hidden;
 `;
 
 export const UsersSection = styled(animated.aside)`

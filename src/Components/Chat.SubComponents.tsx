@@ -4,7 +4,9 @@ import {
   constants,
   getRandomKey,
   HeaderProps,
+  Message,
   PanelHeaderProps,
+  ReturnFormattedDate,
   ShareProps,
   UsersInChatProps,
 } from "../Constants";
@@ -299,3 +301,21 @@ const FoodComponent: FC = memo(() => {
     </>
   );
 });
+
+export const MessageComponent: FC<Message> = (props) => {
+  return (
+    <section className={props.className}>
+      <div>
+        <div className='info'>
+          {parse(props.profilePic)}
+          <span>
+            {props.author} - {ReturnFormattedDate(props.created_at)}
+          </span>
+        </div>
+        <div className='content'>
+          {props.type === "text" ? props.content : ""}
+        </div>
+      </div>
+    </section>
+  );
+};

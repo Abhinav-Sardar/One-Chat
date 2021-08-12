@@ -11,7 +11,8 @@ import { AiFillFileImage, AiOutlineUser } from "react-icons/ai";
 import { FiMaximize, FiMinimize } from "react-icons/fi";
 import { BiSend } from "react-icons/bi";
 import io from "socket.io-client";
-import { ScrollWrapper } from "react-bottom-scroll";
+//@ts-ignore
+import Scroll from "react-scroll-to-bottom";
 import {
   FaRegSmile,
   FaSmile,
@@ -35,6 +36,7 @@ import {
   exitFullScreen,
   goFullScreen,
   constants,
+  Message,
 } from "../Constants";
 import {
   ChatPage,
@@ -51,6 +53,7 @@ import {
   UsersPanelInfo,
   SharePanelInfo,
   EmojiPanelInfo,
+  MessageComponent,
 } from "./Chat.SubComponents";
 import { MessageGenerator } from "../Constants";
 import { Pop } from "./Images/Accumulator";
@@ -79,7 +82,7 @@ const ChatComponent: FC = () => {
   const MsgsRef = useRef<HTMLDivElement>(null);
   const ScrollRef = useRef(null);
   const inputRef = useRef(null);
-
+  const [msgs, setMsgs] = useState<Message[]>([]);
   const socketCode = () => {
     socket.emit("new-user", {
       name: user.name,
@@ -93,21 +96,10 @@ const ChatComponent: FC = () => {
       setUsers(newUsers);
     });
     socket.on("message", (newMessage) => {
-      // @ts-ignore
-      MsgsRef.current.innerHTML += MessageGenerator(
-        newMessage.children,
-        "Incoming",
-
-        //@ts-ignore
-        newMessage.profilePic,
-        new Date(newMessage.dateSentAt),
-        newMessage.author
-      );
-      Pop.play();
-      //@ts-ignore
-      inputRef.current.focus();
-      //@ts-ignore
-      ScrollRef.current.scrollTop = ScrollRef.current.scrollHeight;
+      setMsgs((p) => [
+        ...p,
+        { ...newMessage, created_at: new Date(newMessage.created_at) },
+      ]);
     });
   };
   useEffect(() => {
@@ -121,26 +113,18 @@ const ChatComponent: FC = () => {
     if (text === "") {
       toast.error("Invalid message!");
     } else {
-      // @ts-ignore
-      MsgsRef.current.innerHTML += MessageGenerator(
-        text,
-        "Outgoing",
-        user.avatarSvg,
-        new Date(),
-        "You"
-      );
-      Pop.play();
-
-      socket.emit("message", {
-        //@ts-ignore
-        children: text,
+      const newMessage: Message = {
         author: user.name,
-        dateSentAt: new Date().toLocaleDateString(),
         profilePic: user.avatarSvg,
-      });
-      setText("");
-      // @ts-ignore
-      ScrollRef.current.scrollTop = ScrollRef.current.scrollHeight;
+        created_at: new Date(),
+        accentColor: constants.appAccentColor,
+        content: text,
+        type: "text",
+        className: "Outgoing",
+      };
+      setMsgs((p) => [...p, newMessage]);
+      Pop.play();
+      socket.emit("message", { ...newMessage, className: "Incoming" });
     }
   }
 
@@ -288,9 +272,13 @@ const ChatComponent: FC = () => {
               }}
               smoothBehavior
             > */}
-            <div className='mainChat' ref={MsgsRef}>
-              <span>bottom</span>
-            </div>
+
+            <Scroll className='rstb'>
+              {msgs.map((msg) => (
+                <MessageComponent {...msg} />
+              ))}
+            </Scroll>
+
             {/* </ScrollWrapper> */}
           </ChatArea>
 
