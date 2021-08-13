@@ -303,19 +303,25 @@ const FoodComponent: FC = memo(() => {
 });
 
 export const MessageComponent: FC<Message> = (props) => {
-  return (
-    <section className={props.className}>
-      <div>
-        <div className='info'>
-          {parse(props.profilePic)}
-          <span>
-            {props.author} - {ReturnFormattedDate(props.created_at)}
-          </span>
+  if (props.type === "text") {
+    return (
+      <section className={props.className}>
+        <div>
+          <div className='info'>
+            {/* @ts-ignore */}
+            {parse(props.profilePic)}
+            <span>
+              {/* @ts-ignore */}
+              {props.author} - {ReturnFormattedDate(props.created_at)}
+            </span>
+          </div>
+          <div className='content'>
+            {props.type === "text" ? props.content : ""}
+          </div>
         </div>
-        <div className='content'>
-          {props.type === "text" ? props.content : ""}
-        </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  } else {
+    return <span></span>;
+  }
 };

@@ -142,15 +142,24 @@ svg:root {
 	overflow-y:auto ; 
 	overflow-x: hidden;
 }
-.react-scroll-to-bottom--css-fhmve-1tj0vk3 {
-  height:2vw !important ; 
-  width:2vw !important ; 
-  border-radius:50% !important ;  
-  background-color:${constants.appAccentColor} !important ; 
+
+.scrollButton {
+  background:${constants.appAccentColor} !important ; 
+  height:2.5vw !important; 
+  width:2.5vw !important; 
+  border-radius:50% !important; 
   &:hover {
     opacity:0.9 !important ; 
   }
+  display:flex  !important; 
+  justify-content: center !important ; 
+  align-items: center !important;
+  i {
+    color:white  !important; 
+    font-size:1.5vw  ; 
+  }
 }
+
 `;
 export const Wrapper = styled.div`
   display: flex;

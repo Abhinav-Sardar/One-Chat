@@ -37,6 +37,7 @@ import {
   goFullScreen,
   constants,
   Message,
+  getRandomKey,
 } from "../Constants";
 import {
   ChatPage,
@@ -59,7 +60,7 @@ import { MessageGenerator } from "../Constants";
 import { Pop } from "./Images/Accumulator";
 const { config } = Animations;
 const socket = io(constants.serverName);
-console.log(socket);
+
 export const MessageContext = createContext<any>(null);
 const ChatComponent: FC = () => {
   const footerAndHeaderExpander = useSpring({
@@ -83,6 +84,7 @@ const ChatComponent: FC = () => {
   const ScrollRef = useRef(null);
   const inputRef = useRef(null);
   const [msgs, setMsgs] = useState<Message[]>([]);
+
   const socketCode = () => {
     socket.emit("new-user", {
       name: user.name,
@@ -100,11 +102,15 @@ const ChatComponent: FC = () => {
         ...p,
         { ...newMessage, created_at: new Date(newMessage.created_at) },
       ]);
+      Pop.play();
     });
   };
   useEffect(() => {
     document.title = `Room - ${user.currentRoomName}`;
     socketCode();
+    setInterval(() => {
+      setIsFullScreen(document.fullscreenElement ? true : false);
+    }, 1000);
   }, []);
 
   function handleSubmit(e: FormEvent): void {
@@ -125,6 +131,7 @@ const ChatComponent: FC = () => {
       setMsgs((p) => [...p, newMessage]);
       Pop.play();
       socket.emit("message", { ...newMessage, className: "Incoming" });
+      setText("");
     }
   }
 
@@ -255,6 +262,7 @@ const ChatComponent: FC = () => {
   const LeaveRoom = () => {
     window.location.assign("/");
   };
+
   return (
     <>
       <ChatPage style={backgroundAnimation}>
@@ -272,11 +280,11 @@ const ChatComponent: FC = () => {
               }}
               smoothBehavior
             > */}
-
-            <Scroll className='rstb'>
-              {msgs.map((msg) => (
-                <MessageComponent {...msg} />
-              ))}
+            <Scroll className='rstb' followButtonClassName='scrollButton'>
+              {msgs.length > 0 &&
+                msgs.map((msg) => (
+                  <MessageComponent {...msg} key={getRandomKey()} />
+                ))}
             </Scroll>
 
             {/* </ScrollWrapper> */}

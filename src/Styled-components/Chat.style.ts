@@ -142,8 +142,8 @@ export const User = styled.section`
     border: 1px solid ${(pr) => pr.theme};
   }
   h2 {
-    font-size: 1.5vw;
-    font-family: "Quicksand", sans-serif;
+    font-size: 1.3vw;
+    font-family: "Roboto", sans-serif;
   }
 `;
 

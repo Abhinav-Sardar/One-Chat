@@ -197,11 +197,11 @@ export const ReturnFormattedDate: (date: Date) => string = (date: Date) => {
 };
 
 export type Message = {
-  profilePic: string;
-  accentColor: string;
+  profilePic?: string;
+  accentColor?: string;
   content: string;
-  type: "text" | "image";
-  created_at: Date;
-  author: string;
-  className: "Incoming" | "Outgoing";
+  type: "text" | "image" | "tooltip" | "reply";
+  created_at?: Date;
+  author?: string;
+  className: "Incoming" | "Outgoing" | "" | "Left" | "Entered";
 };

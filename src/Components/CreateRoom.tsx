@@ -108,7 +108,7 @@ const CreateRoom: FunctionalComponent = () => {
             setUser(newUser);
             socket.disconnect();
             // @ts-ignore
-            linkRef?.current.click();
+            linkRef.current.click();
           }
         });
       }
