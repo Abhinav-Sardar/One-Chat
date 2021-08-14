@@ -136,6 +136,13 @@ const CreateRoom: FunctionalComponent = () => {
 
   return (
     <Page style={appear}>
+      <Link
+        to={`/room/${room}`}
+        style={{
+          display: "none",
+        }}
+        ref={linkRef}
+      ></Link>
       <h1 className='purpose'>Create</h1>
       <Form onSubmit={(e) => handleSubmit(e)}>
         <div className='field'>
@@ -247,13 +254,6 @@ const CreateRoom: FunctionalComponent = () => {
           <span>Back To Home</span> <FaHome />
         </Button>{" "}
       </Link>
-      <Link
-        to={`/room/${room}`}
-        style={{
-          display: "none",
-        }}
-        ref={linkRef}
-      ></Link>
     </Page>
   );
 };
