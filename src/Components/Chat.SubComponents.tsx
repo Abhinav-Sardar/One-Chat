@@ -315,13 +315,32 @@ export const MessageComponent: FC<Message> = (props) => {
               {props.author} - {ReturnFormattedDate(props.created_at)}
             </span>
           </div>
-          <div className='content'>
-            {props.type === "text" ? props.content : ""}
+          <div
+            className='content'
+            style={{
+              backgroundColor: props.accentColor,
+            }}
+          >
+            {props.content}
           </div>
         </div>
       </section>
     );
-  } else {
+  }
+  // else if (props.type === "tooltip") {
+  //   if (props.className === "Entered") {
+  //     return <Tooltip content={props.content} className={props.className} />;
+  //   }
+  // }
+  else {
     return <span></span>;
   }
 };
+
+// const Tooltip: FC<{ content: string; className: "Entered" | "Left" }> = ({
+//   className,
+//   content,
+// }) => {
+//   if (className === "Entered") {
+//   }
+// };

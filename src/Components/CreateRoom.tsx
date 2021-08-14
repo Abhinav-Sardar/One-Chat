@@ -93,6 +93,7 @@ const CreateRoom: FunctionalComponent = () => {
       } else {
         socket.emit("rooms");
         socket.on("rooms-back", (rooms) => {
+          console.log("Req came back!");
           const particularRoom = rooms.find((r: any) => r.name === room);
           if (particularRoom) {
             toast.error("A room with the same name already exists!");
@@ -104,10 +105,9 @@ const CreateRoom: FunctionalComponent = () => {
               name: name,
               currentRoomName: room,
             };
-            console.log(newUser);
+
             setUser(newUser);
-            socket.disconnect();
-            // @ts-ignore
+            //@ts-ignore
             linkRef.current.click();
           }
         });

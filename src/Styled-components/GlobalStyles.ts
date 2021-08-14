@@ -70,7 +70,8 @@ svg:root {
       height:4vw ; 
       width:4vw ; 
       border-radius:50% ; 
-      border:2px solid ${constants.appAccentColor} ; 
+  
+      border:2px solid #2f9ee0  ; 
     }
     span {
       font-size:2vw ; 
@@ -107,7 +108,8 @@ svg:root {
       height:4vw ; 
       width:4vw ; 
       border-radius:50% ; 
-      border:2px solid ${constants.appAccentColor} ; 
+      border:2px solid #2f9ee0  ; 
+   
     }
     span {
       font-size:2vw ; 
@@ -117,7 +119,7 @@ svg:root {
     }
   }
   .content {
-    color:black ; 
+    color:white ; 
   border-radius:10px ; 
 
     background:whitesmoke; 
@@ -126,7 +128,7 @@ svg:root {
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
     padding:0.5vw ; 
-    border:1px solid #232424 ; 
+   
 
   }
   }

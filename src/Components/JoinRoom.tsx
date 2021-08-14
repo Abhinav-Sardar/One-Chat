@@ -59,6 +59,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       setTimeout(() => window.scroll(0, 0), 1000);
     }
   }, [isModalOpen]);
+  useEffect(() => {
+    document.title = "Join A Room";
+  }, []);
   function handleClose() {
     setIsModalOpen(false);
   }
@@ -85,9 +88,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       setCurrentAvatar(avatars[0]);
     }
   }, [avatars]);
-  useEffect(() => {
-    setUrl();
-  });
+
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     const newRoom = isAuth ? roomName : room;
@@ -124,9 +125,6 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
     } else {
       toast.error("Invalid Username Or Room Name !");
     }
-  }
-  if (isAuth) {
-    document.title = "Join a room";
   }
 
   const appear = useSpring({

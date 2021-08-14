@@ -13,6 +13,7 @@ import { BiSend } from "react-icons/bi";
 import io from "socket.io-client";
 //@ts-ignore
 import Scroll from "react-scroll-to-bottom";
+import { BiExit } from "react-icons/bi";
 import {
   FaRegSmile,
   FaSmile,
@@ -103,6 +104,17 @@ const ChatComponent: FC = () => {
         { ...newMessage, created_at: new Date(newMessage.created_at) },
       ]);
       Pop.play();
+    });
+    socket.on("new-user-join", (mems, user) => {
+      setUsers(mems);
+      // setMsgs((p) => [
+      //   ...p,
+      //   {
+      //     className: "Entered",
+      //     content: `${user} Joined The Chat.`,
+      //     type: "tooltip",
+      //   },
+      // ]);
     });
   };
   useEffect(() => {
@@ -261,6 +273,7 @@ const ChatComponent: FC = () => {
   const emojiTransition = useTransition(emojiOpen, config);
   const LeaveRoom = () => {
     window.location.assign("/");
+    socket.emit("disconnect");
   };
 
   return (
@@ -355,6 +368,7 @@ const ChatComponent: FC = () => {
               onChange={(e) => setText(e.target.value)}
               //@ts-ignore
               ref={inputRef}
+              autoFocus
             />
             <button type='submit'>
               <BiSend />

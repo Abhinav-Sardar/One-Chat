@@ -19,21 +19,6 @@ export const MeetInfo = styled(animated.section)`
     }
   }
   button {
-    &:hover {
-      background-color: whitesmoke;
-      color: red;
-    }
-    transition: 400ms ease-in-out;
-
-    height: 70%;
-    color: white;
-    background-color: red;
-    margin-right: 2vw;
-    padding: 0 1vw;
-    font-size: 1.5vw;
-    border-radius: 20px;
-    outline: 0;
-    border: 1px solid red;
   }
 `;
 export const RemainingChatArea = styled(animated.div)`
@@ -143,7 +128,7 @@ export const User = styled.section`
   }
   h2 {
     font-size: 1.3vw;
-    font-family: "Roboto", sans-serif;
+    font-family: "Quicksand", sans-serif;
   }
 `;
 
@@ -258,6 +243,13 @@ export const EmojiPanel = styled(animated.aside)`
       margin: 1vw;
       width: 2vw;
       height: 2vw;
+      cursor: pointer;
+      &:active {
+        transform: scale(0.8);
+      }
+      &::selection {
+        background-color: transparent;
+      }
     }
   }
 `;
