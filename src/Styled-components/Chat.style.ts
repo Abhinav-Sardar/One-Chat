@@ -19,6 +19,28 @@ export const MeetInfo = styled(animated.section)`
     }
   }
   button {
+    border-radius: 10px;
+    color: white;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 13%;
+    background-color: red;
+    font-size: 1.5vw;
+    margin-right: 2vw;
+    border: 0;
+    outline: 0;
+    font-family: "Quicksand", sans-serif;
+    border: 1px solid red;
+    transition: 500ms ease-out;
+    svg {
+      font-size: 1.7vw;
+    }
+    &:hover {
+      color: red;
+      background-color: white;
+    }
   }
 `;
 export const RemainingChatArea = styled(animated.div)`
@@ -61,6 +83,7 @@ export const MeetControls = styled(animated.footer)`
     margin-left: 2vw;
     input {
       height: 3vw;
+
       width: 50vw;
       border: 2px solid gray;
       &:focus {

@@ -22,6 +22,7 @@ import {
   FaSun,
   FaMoon,
   FaMusic,
+  FaTimes,
 } from "react-icons/fa";
 
 import { FiShare2 } from "react-icons/fi";
@@ -49,6 +50,7 @@ import {
   MeetControls,
   EmojiPanel,
 } from "../Styled-components/Chat.style";
+import { Modal } from "react-responsive-modal";
 import {
   ChatHeader,
   SidePanelHeaderComponent,
@@ -81,69 +83,56 @@ const ChatComponent: FC = () => {
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [users, setUsers] = useState<ChatUser[]>([]);
   const [text, setText] = useState<any>("");
-  const MsgsRef = useRef<HTMLDivElement>(null);
+  const ImageRef = useRef<HTMLInputElement>(null);
   const ScrollRef = useRef(null);
   const inputRef = useRef(null);
   const [msgs, setMsgs] = useState<Message[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [image, setImage] = useState<string>("");
+  const [caption, setCaption] = useState<string>("");
 
-  const socketCode = () => {
-    socket.emit("new-user", {
-      name: user.name,
-      roomName: user.currentRoomName,
-      profilePic: user.avatarSvg,
-    });
-    socket.on("room-info", (newUsers) => {
-      setUsers(newUsers);
-    });
-    socket.on("user-left", (leftUser, newUsers) => {
-      setUsers(newUsers);
-    });
-    socket.on("message", (newMessage) => {
-      setMsgs((p) => [
-        ...p,
-        { ...newMessage, created_at: new Date(newMessage.created_at) },
-      ]);
-      Pop.play();
-    });
-    socket.on("new-user-join", (mems, user) => {
-      setUsers(mems);
-      // setMsgs((p) => [
-      //   ...p,
-      //   {
-      //     className: "Entered",
-      //     content: `${user} Joined The Chat.`,
-      //     type: "tooltip",
-      //   },
-      // ]);
-    });
-  };
   useEffect(() => {
     document.title = `Room - ${user.currentRoomName}`;
     socketCode();
     setInterval(() => {
       setIsFullScreen(document.fullscreenElement ? true : false);
     }, 1000);
+    ImageRef.current.onchange = () => {
+      const image = ImageRef.current.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onload = () => {
+        //@ts-ignore
+        setImage(reader.result);
+        setIsModalOpen(true);
+        ImageRef.current.value = null;
+      };
+    };
   }, []);
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
     //@ts-ignore
-    if (text === "") {
+    if (text === "" || !text.trim()) {
       toast.error("Invalid message!");
+    } else if (text.length >= 500) {
+      toast.error("Message Length Too Long !");
     } else {
       const newMessage: Message = {
         author: user.name,
-        profilePic: user.avatarSvg,
+
         created_at: new Date(),
         accentColor: constants.appAccentColor,
         content: text,
         type: "text",
         className: "Outgoing",
+        profilePic: user.avatarSvg,
       };
       setMsgs((p) => [...p, newMessage]);
       Pop.play();
       socket.emit("message", { ...newMessage, className: "Incoming" });
       setText("");
+      inputRef.current.focus();
     }
   }
 
@@ -166,7 +155,10 @@ const ChatComponent: FC = () => {
             data-tip='Close Emojis'
           />
         )}
-        <AiFillFileImage data-tip='Image Upload' />
+        <AiFillFileImage
+          data-tip='Image Upload'
+          onClick={() => ImageRef.current.click()}
+        />
 
         {!usersOpen ? (
           <AiOutlineUser
@@ -276,6 +268,37 @@ const ChatComponent: FC = () => {
     socket.emit("disconnect");
   };
 
+  const socketCode = () => {
+    socket.emit("new-user", {
+      name: user.name,
+      roomName: user.currentRoomName,
+      profilePic: user.avatarSvg,
+    });
+    socket.on("room-info", (newUsers) => {
+      setUsers(newUsers);
+    });
+    socket.on("user-left", (leftUser, newUsers) => {
+      setUsers(newUsers);
+    });
+    socket.on("message", (newMessage) => {
+      setMsgs((p) => [
+        ...p,
+        { ...newMessage, created_at: new Date(newMessage.created_at) },
+      ]);
+      Pop.play();
+    });
+    socket.on("new-user-join", (mems, user) => {
+      setUsers(mems);
+      // setMsgs((p) => [
+      //   ...p,
+      //   {
+      //     className: "Entered",
+      //     content: `${user} Joined The Chat.`,
+      //     type: "tooltip",
+      //   },
+      // ]);
+    });
+  };
   return (
     <>
       <ChatPage style={backgroundAnimation}>
@@ -384,6 +407,67 @@ const ChatComponent: FC = () => {
         pauseOnHover={false}
         closeOnClick={false}
       />
+      <input type='file' ref={ImageRef} accept='image/*' />
+
+      <Modal
+        open={isModalOpen}
+        center={true}
+        onClose={() => setIsModalOpen(false)}
+        styles={{
+          closeButton: {
+            outline: "none",
+          },
+          modal: {
+            backgroundColor: constants.appAccentColor,
+            color: "white",
+            width: "60vw",
+          },
+        }}
+        closeIcon={<FaTimes style={{ fontSize: "2.5vw", color: "red" }} />}
+        closeOnEsc={true}
+        closeOnOverlayClick={false}
+      >
+        <div className='upload-content'>
+          <h1>Image Upload</h1>
+          <img src={image} alt='' />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const newMessage = {
+                content: image,
+                accentColor: constants.appAccentColor,
+                author: user.name,
+                className: "Outgoing",
+                created_at: new Date(),
+                profilePic: user.avatarSvg,
+                type: "image",
+                caption: caption === "" || !caption.trim() ? "" : caption,
+              };
+              //@ts-ignore
+              setMsgs((p) => [...p, newMessage]);
+              socket.emit("message", { ...newMessage, className: "Incoming" });
+              setCaption("");
+              setImage("");
+              setIsModalOpen(false);
+              inputRef.current.focus();
+            }}
+          >
+            <h2>Caption</h2>
+            <br />
+            <div>
+              {" "}
+              <input
+                type='text'
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+              />
+              <button type='submit'>
+                <BiSend />
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </>
   );
 };

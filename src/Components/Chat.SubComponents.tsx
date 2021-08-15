@@ -10,6 +10,7 @@ import {
   ShareProps,
   UsersInChatProps,
 } from "../Constants";
+import { IoMdExit } from "react-icons/io";
 import io from "socket.io-client";
 import { SelfClientContext } from "../App";
 import { MdContentCopy } from "react-icons/md";
@@ -26,7 +27,7 @@ import { FaTimes } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "./Emojis";
 import Emojis from "./Images/Accumulator";
 import { MessageContext } from "./ChatComponent";
-const socket = io(constants.serverName);
+
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
   const [minutes, setMinutes] = useState<number>(new Date().getMinutes());
@@ -57,7 +58,9 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
       <span className='roomName'>
         {hours}:{minutes}:{seconds}
       </span>
-      <button onClick={onClick}>Leave Room</button>
+      <button onClick={onClick}>
+        Leave Room <IoMdExit />
+      </button>
     </MeetInfo>
   );
 });
@@ -322,6 +325,34 @@ export const MessageComponent: FC<Message> = (props) => {
             }}
           >
             {props.content}
+          </div>
+        </div>
+      </section>
+    );
+  } else if (props.type === "image") {
+    return (
+      <section className={props.className}>
+        <div>
+          <div className='info'>
+            {/* @ts-ignore */}
+            {parse(props.profilePic)}
+            <span>
+              {/* @ts-ignore */}
+              {props.author} - {ReturnFormattedDate(props.created_at)}
+            </span>
+          </div>
+          <div
+            className='content'
+            style={{
+              backgroundColor: props.accentColor,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <img src={props.content} alt='' />
+            <br />
+            {props.caption}
           </div>
         </div>
       </section>

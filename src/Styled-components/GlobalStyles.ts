@@ -5,6 +5,10 @@ export const GlobalStyles = createGlobalStyle`
 * {
     padding:0 ; 
     margin:0 ; 
+   
+}
+#root , body {
+  overflow:hidden ; 
 }
 .mainChat {
   display:flex ; 
@@ -81,12 +85,16 @@ svg:root {
     }
   }
   .content {
+    img {
+   height:15vw ; 
+   width:25vw ; 
+    }
     color:white ;
   border-radius:10px ; 
 
     background:${constants.appAccentColor} ; 
     width:45vw ;  ; 
-    font-size:1.8vw ; 
+    font-size:1.45vw ; 
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
     padding:0.5vw ; 
@@ -119,12 +127,16 @@ svg:root {
     }
   }
   .content {
+    img {
+      height:15vw ; 
+      width:25vw ; 
+    }
     color:white ; 
   border-radius:10px ; 
 
     background:whitesmoke; 
     width:45vw ;  ; 
-    font-size:1.8vw ; 
+    font-size:1.45vw ; 
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
     padding:0.5vw ; 
@@ -146,6 +158,7 @@ svg:root {
 }
 
 .scrollButton {
+  border:1px solid white ; 
   background:${constants.appAccentColor} !important ; 
   height:2.5vw !important; 
   width:2.5vw !important; 
@@ -162,6 +175,65 @@ svg:root {
   }
 }
 
+.upload-content {
+  margin-top:3vw ; 
+  width:100% ; 
+  text-align:center ;
+  img {
+    width:40% ; 
+    height:15vw ;
+    border:1px solid white ; 
+  } 
+   > * {
+     margin:1.5vw 0 ;
+   }
+   h1 {
+     font-family:"Quicksand", sans-serif;
+   }
+   
+   form {
+     width:100% ; 
+     h2 {
+       font-size:1.5vw ; 
+       font-family: "Quicksand" , sans-serif;
+      }
+    div {
+      width:100% ; 
+      display:flex ; 
+      align-items: center; 
+      justify-content: center;
+      input {
+        border:0 ; 
+        outline: 1px solid black ; 
+        color:${constants.appAccentColor} ; 
+         height:3.1vw ; 
+        width:70% ; 
+        font-size:1.6vw ; 
+      }
+      button {
+        &:active {
+          transform:scale(0.8) ; 
+        }
+        height:3.5vw ; 
+        width:3.5vw ; 
+        border-radius: 50%;
+        border:0 ; 
+        background-color:white ;
+        display:flex ; 
+        align-items: center;
+        justify-content: center;
+        margin-left:1vw ; 
+        
+        svg {
+          font-size: 1.7vw;
+   
+
+          color:${constants.appAccentColor} ; 
+        }
+    }
+    }
+   }
+}
 `;
 export const Wrapper = styled.div`
   display: flex;

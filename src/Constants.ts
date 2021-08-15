@@ -204,4 +204,5 @@ export type Message = {
   created_at?: Date;
   author?: string;
   className: "Incoming" | "Outgoing" | "" | "Left" | "Entered";
+  caption?: string;
 };
