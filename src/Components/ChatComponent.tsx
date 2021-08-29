@@ -67,7 +67,7 @@ import {
 } from "./Chat.SubComponents";
 //@ts-ignore
 
-import { Pop } from "./Images/Accumulator";
+import { Pop } from "../Images/Accumulator";
 
 const { config } = Animations;
 //@ts-ignore

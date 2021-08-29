@@ -32,8 +32,8 @@ import {
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
 import { FaTimes, FaSearch, FaSpinner } from "react-icons/fa";
-import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "./Emojis";
-import Emojis from "./Images/Accumulator";
+import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
+import Emojis from "../Images/Accumulator";
 import { MessageContext } from "./ChatComponent";
 import { BiSad } from "react-icons/bi";
 
