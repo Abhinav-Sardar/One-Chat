@@ -176,10 +176,10 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
               type='text'
               //@ts-ignore
               value={room}
-              onChange={(e) => setRoom(e.target.value)}
               spellCheck
               required
               placeholder='Name Your Room'
+              onChange={(e) => setRoom(e.target.value)}
               autoFocus={isAuth ? true : false}
             />
           </div>
@@ -250,11 +250,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
           )}
         </AvatarActionBtns>
       </Modal>
-      <ToastContainer
-        draggable={false}
-        pauseOnHover={false}
-        closeOnClick={false}
-      />
+
       <Link to='/'>
         <Button>
           <span>Back To Home</span> <FaHome />

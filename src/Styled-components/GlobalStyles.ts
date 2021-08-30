@@ -200,13 +200,7 @@ a {
      scrollbar-width: auto;
      scrollbar-color: ${constants.appAccentColor} lightgray;
    }
-`;
-export const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-export const Page = styled.div`
-  height: 100vh;
-  width: 100vw;
-  background: linear-gradient(60deg, #be3fbe, #fff); ;
+   #reset {
+     animation:2s spin linear infinite ; 
+   }
 `;

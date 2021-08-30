@@ -32,18 +32,20 @@ import {
 
 import { FiShare2 } from "react-icons/fi";
 import { useSpring, useTransition } from "react-spring";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import ReactTooltip from "react-tooltip";
 import { SelfClientContext } from "../App";
 import {
   user,
   ChatUser,
-  Animations,
   exitFullScreen,
   goFullScreen,
   constants,
   Message,
   getRandomKey,
+  MeetInputAttributesConfig,
+  FooterExpanderConfig,
+  config,
 } from "../Constants";
 import {
   ChatPage,
@@ -55,7 +57,7 @@ import {
   EmojiPanel,
   ImagesPanel,
 } from "../Styled-components/Chat.style";
-import { Modal } from "react-responsive-modal";
+
 import {
   ChatHeader,
   SidePanelHeaderComponent,
@@ -67,27 +69,22 @@ import {
 } from "./Chat.SubComponents";
 //@ts-ignore
 
-import { Pop } from "../Images/Accumulator";
+import { Pop, ForeignMessagePop } from "../Images/Accumulator";
+import Banned from "./Banned";
 
-const { config } = Animations;
 //@ts-ignore
 const socket = io.connect(constants.serverName);
 
 export const MessageContext = createContext<any>(null);
+export const IsHostContext = createContext<boolean>(false);
 const ChatComponent: FC = () => {
-  const footerAndHeaderExpander = useSpring({
-    from: {
-      width: "0vw",
-    },
-    to: {
-      width: "100vw",
-    },
-  });
+  const footerAndHeaderExpander = useSpring(FooterExpanderConfig);
 
   const [usersOpen, setUsersOpen] = useState<boolean>(false);
   const [shareOpen, setShareOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [imgsOpen, setImgsOpen] = useState<boolean>(false);
+  const [isBanned, setIsBanned] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const history = useHistory();
   const user = useContext(SelfClientContext)[0];
@@ -96,7 +93,13 @@ const ChatComponent: FC = () => {
   const ScrollRef = useRef(null);
   const inputRef = useRef(null);
   const [msgs, setMsgs] = useState<Message[]>([]);
-
+  const [isHost, setisHost] = useState<boolean>(false);
+  const [oppositeTheme, setOppositeTheme] = useState<"#fff" | "#232424">(
+    "#232424"
+  );
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
   useEffect(() => {
     document.title = `Room - ${user.currentRoomName}`;
     socketCode();
@@ -104,6 +107,9 @@ const ChatComponent: FC = () => {
       setIsFullScreen(document.fullscreenElement ? true : false);
     }, 500);
   }, []);
+  useEffect(() => {
+    setOppositeTheme(theme === "#232424" ? "#fff" : "#232424");
+  }, [theme]);
   useEffect(() => {
     sessionStorage.setItem("users", JSON.stringify(users));
   }, [users]);
@@ -125,7 +131,7 @@ const ChatComponent: FC = () => {
         profilePic: user.avatarSvg,
       };
       setMsgs((p) => [...p, newMessage]);
-      Pop.play();
+      ForeignMessagePop.play();
       socket.emit("message", { ...newMessage, className: "Incoming" });
       inputRef.current.value = "";
       inputRef.current.focus();
@@ -260,19 +266,10 @@ const ChatComponent: FC = () => {
       setImgsOpen(false);
     }
   }, [usersOpen]);
-  const backgroundAnimation = useSpring({
-    from: {
-      opacity: 0,
-      backgroundColor: "white",
-    },
-    to: {
-      opacity: 1,
-      backgroundColor: theme,
-    },
-  });
+  const backgroundAnimation = useSpring({ backgroundColor: theme });
   const colorSetter = useSpring({
-    color: theme === "#232424" ? "#fff" : "#232424",
-    border: `1px solid ${theme === "#232424" ? "#fff" : "#232424"}`,
+    color: oppositeTheme,
+    border: `1px solid ${oppositeTheme}`,
     borderRight: "none",
   });
 
@@ -292,6 +289,8 @@ const ChatComponent: FC = () => {
       name: user.name,
       roomName: user.currentRoomName,
       profilePic: user.avatarSvg,
+      host: false,
+      id: socket.id,
     });
     socket.on("room-info", (newUsers: ChatUser[]) => {
       setUsers(newUsers);
@@ -323,129 +322,133 @@ const ChatComponent: FC = () => {
       //   },
       // ]);
     });
+
+    socket.on("host", () => setisHost(true));
+    socket.on("user-banned", (mems: ChatUser[], msg: string) => {
+      setUsers(mems);
+      alert(msg);
+    });
+    socket.on("ban", () => {
+      socket.disconnect(true);
+      setIsBanned(true);
+    });
   };
   return (
     <>
-      <ChatPage style={backgroundAnimation}>
-        <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
-        <RemainingChatArea style={colorSetter}>
-          <ChatArea
-            theme={theme === "#232424" ? "#fff" : "#232424"}
-            ref={ScrollRef}
-          >
-            <Scroll className='rstb' followButtonClassName='scrollButton'>
-              {msgs.length > 0 &&
-                msgs.map((msg) => (
-                  <MessageComponent
-                    {...msg}
-                    key={getRandomKey()}
-                    content={msg.content}
-                  />
-                ))}
-            </Scroll>
-          </ChatArea>
+      {isBanned ? (
+        <Banned />
+      ) : (
+        <>
+          <ChatPage style={backgroundAnimation}>
+            <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
+            <RemainingChatArea style={colorSetter}>
+              <ChatArea theme={oppositeTheme} ref={ScrollRef}>
+                <Scroll className='rstb' followButtonClassName='scrollButton'>
+                  {msgs.length > 0 &&
+                    msgs.map((msg) => (
+                      <MessageComponent
+                        {...msg}
+                        key={getRandomKey()}
+                        content={msg.content}
+                      />
+                    ))}
+                </Scroll>
+              </ChatArea>
 
-          {usersTransition((style, item) => {
-            return item ? (
-              <>
-                <UsersSection style={style}>
-                  <SidePanelHeaderComponent onClose={() => setUsersOpen(false)}>
-                    <span> Users In Chat</span>
-                  </SidePanelHeaderComponent>
+              {usersTransition((style, item) => {
+                return item ? (
+                  <>
+                    <IsHostContext.Provider value={isHost}>
+                      <UsersSection style={style}>
+                        <SidePanelHeaderComponent
+                          onClose={() => setUsersOpen(false)}
+                        >
+                          <span> Users In Chat</span>
+                        </SidePanelHeaderComponent>
 
-                  <UsersPanelInfo
-                    users={users}
-                    theme={theme === "#232424" ? "#fff" : "#232424"}
-                  />
-                </UsersSection>
-              </>
-            ) : (
-              ""
-            );
-          })}
-          {shareTransition((style, item) => {
-            return item ? (
-              <SharePanel style={style}>
-                <SharePanelInfo
-                  onClose={() => setShareOpen(false)}
-                  theme={theme === "#232424" ? "#fff" : "#232424"}
-                  roomName={user.currentRoomName}
+                        <UsersPanelInfo
+                          users={users}
+                          theme={oppositeTheme}
+                          onBan={(user) => socket.emit("ban-user", user)}
+                        />
+                      </UsersSection>
+                    </IsHostContext.Provider>
+                  </>
+                ) : (
+                  ""
+                );
+              })}
+              {shareTransition((style, item) => {
+                return item ? (
+                  <SharePanel style={style}>
+                    <SharePanelInfo
+                      onClose={() => setShareOpen(false)}
+                      theme={oppositeTheme}
+                      roomName={user.currentRoomName}
+                    />
+                  </SharePanel>
+                ) : (
+                  ""
+                );
+              })}
+              {emojiTransition((style, item) => {
+                return item ? (
+                  <EmojiPanel style={style}>
+                    <SidePanelHeaderComponent
+                      onClose={() => setEmojiOpen(false)}
+                      style={{
+                        borderBottom: `1px solid ${oppositeTheme}`,
+                      }}
+                    >
+                      Emojis
+                    </SidePanelHeaderComponent>
+                    <MessageContext.Provider value={inputRef.current}>
+                      <EmojiPanelInfo />
+                    </MessageContext.Provider>
+                  </EmojiPanel>
+                ) : (
+                  ""
+                );
+              })}
+              {imagesTransition((style, item) => {
+                return item ? (
+                  <>
+                    <ImagesPanel style={style}>
+                      <SidePanelHeaderComponent
+                        onClose={() => setImgsOpen(false)}
+                        style={{
+                          borderBottom: `1px solid ${oppositeTheme}`,
+                        }}
+                      >
+                        Images
+                      </SidePanelHeaderComponent>
+                      <ImagesContent />
+                    </ImagesPanel>
+                  </>
+                ) : (
+                  ""
+                );
+              })}
+            </RemainingChatArea>
+
+            <MeetControls style={footerAndHeaderExpander}>
+              <form className='input' onSubmit={(e) => handleSubmit(e)}>
+                <input
+                  //@ts-ignore
+                  ref={inputRef}
+                  {...MeetInputAttributesConfig}
                 />
-              </SharePanel>
-            ) : (
-              ""
-            );
-          })}
-          {emojiTransition((style, item) => {
-            return item ? (
-              <EmojiPanel style={style}>
-                <SidePanelHeaderComponent
-                  onClose={() => setEmojiOpen(false)}
-                  style={{
-                    borderBottom: `1px solid ${
-                      theme === "#232424" ? "#fff" : "#232424"
-                    }`,
-                  }}
-                >
-                  Emojis
-                </SidePanelHeaderComponent>
-                <MessageContext.Provider value={inputRef.current}>
-                  <EmojiPanelInfo />
-                </MessageContext.Provider>
-              </EmojiPanel>
-            ) : (
-              ""
-            );
-          })}
-          {imagesTransition((style, item) => {
-            return item ? (
-              <>
-                <ImagesPanel style={style}>
-                  <SidePanelHeaderComponent
-                    onClose={() => setImgsOpen(false)}
-                    style={{
-                      borderBottom: `1px solid ${
-                        theme === "#232424" ? "#fff" : "#232424"
-                      }`,
-                    }}
-                  >
-                    Images
-                  </SidePanelHeaderComponent>
-                  <ImagesContent />
-                </ImagesPanel>
-              </>
-            ) : (
-              ""
-            );
-          })}
-        </RemainingChatArea>
-
-        <MeetControls style={footerAndHeaderExpander}>
-          <form className='input' onSubmit={(e) => handleSubmit(e)}>
-            <input
-              type='text'
-              name=''
-              id=''
-              spellCheck={false}
-              //@ts-ignore
-              ref={inputRef}
-              autoFocus
-              placeholder='Say Something ...'
-            />
-            <button type='submit'>
-              <BiSend />
-            </button>
-          </form>
-          <div className='icons'>
-            <Icons />
-          </div>
-        </MeetControls>
-      </ChatPage>
-      <ToastContainer
-        draggable={false}
-        pauseOnHover={false}
-        closeOnClick={false}
-      />
+                <button type='submit'>
+                  <BiSend />
+                </button>
+              </form>
+              <div className='icons'>
+                <Icons />
+              </div>
+            </MeetControls>
+          </ChatPage>
+        </>
+      )}
     </>
   );
 };

@@ -22,7 +22,7 @@ import {
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy } from "react-icons/md";
-
+import { IsHostContext } from "./ChatComponent";
 import {
   EmojiPanel,
   MeetInfo,
@@ -36,6 +36,8 @@ import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
 import Emojis from "../Images/Accumulator";
 import { MessageContext } from "./ChatComponent";
 import { BiSad } from "react-icons/bi";
+import { HiOutlineBan } from "react-icons/hi";
+import { SelfClientContext } from "../App";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
@@ -74,26 +76,49 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   );
 });
 
-export const UsersPanelInfo: FC<UsersInChatProps> = memo(({ theme, users }) => {
-  return (
-    <>
-      <div
-        className='length'
-        style={{
-          borderTop: `1px solid ${theme}`,
-        }}
-      >
-        Number Of Users :{users.length}
-      </div>
-      {users.map((user) => (
-        <User theme={theme} key={getRandomKey()}>
-          {parse(user.profilePic)}
-          <h2>{user.name}</h2>
-        </User>
-      ))}
-    </>
-  );
-});
+export const UsersPanelInfo: FC<UsersInChatProps> = memo(
+  ({ theme, users, onBan }) => {
+    const isHost = useContext(IsHostContext);
+    const { name } = useContext(SelfClientContext)[0];
+    return (
+      <>
+        <div
+          className='length'
+          style={{
+            borderTop: `1px solid ${theme}`,
+          }}
+        >
+          Number Of Users :{users.length}
+        </div>
+        {users.map((user) => {
+          if (isHost) {
+            return (
+              <User theme={theme} key={getRandomKey()}>
+                {parse(user.profilePic)}
+                <h2>{user.name}</h2>
+                {user.name === name ? (
+                  ""
+                ) : (
+                  <HiOutlineBan
+                    className='ban__icon'
+                    onClick={() => onBan(user.name)}
+                  />
+                )}
+              </User>
+            );
+          } else {
+            return (
+              <User theme={theme} key={getRandomKey()}>
+                {parse(user.profilePic)}
+                <h2>{user.name}</h2>
+              </User>
+            );
+          }
+        })}
+      </>
+    );
+  }
+);
 
 export const SharePanelInfo: FC<ShareProps> = memo(
   ({ roomName, theme, onClose }) => {

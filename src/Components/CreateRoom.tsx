@@ -20,8 +20,8 @@ import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
 import AvatarsComponent from "./Avatars";
-import { constants, getRandomKey, maxAvatarType, user } from "../Constants";
-import { AiOutlineReload } from "react-icons/ai";
+import { constants, maxAvatarType, user } from "../Constants";
+
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
 import { toast, ToastContainer } from "react-toastify";
@@ -84,14 +84,14 @@ const CreateRoom: FunctionalComponent = () => {
   }, [maxAvatarIndex]);
 
   function handleSubmit(e: FormEvent): void {
-    setisFetching(true);
     e.preventDefault();
     if (name && room && name.trim() && room.trim()) {
       if (room.includes(" ")) {
         toast.error("Room names can't have a space");
       } else {
+        setisFetching(true);
         socket.emit("rooms");
-        socket.on("rooms-back", (rooms: any) => {
+        socket.on("rooms-back", (rooms: any[]) => {
           const particularRoom = rooms.find((r: any) => r.name === room);
           setisFetching(false);
           if (particularRoom) {
@@ -99,6 +99,7 @@ const CreateRoom: FunctionalComponent = () => {
             //@ts-ignore
             socket.removeAllListeners("rooms-back");
           } else {
+            setisFetching(false);
             const newUser: user = {
               avatarSvg: currentAvatar,
               name: name,
@@ -111,6 +112,7 @@ const CreateRoom: FunctionalComponent = () => {
         });
       }
     } else {
+      setisFetching(false);
       toast.error("Invalid Username Or Room Name !");
     }
   }
@@ -237,11 +239,7 @@ const CreateRoom: FunctionalComponent = () => {
               )}
             </AvatarActionBtns>
           </Modal>
-          <ToastContainer
-            draggable={false}
-            pauseOnHover={false}
-            closeOnClick={false}
-          />
+
           <Link to='/'>
             <Button>
               <span>Back To Home</span> <FaHome />

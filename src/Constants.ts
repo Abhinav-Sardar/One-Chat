@@ -1,4 +1,4 @@
-import React, { CSSProperties, FC, ReactChildren, ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { useSpring, useTransition } from "react-spring";
 
 const devUrl = "http://localhost:1919/";
@@ -43,6 +43,8 @@ export type maxAvatarType = {
 export type ChatUser = {
   profilePic: string;
   name: string;
+  host: boolean;
+  id: string;
 };
 export const userInfoStorageKey: string = "one-chat-user-info";
 
@@ -54,6 +56,7 @@ export interface HeaderProps {
 export interface UsersInChatProps {
   theme: string;
   users: ChatUser[];
+  onBan: (user: string) => void;
 }
 
 export interface ShareProps {
@@ -81,23 +84,6 @@ export function getRandomKey(): string {
   return str;
 }
 
-export const Animations = {
-  config: {
-    from: {
-      opacity: 0,
-      width: "0vw",
-    },
-    enter: {
-      opacity: 1,
-      width: "25vw",
-      delay: 150,
-    },
-    leave: {
-      opacity: 0,
-      width: "0vw",
-    },
-  },
-};
 export const goFullScreen: () => void = () => {
   const root = document.getElementById("root")!;
   if (root.requestFullscreen) {
@@ -199,4 +185,44 @@ export const fetchPexelsApi: (url: string) => any = async (url: string) => {
   });
   const result = await res.json();
   return result;
+};
+
+export const ToastContainerConfig = {
+  draggable: false,
+  pauseOnHover: false,
+  closeOnClick: false,
+};
+
+export const MeetInputAttributesConfig = {
+  autoFocus: true,
+  placeholder: "Say Something ...",
+  type: "text",
+  name: "",
+  id: "",
+  spellCheck: false,
+};
+
+export const FooterExpanderConfig = {
+  from: {
+    width: "0vw",
+  },
+  to: {
+    width: "100vw",
+  },
+};
+
+export const config = {
+  from: {
+    opacity: 0,
+    width: "0vw",
+  },
+  enter: {
+    opacity: 1,
+    width: "25vw",
+    delay: 150,
+  },
+  leave: {
+    opacity: 0,
+    width: "0vw",
+  },
 };

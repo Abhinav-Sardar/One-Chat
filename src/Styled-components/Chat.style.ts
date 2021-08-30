@@ -145,7 +145,7 @@ export const User = styled.section`
   width: 100%;
   text-align: center;
   border-top: 1px solid ${(pr) => pr.theme};
-  svg {
+  svg:not(.ban__icon) {
     height: 4vw;
     width: 4vw;
     border-radius: 50%;
@@ -154,6 +154,10 @@ export const User = styled.section`
   h2 {
     font-size: 1.3vw;
     font-family: "Quicksand", sans-serif;
+  }
+  .ban__icon {
+    color: red;
+    font-size: 2vw;
   }
 `;
 

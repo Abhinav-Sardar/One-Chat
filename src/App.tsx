@@ -4,13 +4,14 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
 
 import CreateRoom from "./Components/CreateRoom";
-import { accentColorChecker, user } from "./Constants";
+import { accentColorChecker, ToastContainerConfig, user } from "./Constants";
 import Customize from "./Components/Customize";
 import "react-responsive-modal/styles.css";
 import Chat from "./Components/Chat";
 import JoinRoom from "./Components/JoinRoom";
 import { useSpring, animated } from "react-spring";
-
+import { ToastContainer } from "react-toastify";
+import Banned from "./Components/Banned";
 export const SelfClientContext = createContext<[user, any]>([
   {
     avatarSvg: "",
@@ -57,6 +58,7 @@ const App: FC = () => {
                 <Chat />
               </animated.div>
             </Route>
+
             <Route path='/*'>
               <animated.div style={fade}>
                 <NotFoundPage />
@@ -65,6 +67,7 @@ const App: FC = () => {
           </Switch>
         </Router>
       </SelfClientContext.Provider>
+      <ToastContainer {...ToastContainerConfig} />
     </Fragment>
   );
 };

@@ -13,7 +13,10 @@ import { constants } from "../Constants";
 import { AiOutlineSave } from "react-icons/ai";
 import { FaCheck, FaLightbulb } from "react-icons/fa";
 import { useSpring } from "react-spring";
-import { BsReverseLayoutSidebarInsetReverse } from "react-icons/bs";
+import {
+  BsArrowRepeat,
+  BsReverseLayoutSidebarInsetReverse,
+} from "react-icons/bs";
 
 const Customize: FC = () => {
   const [color, setColor] = useState<string>(constants.appAccentColor);
@@ -33,6 +36,7 @@ const Customize: FC = () => {
   useEffect(() => {
     document.title = "Customize";
   }, []);
+
   return (
     <CustomizePage style={bgColorChanger}>
       <Title>Customize</Title>
@@ -75,6 +79,10 @@ const Customize: FC = () => {
 
         <Button onClick={() => window.location.assign("/")}>
           <span>Back To Home</span> <FaHome />
+        </Button>
+        <Button onClick={() => setColor("#bd14ca")}>
+          <span>Reset Color </span>
+          <BsArrowRepeat id='reset' />
         </Button>
       </ButtonsWrapper>
     </CustomizePage>

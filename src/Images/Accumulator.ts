@@ -4,6 +4,8 @@ import GreenApple from "./GreenApple.png";
 import Heart from "./Heart.png";
 import Smile from "./Smile.png";
 //@ts-ignore
+import ForeignPop from "./ForeignPop.mp3";
+//@ts-ignore
 import PopSound from "./Pop Sound 🎉.mp3";
 
 const obj = {
@@ -31,3 +33,4 @@ const obj = {
 
 export default obj;
 export const Pop = new Audio(PopSound);
+export const ForeignMessagePop = new Audio(ForeignPop);
