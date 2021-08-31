@@ -20,7 +20,13 @@ import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
 import AvatarsComponent from "./Avatars";
-import { constants, maxAvatarType, user } from "../Constants";
+import {
+  constants,
+  IsRoomThere,
+  maxAvatarType,
+  user,
+  validator,
+} from "../Constants";
 
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
@@ -46,7 +52,6 @@ const CreateRoom: FunctionalComponent = () => {
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
-  const [isFetching, setisFetching] = useState<boolean>(false);
   useEffect(() => {
     if (isModalOpen === true) {
       //@ts-ignore
@@ -85,35 +90,26 @@ const CreateRoom: FunctionalComponent = () => {
 
   function handleSubmit(e: FormEvent): void {
     e.preventDefault();
-    if (name && room && name.trim() && room.trim()) {
-      if (room.includes(" ")) {
-        toast.error("Room names can't have a space");
-      } else {
-        setisFetching(true);
-        socket.emit("rooms");
-        socket.on("rooms-back", (rooms: any[]) => {
-          const particularRoom = rooms.find((r: any) => r.name === room);
-          setisFetching(false);
-          if (particularRoom) {
-            toast.error(constants.roomAlreadyExistsError);
-            //@ts-ignore
-            socket.removeAllListeners("rooms-back");
-          } else {
-            setisFetching(false);
-            const newUser: user = {
-              avatarSvg: currentAvatar,
-              name: name,
-              currentRoomName: room,
-            };
-            socket.disconnect();
-            setUser(newUser);
-            history.push(`/room/${room}`);
-          }
-        });
-      }
-    } else {
-      setisFetching(false);
-      toast.error("Invalid Username Or Room Name !");
+    const res = validator(name, room);
+    if (res) {
+      socket.emit("rooms");
+      socket.on("rooms-back", (rooms: any[]) => {
+        //@ts-ignore
+        socket.removeAllListeners("rooms-back");
+        if (IsRoomThere(rooms, room)) {
+          toast.error(constants.roomAlreadyExistsError);
+        } else {
+          console.log("You are free to proceeed");
+          const newUser: user = {
+            avatarSvg: currentAvatar,
+            currentRoomName: room,
+            name: name,
+          };
+          setUser(newUser);
+          socket.disconnect(true);
+          history.push(`/room/${room}`);
+        }
+      });
     }
   }
 
@@ -136,119 +132,116 @@ const CreateRoom: FunctionalComponent = () => {
 
   return (
     <>
-      {!isFetching ? (
-        <Page style={appear}>
-          <h1 className='purpose'>Create</h1>
-          <Form onSubmit={(e) => handleSubmit(e)}>
-            <div className='field'>
-              <span>Name</span>
-              <br />
-              <input
-                type='text'
-                /* @ts-ignore */
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                spellCheck
-                required
-                placeholder='Your Name'
-                autoFocus
-              />
-            </div>
-            <div className='field'>
-              <span>Room Name</span>
-              <br />
-              <input
-                type='text'
-                //@ts-ignore
-                value={room}
-                onChange={(e) => setRoom(e.target.value)}
-                spellCheck
-                required
-                placeholder='Name Your Room'
-              />
-            </div>
-            <div className='field'>
-              <span>Avatar</span>
-              {currentAvatar && parse(currentAvatar)}
-              <br />
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className='choose__avatar'
-                type='button'
-              >
-                <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
-              </button>
-            </div>
-            <button type='submit' className='submit'>
-              Create Room
-            </button>
-          </Form>
-          <Modal
-            open={isModalOpen}
-            styles={{
-              modal: {
-                background: constants.appAccentColor,
-                color: "white",
-              },
-            }}
-            onClose={() => handleClose()}
-            closeIcon={
-              <FaTimes
-                fill='red'
-                fontSize={"2vw"}
-                style={{
-                  margin: "1vh 0",
-                }}
-              />
-            }
-          >
-            <AvatarActionBtns>
-              <h1>Choose your avatar</h1>
-            </AvatarActionBtns>
-            <AvatarsWrapper>
-              <AvatarsComponent
-                avatars={avatars}
-                currentAvatar={currentAvatar}
-                setCurrentAvatar={setCurrentAvatar}
-              />
-            </AvatarsWrapper>
+      <Page style={appear}>
+        <h1 className='purpose'>Create</h1>
+        <Form onSubmit={(e) => handleSubmit(e)}>
+          <div className='field'>
+            <span>Name</span>
             <br />
-            <AvatarActionBtns>
-              {loading ? (
-                <h2 className='loader'>Loading . . .</h2>
-              ) : (
-                <>
-                  {maxAvatarIndex.number < 300 ? (
-                    <>
-                      <button
-                        onClick={() => {
-                          setLoading(true);
-                          setMaxAvatar((prev) => {
-                            return { isNew: false, number: prev.number + 24 };
-                          });
-                        }}
-                      >
-                        <span>Load More</span>
-                        <HiOutlineArrowDown />
-                      </button>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </>
-              )}
-            </AvatarActionBtns>
-          </Modal>
+            <input
+              type='text'
+              /* @ts-ignore */
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              spellCheck
+              required
+              placeholder='Your Name'
+              autoFocus
+            />
+          </div>
+          <div className='field'>
+            <span>Room Name</span>
+            <br />
+            <input
+              type='text'
+              //@ts-ignore
+              value={room}
+              onChange={(e) => setRoom(e.target.value)}
+              spellCheck
+              required
+              placeholder='Name Your Room'
+            />
+          </div>
+          <div className='field'>
+            <span>Avatar</span>
+            {currentAvatar && parse(currentAvatar)}
+            <br />
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className='choose__avatar'
+              type='button'
+            >
+              <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
+            </button>
+          </div>
+          <button type='submit' className='submit'>
+            Create Room
+          </button>
+        </Form>
+        <Modal
+          open={isModalOpen}
+          styles={{
+            modal: {
+              background: constants.appAccentColor,
+              color: "white",
+            },
+          }}
+          onClose={() => handleClose()}
+          closeIcon={
+            <FaTimes
+              fill='red'
+              fontSize={"2vw"}
+              style={{
+                margin: "1vh 0",
+              }}
+            />
+          }
+        >
+          <AvatarActionBtns>
+            <h1>Choose your avatar</h1>
+          </AvatarActionBtns>
+          <AvatarsWrapper>
+            <AvatarsComponent
+              avatars={avatars}
+              currentAvatar={currentAvatar}
+              setCurrentAvatar={setCurrentAvatar}
+            />
+          </AvatarsWrapper>
+          <br />
+          <AvatarActionBtns>
+            {loading ? (
+              <h2 className='loader'>Loading . . .</h2>
+            ) : (
+              <>
+                {maxAvatarIndex.number < 300 ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        setLoading(true);
+                        setMaxAvatar((prev) => {
+                          return { isNew: false, number: prev.number + 24 };
+                        });
+                      }}
+                    >
+                      <span>Load More</span>
+                      <HiOutlineArrowDown />
+                    </button>
+                  </>
+                ) : (
+                  ""
+                )}
+              </>
+            )}
+          </AvatarActionBtns>
+        </Modal>
 
-          <Link to='/'>
-            <Button>
-              <span>Back To Home</span> <FaHome />
-            </Button>{" "}
-          </Link>
-        </Page>
-      ) : (
-        <PleaseWait />
-      )}
+        <Link to='/'>
+          <Button>
+            <span>Back To Home</span> <FaHome />
+          </Button>{" "}
+        </Link>
+      </Page>
+      )
     </>
   );
 };

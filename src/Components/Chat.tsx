@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, FormEvent } from "react";
 import { FC } from "react";
 import { useParams } from "react-router-dom";
-import { user, userInfoStorageKey } from "../Constants";
+
 import ChatComponent from "./ChatComponent";
 import { SelfClientContext } from "../App";
 
@@ -9,33 +9,27 @@ import JoinRoom from "./JoinRoom";
 
 const Chat: FC = () => {
   const [user, _] = useContext(SelfClientContext);
+  const [infoThere, setInfoThere] = useState<boolean>(false);
   //@ts-ignore
   const { roomId } = useParams();
-  const [userStatus, setStatus] = useState<"NoInfo" | null | user | "AllFine">(
-    null
-  );
-
   useEffect(() => {
     if (
       user.avatarSvg !== "" &&
-      user.currentRoomName !== "" &&
-      user.name !== ""
+      user.name !== "" &&
+      user.currentRoomName !== ""
     ) {
-      setStatus("AllFine");
+      setInfoThere(true);
     } else {
-      setStatus("NoInfo");
+      setInfoThere(false);
     }
-  }, [user.avatarSvg, user.currentRoomName, user.name]);
+  }, []);
   //@ts-ignore
   return (
     <>
-      {userStatus === "NoInfo" ? (
-        //@ts-ignore
-        <JoinRoom isAuth={true} roomName={roomId} />
-      ) : userStatus === "AllFine" ? (
+      {infoThere ? (
         <ChatComponent />
       ) : (
-        ""
+        <JoinRoom isAuth={true} roomName={roomId} />
       )}
     </>
   );

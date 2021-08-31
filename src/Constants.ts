@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { useSpring, useTransition } from "react-spring";
+import { toast } from "react-toastify";
 
 const devUrl = "http://localhost:1919/";
 const prodUrl = "https://one-chat-server.herokuapp.com";
@@ -225,4 +225,42 @@ export const config = {
     opacity: 0,
     width: "0vw",
   },
+};
+
+export const validator: (name: string, room: string) => boolean = (
+  name: string,
+  room: string
+) => {
+  let valueToBeReturned: boolean = false;
+  if (room && room.trim() && name && name.trim()) {
+    if (room.includes(" ")) {
+      toast.error("Room Names Cannot have spaces");
+      valueToBeReturned = false;
+    } else {
+      valueToBeReturned = true;
+    }
+  } else {
+    toast.error("Invalid Name Or Room Name");
+    valueToBeReturned = false;
+  }
+  return valueToBeReturned;
+};
+
+type room = {
+  name: string;
+  members: ChatUser[];
+  public?: boolean;
+};
+export const IsRoomThere: (rooms: room[], searchKey: string) => boolean = (
+  rooms: room[],
+  searchKey: string
+) => {
+  let valueToBeReturned: boolean = false;
+  const doesRoomExist = rooms.find((r) => r.name === searchKey);
+  if (doesRoomExist) {
+    valueToBeReturned = true;
+  } else {
+    valueToBeReturned = false;
+  }
+  return valueToBeReturned;
 };

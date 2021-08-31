@@ -36,8 +36,6 @@ function ThisHeader(): JSX.Element {
         <IoChatboxSharp fill={constants.appAccentColor} fontSize={"3vw"} />
         <span>One-Chat</span>
       </div>
-
-      <span className='tagline'>Best place for One Time Chats</span>
     </StyledStickyHeader>
   );
 }

@@ -43,25 +43,6 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
   const [minutes, setMinutes] = useState<number>(new Date().getMinutes());
   const [seconds, setSeconds] = useState<string>("");
-  function setTime() {
-    setInterval(() => {
-      const date = new Date();
-
-      setHours(date.getHours());
-      setMinutes(date.getMinutes());
-    }, 2000);
-    setInterval(() => {
-      const date = new Date();
-      const dateSeconds = date.getSeconds();
-      if (String(dateSeconds).length === 1) {
-        setSeconds(`0${dateSeconds}`);
-      } else {
-        setSeconds(String(dateSeconds));
-      }
-    }, 1000);
-  }
-
-  setTime();
 
   return (
     <MeetInfo style={{ color: constants.appAccentColor }}>
@@ -80,6 +61,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
   ({ theme, users, onBan }) => {
     const isHost = useContext(IsHostContext);
     const { name } = useContext(SelfClientContext)[0];
+
     return (
       <>
         <div
