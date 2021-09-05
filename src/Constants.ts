@@ -57,6 +57,7 @@ export interface UsersInChatProps {
   theme: string;
   users: ChatUser[];
   onBan: (user: string) => void;
+  isHost: boolean;
 }
 
 export interface ShareProps {
@@ -160,7 +161,7 @@ export const ReturnFormattedDate: (date: Date) => string = (date: Date) => {
 export type Message = {
   profilePic?: string;
   accentColor?: string;
-  content: string | File;
+  content: string;
   type: "text" | "image" | "tooltip" | "reply";
   created_at?: Date;
   author?: string;
@@ -246,7 +247,7 @@ export const validator: (name: string, room: string) => boolean = (
   return valueToBeReturned;
 };
 
-type room = {
+export type room = {
   name: string;
   members: ChatUser[];
   public?: boolean;
@@ -263,4 +264,11 @@ export const IsRoomThere: (rooms: room[], searchKey: string) => boolean = (
     valueToBeReturned = false;
   }
   return valueToBeReturned;
+};
+
+export type contentType = {
+  usersOpen: boolean;
+  shareOpen: boolean;
+  emojiOpen: boolean;
+  imgsOpen: boolean;
 };

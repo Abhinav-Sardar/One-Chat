@@ -178,24 +178,7 @@ a {
   }
 }
 
-.upload-content {
-  margin-top:3vw ; 
-  width:100% ; 
-  text-align:center ;
-  img {
-    width:40% ; 
-    height:15vw ;
-    border:1px solid white ; 
-  } 
-   > * {
-     margin:1.5vw 0 ;
-   }
-   h1 {
-     font-family:"Quicksand", sans-serif;
-   } ; 
 
-
-}
 * {
      scrollbar-width: auto;
      scrollbar-color: ${constants.appAccentColor} lightgray;

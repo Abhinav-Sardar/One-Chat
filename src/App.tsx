@@ -11,7 +11,7 @@ import Chat from "./Components/Chat";
 import JoinRoom from "./Components/JoinRoom";
 import { useSpring, animated } from "react-spring";
 import { ToastContainer } from "react-toastify";
-import Banned from "./Components/Banned";
+
 export const SelfClientContext = createContext<[user, any]>([
   {
     avatarSvg: "",
@@ -59,7 +59,7 @@ const App: FC = () => {
               </animated.div>
             </Route>
 
-            <Route path='/*'>
+            <Route path='*'>
               <animated.div style={fade}>
                 <NotFoundPage />
               </animated.div>

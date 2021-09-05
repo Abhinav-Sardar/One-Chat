@@ -26,6 +26,7 @@ import {
   maxAvatarType,
   user,
   validator,
+  room,
 } from "../Constants";
 
 import { HiOutlineArrowDown } from "react-icons/hi";
@@ -36,7 +37,6 @@ import { Link, useHistory } from "react-router-dom";
 import { animated, useSpring, useSprings } from "react-spring";
 import PleaseWait from "./PleaseWait";
 //@ts-ignore
-const socket = io.connect(constants.serverName);
 
 const CreateRoom: FunctionalComponent = () => {
   const history = useHistory();
@@ -89,14 +89,19 @@ const CreateRoom: FunctionalComponent = () => {
   }, [maxAvatarIndex]);
 
   function handleSubmit(e: FormEvent): void {
+    //@ts-ignore
+    const socket = io.connect(constants.serverName);
+    console.log(socket);
     e.preventDefault();
     const res = validator(name, room);
     if (res) {
       socket.emit("rooms");
-      socket.on("rooms-back", (rooms: any[]) => {
+      socket.on("rooms-back", (rooms: room[]) => {
         //@ts-ignore
         socket.removeAllListeners("rooms-back");
         if (IsRoomThere(rooms, room)) {
+          socket.disconnect(true);
+
           toast.error(constants.roomAlreadyExistsError);
         } else {
           console.log("You are free to proceeed");

@@ -145,7 +145,7 @@ export const User = styled.section`
   width: 100%;
   text-align: center;
   border-top: 1px solid ${(pr) => pr.theme};
-  svg:not(.ban__icon) {
+  svg:not(.ban__icon, .host__crown) {
     height: 4vw;
     width: 4vw;
     border-radius: 50%;
@@ -158,6 +158,10 @@ export const User = styled.section`
   .ban__icon {
     color: red;
     font-size: 2vw;
+  }
+  .host__crown {
+    color: #efc623;
+    font-size: 2.5vw;
   }
 `;
 
@@ -192,7 +196,9 @@ export const ChatPage = styled(animated.div)`
 `;
 
 export const SharePanel = styled(animated.aside)`
+  flex-direction: column;
   overflow-y: auto;
+
   h3 {
     width: 100%;
     text-align: center;
@@ -377,3 +383,5 @@ export const ImagesPanel = styled(animated.aside)`
     }
   }
 `;
+
+export const Message = styled(animated.section)``;

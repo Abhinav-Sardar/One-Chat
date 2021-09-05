@@ -22,22 +22,24 @@ import {
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy } from "react-icons/md";
-import { IsHostContext } from "./ChatComponent";
+
 import {
   EmojiPanel,
   MeetInfo,
+  Message as MessageWrapper,
   SidePanelHeader,
   User,
 } from "../Styled-components/Chat.style";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
-import { FaTimes, FaSearch, FaSpinner } from "react-icons/fa";
+import { FaTimes, FaSearch, FaSpinner, FaCrown } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
 import Emojis from "../Images/Accumulator";
 import { MessageContext } from "./ChatComponent";
 import { BiSad } from "react-icons/bi";
 import { HiOutlineBan } from "react-icons/hi";
 import { SelfClientContext } from "../App";
+import { useSpring } from "react-spring";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
@@ -58,8 +60,7 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
 });
 
 export const UsersPanelInfo: FC<UsersInChatProps> = memo(
-  ({ theme, users, onBan }) => {
-    const isHost = useContext(IsHostContext);
+  ({ theme, users, onBan, isHost }) => {
     const { name } = useContext(SelfClientContext)[0];
 
     return (
@@ -86,6 +87,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
                     onClick={() => onBan(user.name)}
                   />
                 )}
+                {user.host === true ? <FaCrown className='host__crown' /> : ""}
               </User>
             );
           } else {
@@ -93,6 +95,14 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
               <User theme={theme} key={getRandomKey()}>
                 {parse(user.profilePic)}
                 <h2>{user.name}</h2>
+                {user.host === true ? (
+                  <FaCrown
+                    className='host__crown'
+                    data-tip={`${user.name} is host`}
+                  />
+                ) : (
+                  ""
+                )}
               </User>
             );
           }
@@ -335,18 +345,20 @@ const FoodComponent: FC = memo(() => {
 
 //@ts-ignore
 export const MessageComponent: FC<Message> = memo((props) => {
-  const imgRef = useRef();
+  console.log("nr2n");
   if (props.type === "text") {
     return (
-      <section className={props.className}>
+      <MessageWrapper className={props.className}>
         <div>
           <div className='info'>
             {/* @ts-ignore */}
             {parse(props.profilePic)}
             <span>
               {/* @ts-ignore */}
-              {props.className === "Outgoing" ? "You" : props.author} -{" "}
-              {ReturnFormattedDate(props.created_at)}
+              {props.className === "Outgoing"
+                ? `${props.author} (You)`
+                : props.author}{" "}
+              - {ReturnFormattedDate(props.created_at)}
             </span>
           </div>
           <div
@@ -358,7 +370,7 @@ export const MessageComponent: FC<Message> = memo((props) => {
             {props.content}
           </div>
         </div>
-      </section>
+      </MessageWrapper>
     );
   } else if (props.type === "image") {
     return "";

@@ -97,6 +97,55 @@ const ChatComponent: FC = () => {
   const [oppositeTheme, setOppositeTheme] = useState<"#fff" | "#232424">(
     "#232424"
   );
+  const socketCode = () => {
+    socket.emit("new-user", {
+      name: user.name,
+      roomName: user.currentRoomName,
+      profilePic: user.avatarSvg,
+      host: false,
+      id: socket.id,
+    });
+    socket.on("room-info", (newUsers: ChatUser[]) => {
+      setUsers(newUsers);
+    });
+    socket.on("user-left", (leftUser: string, newUsers: ChatUser[]) => {
+      setUsers(newUsers);
+    });
+    socket.on("message", (newMessage: Message) => {
+      const parsed: ChatUser[] = JSON.parse(sessionStorage.getItem("users"));
+      setMsgs((p) => [
+        ...p,
+        {
+          ...newMessage,
+          created_at: new Date(newMessage.created_at),
+          profilePic: parsed.find((p) => p.name === newMessage.author)
+            .profilePic,
+        },
+      ]);
+      Pop.play();
+    });
+    socket.on("new-user-join", (mems: ChatUser[], user: string) => {
+      setUsers(mems);
+      // setMsgs((p) => [
+      //   ...p,
+      //   {
+      //     className: "Entered",
+      //     content: `${user} Joined The Chat.`,
+      //     type: "tooltip",
+      //   },
+      // ]);
+    });
+
+    socket.on("host", () => setisHost(true));
+    socket.on("user-banned", (mems: ChatUser[], msg: string) => {
+      setUsers(mems);
+      alert(msg);
+    });
+    socket.on("ban", () => {
+      socket.disconnect(true);
+      setIsBanned(true);
+    });
+  };
   useEffect(() => {
     console.log(users);
   }, [users]);
@@ -132,7 +181,11 @@ const ChatComponent: FC = () => {
       };
       setMsgs((p) => [...p, newMessage]);
       ForeignMessagePop.play();
-      socket.emit("message", { ...newMessage, className: "Incoming" });
+      socket.emit("message", {
+        ...newMessage,
+        className: "Incoming",
+        profilePic: "",
+      });
       inputRef.current.value = "";
       inputRef.current.focus();
     }
@@ -284,55 +337,6 @@ const ChatComponent: FC = () => {
     socket.disconnect(true);
   };
 
-  const socketCode = () => {
-    socket.emit("new-user", {
-      name: user.name,
-      roomName: user.currentRoomName,
-      profilePic: user.avatarSvg,
-      host: false,
-      id: socket.id,
-    });
-    socket.on("room-info", (newUsers: ChatUser[]) => {
-      setUsers(newUsers);
-    });
-    socket.on("user-left", (leftUser: string, newUsers: ChatUser[]) => {
-      setUsers(newUsers);
-    });
-    socket.on("message", (newMessage: Message) => {
-      const parsed: ChatUser[] = JSON.parse(sessionStorage.getItem("users"));
-      setMsgs((p) => [
-        ...p,
-        {
-          ...newMessage,
-          created_at: new Date(newMessage.created_at),
-          profilePic: parsed.find((p) => p.name === newMessage.author)
-            .profilePic,
-        },
-      ]);
-      Pop.play();
-    });
-    socket.on("new-user-join", (mems: ChatUser[], user: string) => {
-      setUsers(mems);
-      // setMsgs((p) => [
-      //   ...p,
-      //   {
-      //     className: "Entered",
-      //     content: `${user} Joined The Chat.`,
-      //     type: "tooltip",
-      //   },
-      // ]);
-    });
-
-    socket.on("host", () => setisHost(true));
-    socket.on("user-banned", (mems: ChatUser[], msg: string) => {
-      setUsers(mems);
-      alert(msg);
-    });
-    socket.on("ban", () => {
-      socket.disconnect(true);
-      setIsBanned(true);
-    });
-  };
   return (
     <>
       {isBanned ? (
@@ -367,6 +371,7 @@ const ChatComponent: FC = () => {
                         </SidePanelHeaderComponent>
 
                         <UsersPanelInfo
+                          isHost={isHost}
                           users={users}
                           theme={oppositeTheme}
                           onBan={(user) => socket.emit("ban-user", user)}

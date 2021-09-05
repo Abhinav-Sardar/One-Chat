@@ -26,6 +26,7 @@ const Customize: FC = () => {
   function handleSave() {
     setSaved(!saved);
     localStorage.setItem("one-chat-accent-color", color);
+    constants.appAccentColor = color;
     setTimeout(() => {
       setSaved(false);
     }, 1000);

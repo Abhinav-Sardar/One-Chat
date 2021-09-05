@@ -39,7 +39,6 @@ import Avatars from "./Avatars";
 import ReactTooltip from "react-tooltip";
 import ChatComponent from "./ChatComponent";
 //@ts-ignore
-const socket = io.connect(constants.serverName);
 const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   isAuth,
   roomName,
@@ -95,6 +94,8 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   }, [avatars]);
 
   function handleSubmit(e: FormEvent): void {
+    //@ts-ignore
+    const socket = io.connect(constants.serverName);
     e.preventDefault();
     const newRoom = isAuth ? roomName : room;
     const res = validator(name, newRoom);
@@ -119,6 +120,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             setIsDone(true);
           }
         } else {
+          socket.disconnect(true);
           toast.error(constants.roomDoesntExistError);
         }
       });
