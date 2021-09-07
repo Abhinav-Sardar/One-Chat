@@ -39,6 +39,8 @@ import Avatars from "./Avatars";
 import ReactTooltip from "react-tooltip";
 import ChatComponent from "./ChatComponent";
 //@ts-ignore
+const socket = io(constants.serverName);
+
 const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   isAuth,
   roomName,
@@ -94,14 +96,16 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   }, [avatars]);
 
   function handleSubmit(e: FormEvent): void {
-    //@ts-ignore
-    const socket = io.connect(constants.serverName);
+    if (socket.disconnected) {
+      socket.connect();
+    }
     e.preventDefault();
     const newRoom = isAuth ? roomName : room;
     const res = validator(name, newRoom);
     if (res) {
       socket.emit("rooms");
       socket.on("rooms-back", (rooms: any[]) => {
+        //@ts-ignore
         socket.removeAllListeners("rooms-back");
         const doesRoomExist = IsRoomThere(rooms, newRoom);
         if (doesRoomExist) {
@@ -112,6 +116,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             avatarSvg: currentAvatar,
           };
           setUser(newUser);
+          //@ts-ignore
           socket.disconnect(true);
 
           if (!isAuth) {
@@ -120,6 +125,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             setIsDone(true);
           }
         } else {
+          //@ts-ignore
           socket.disconnect(true);
           toast.error(constants.roomDoesntExistError);
         }
@@ -253,12 +259,15 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
               )}
             </AvatarActionBtns>
           </Modal>
-
-          <Link to='/'>
-            <Button>
-              <span>Back To Home</span> <FaHome />
-            </Button>{" "}
-          </Link>
+          <Button
+            onClick={() => {
+              //@ts-ignore
+              socket.disconnect(true);
+              history.push("/");
+            }}
+          >
+            <span>Back To Home</span> <FaHome />
+          </Button>{" "}
         </Page>
       )}
     </>

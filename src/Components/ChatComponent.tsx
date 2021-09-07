@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { memo, useContext } from "react";
 import {
   FC,
   useState,
@@ -18,7 +18,7 @@ import { useHistory } from "react-router";
 import io from "socket.io-client";
 //@ts-ignore
 import Scroll from "react-scroll-to-bottom";
-
+import { RiFileGifLine, RiFileGifFill } from "react-icons/ri";
 import {
   FaRegSmile,
   FaSmile,
@@ -36,7 +36,6 @@ import { toast } from "react-toastify";
 import ReactTooltip from "react-tooltip";
 import { SelfClientContext } from "../App";
 import {
-  user,
   ChatUser,
   exitFullScreen,
   goFullScreen,
@@ -56,6 +55,7 @@ import {
   MeetControls,
   EmojiPanel,
   ImagesPanel,
+  GifPanel,
 } from "../Styled-components/Chat.style";
 
 import {
@@ -76,7 +76,6 @@ import Banned from "./Banned";
 const socket = io.connect(constants.serverName);
 
 export const MessageContext = createContext<any>(null);
-export const IsHostContext = createContext<boolean>(false);
 const ChatComponent: FC = () => {
   const footerAndHeaderExpander = useSpring(FooterExpanderConfig);
 
@@ -87,6 +86,7 @@ const ChatComponent: FC = () => {
   const [isBanned, setIsBanned] = useState<boolean>(false);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const history = useHistory();
+  const [text, setText] = useState<string>("");
   const user = useContext(SelfClientContext)[0];
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [users, setUsers] = useState<ChatUser[]>([]);
@@ -97,14 +97,8 @@ const ChatComponent: FC = () => {
   const [oppositeTheme, setOppositeTheme] = useState<"#fff" | "#232424">(
     "#232424"
   );
+  const [gifsOpen, setGifsOpen] = useState<boolean>(false);
   const socketCode = () => {
-    socket.emit("new-user", {
-      name: user.name,
-      roomName: user.currentRoomName,
-      profilePic: user.avatarSvg,
-      host: false,
-      id: socket.id,
-    });
     socket.on("room-info", (newUsers: ChatUser[]) => {
       setUsers(newUsers);
     });
@@ -154,7 +148,17 @@ const ChatComponent: FC = () => {
     socketCode();
     setInterval(() => {
       setIsFullScreen(document.fullscreenElement ? true : false);
+      if (socket.disconnected) {
+        socket.connect();
+      }
     }, 500);
+    socket.emit("new-user", {
+      name: user.name,
+      roomName: user.currentRoomName,
+      profilePic: user.avatarSvg,
+      host: false,
+      id: socket.id,
+    });
   }, []);
   useEffect(() => {
     setOppositeTheme(theme === "#232424" ? "#fff" : "#232424");
@@ -163,10 +167,11 @@ const ChatComponent: FC = () => {
     sessionStorage.setItem("users", JSON.stringify(users));
   }, [users]);
   function handleSubmit(e: FormEvent): void {
+    console.log(text);
     e.preventDefault();
-    if (inputRef.current.value === "" || !inputRef.current.value.trim()) {
+    if (text === "" || !text.trim()) {
       toast.error("Invalid message!");
-    } else if (inputRef.current.value.length >= 500) {
+    } else if (text.length >= 500) {
       toast.error("Message Length Too Long !");
     } else {
       const newMessage: Message = {
@@ -174,7 +179,7 @@ const ChatComponent: FC = () => {
 
         created_at: new Date(),
         accentColor: constants.appAccentColor,
-        content: inputRef.current.value,
+        content: text,
         type: "text",
         className: "Outgoing",
         profilePic: user.avatarSvg,
@@ -186,7 +191,7 @@ const ChatComponent: FC = () => {
         className: "Incoming",
         profilePic: "",
       });
-      inputRef.current.value = "";
+      setText("");
       inputRef.current.focus();
     }
   }
@@ -221,6 +226,19 @@ const ChatComponent: FC = () => {
             onClick={() => {
               setImgsOpen(true);
             }}
+          />
+        )}
+        {!gifsOpen ? (
+          <RiFileGifLine
+            data-tip='Open Gifs'
+            onClick={() => {
+              setGifsOpen(true);
+            }}
+          />
+        ) : (
+          <RiFileGifFill
+            onClick={() => setGifsOpen(false)}
+            data-tip='Close Gifs'
           />
         )}
 
@@ -295,13 +313,23 @@ const ChatComponent: FC = () => {
       setShareOpen(false);
       setUsersOpen(false);
       setImgsOpen(false);
+      setGifsOpen(false);
     }
   }, [emojiOpen]);
+  useEffect(() => {
+    if (gifsOpen === true) {
+      setShareOpen(false);
+      setUsersOpen(false);
+      setImgsOpen(false);
+      setEmojiOpen(false);
+    }
+  }, [gifsOpen]);
   useEffect(() => {
     if (imgsOpen === true) {
       setShareOpen(false);
       setUsersOpen(false);
       setEmojiOpen(false);
+      setGifsOpen(false);
     }
   }, [imgsOpen]);
   useEffect(() => {
@@ -309,6 +337,7 @@ const ChatComponent: FC = () => {
       setEmojiOpen(false);
       setUsersOpen(false);
       setImgsOpen(false);
+      setGifsOpen(false);
     }
   }, [shareOpen]);
 
@@ -317,6 +346,7 @@ const ChatComponent: FC = () => {
       setShareOpen(false);
       setEmojiOpen(false);
       setImgsOpen(false);
+      setGifsOpen(false);
     }
   }, [usersOpen]);
   const backgroundAnimation = useSpring({ backgroundColor: theme });
@@ -330,10 +360,10 @@ const ChatComponent: FC = () => {
   const shareTransition = useTransition(shareOpen, config);
   const emojiTransition = useTransition(emojiOpen, config);
   const imagesTransition = useTransition(imgsOpen, config);
+  const gifsTransition = useTransition(gifsOpen, config);
   const LeaveRoom = () => {
     history.push("/");
     sessionStorage.clear();
-    //@ts-ignore
     socket.disconnect(true);
   };
 
@@ -350,11 +380,7 @@ const ChatComponent: FC = () => {
                 <Scroll className='rstb' followButtonClassName='scrollButton'>
                   {msgs.length > 0 &&
                     msgs.map((msg) => (
-                      <MessageComponent
-                        {...msg}
-                        key={getRandomKey()}
-                        content={msg.content}
-                      />
+                      <MessageComponent {...msg} key={getRandomKey()} />
                     ))}
                 </Scroll>
               </ChatArea>
@@ -362,26 +388,27 @@ const ChatComponent: FC = () => {
               {usersTransition((style, item) => {
                 return item ? (
                   <>
-                    <IsHostContext.Provider value={isHost}>
-                      <UsersSection style={style}>
-                        <SidePanelHeaderComponent
-                          onClose={() => setUsersOpen(false)}
-                        >
-                          <span> Users In Chat</span>
-                        </SidePanelHeaderComponent>
+                    <UsersSection style={style}>
+                      <SidePanelHeaderComponent
+                        onClose={() => setUsersOpen(false)}
+                      >
+                        <span> Users In Chat</span>
+                      </SidePanelHeaderComponent>
 
-                        <UsersPanelInfo
-                          isHost={isHost}
-                          users={users}
-                          theme={oppositeTheme}
-                          onBan={(user) => socket.emit("ban-user", user)}
-                        />
-                      </UsersSection>
-                    </IsHostContext.Provider>
+                      <UsersPanelInfo
+                        isHost={isHost}
+                        users={users}
+                        theme={oppositeTheme}
+                        onBan={(user) => socket.emit("ban-user", user)}
+                      />
+                    </UsersSection>
                   </>
                 ) : (
                   ""
                 );
+              })}
+              {gifsTransition((style, item) => {
+                return item ? <GifPanel style={style}>HOI BOI</GifPanel> : "";
               })}
               {shareTransition((style, item) => {
                 return item ? (
@@ -407,7 +434,7 @@ const ChatComponent: FC = () => {
                     >
                       Emojis
                     </SidePanelHeaderComponent>
-                    <MessageContext.Provider value={inputRef.current}>
+                    <MessageContext.Provider value={setText}>
                       <EmojiPanelInfo />
                     </MessageContext.Provider>
                   </EmojiPanel>
@@ -439,8 +466,9 @@ const ChatComponent: FC = () => {
             <MeetControls style={footerAndHeaderExpander}>
               <form className='input' onSubmit={(e) => handleSubmit(e)}>
                 <input
-                  //@ts-ignore
                   ref={inputRef}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
                   {...MeetInputAttributesConfig}
                 />
                 <button type='submit'>

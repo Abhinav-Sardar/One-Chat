@@ -16,11 +16,12 @@ export const constants = {
     flexDirection: "column",
   },
   copySuccess: "Copied ✅. Share this Url with anyone you trust",
-  PEXELS_API_KEY: process.env.REACT_APP_API_KEY,
+  PEXELS_API_KEY: process.env.REACT_APP_PEXELS_API_KEY,
   ImageInputErrorMsgs:
     "The provided input was invalid or too long! The limit is 30",
   roomDoesntExistError: "A room with that name doesn't exist",
   roomAlreadyExistsError: "A room with same name already exists",
+  tenorApiKey: process.env.REACT_APP_TENOR_API_KEY,
 };
 
 export function accentColorChecker(): void {

@@ -37,6 +37,7 @@ import { Link, useHistory } from "react-router-dom";
 import { animated, useSpring, useSprings } from "react-spring";
 import PleaseWait from "./PleaseWait";
 //@ts-ignore
+const socket = io.connect(constants.serverName);
 
 const CreateRoom: FunctionalComponent = () => {
   const history = useHistory();
@@ -89,8 +90,10 @@ const CreateRoom: FunctionalComponent = () => {
   }, [maxAvatarIndex]);
 
   function handleSubmit(e: FormEvent): void {
+    if (socket.disconnected) {
+      socket.connect();
+    }
     //@ts-ignore
-    const socket = io.connect(constants.serverName);
     console.log(socket);
     e.preventDefault();
     const res = validator(name, room);
@@ -239,12 +242,14 @@ const CreateRoom: FunctionalComponent = () => {
             )}
           </AvatarActionBtns>
         </Modal>
-
-        <Link to='/'>
-          <Button>
-            <span>Back To Home</span> <FaHome />
-          </Button>{" "}
-        </Link>
+        <Button
+          onClick={() => {
+            window.location.assign("/");
+            socket.disconnect(true);
+          }}
+        >
+          <span>Back To Home</span> <FaHome />
+        </Button>{" "}
       </Page>
       )
     </>

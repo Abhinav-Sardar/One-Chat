@@ -7,6 +7,17 @@ export const GlobalStyles = createGlobalStyle`
     margin:0 ; 
    
 }
+
+[tooltip-content] {
+  position:relative ; 
+
+}
+[tooltip-content]::before {
+    content:attr(tooltip-content) ; 
+    height:3vw ; 
+    width:3vw ; 
+    color:red ; 
+  }
   body {
   overflow:hidden ; 
 }

@@ -26,7 +26,6 @@ import { MdContentCopy } from "react-icons/md";
 import {
   EmojiPanel,
   MeetInfo,
-  Message as MessageWrapper,
   SidePanelHeader,
   User,
 } from "../Styled-components/Chat.style";
@@ -241,7 +240,7 @@ export const EmojiPanelInfo: FC = () => {
 };
 
 const HumansComponent: FC = memo(() => {
-  let setMessage = useContext(MessageContext);
+  const setText = useContext(MessageContext);
   return (
     <>
       {HumanRelatedEmojis.map((h) => (
@@ -250,8 +249,7 @@ const HumansComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setMessage.value += h;
-            setMessage.focus();
+            setText((prev: string) => (prev += h));
           }}
         >
           {h}
@@ -261,7 +259,7 @@ const HumansComponent: FC = memo(() => {
   );
 });
 const SignsComponent: FC = memo(() => {
-  let setMessage = useContext(MessageContext);
+  const setText = useContext(MessageContext);
   return (
     <>
       {Symbols.map((h) => (
@@ -270,8 +268,7 @@ const SignsComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setMessage.value += h;
-            setMessage.focus();
+            setText((prev: string) => (prev += h));
           }}
         >
           {h}
@@ -281,7 +278,7 @@ const SignsComponent: FC = memo(() => {
   );
 });
 const ObjectsComponent: FC = memo(() => {
-  let setMessage = useContext(MessageContext);
+  const setText = useContext(MessageContext);
   return (
     <>
       {Objects.map((h) => (
@@ -290,8 +287,7 @@ const ObjectsComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setMessage.value += h;
-            setMessage.focus();
+            setText((prev: string) => (prev += h));
           }}
         >
           {h}
@@ -302,7 +298,7 @@ const ObjectsComponent: FC = memo(() => {
 });
 
 const AnimalComponent: FC = memo(() => {
-  let setMessage = useContext(MessageContext);
+  const setText = useContext(MessageContext);
   return (
     <>
       {Animals.map((h) => (
@@ -311,8 +307,7 @@ const AnimalComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setMessage.value += h;
-            setMessage.focus();
+            setText((prev: string) => (prev += h));
           }}
         >
           {h}
@@ -323,7 +318,7 @@ const AnimalComponent: FC = memo(() => {
 });
 
 const FoodComponent: FC = memo(() => {
-  let setMessage = useContext(MessageContext);
+  const setText = useContext(MessageContext);
   return (
     <>
       {Food.map((h) => (
@@ -332,8 +327,7 @@ const FoodComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setMessage.value += h;
-            setMessage.focus();
+            setText((prev: string) => (prev += h));
           }}
         >
           {h}
@@ -345,10 +339,9 @@ const FoodComponent: FC = memo(() => {
 
 //@ts-ignore
 export const MessageComponent: FC<Message> = memo((props) => {
-  console.log("nr2n");
   if (props.type === "text") {
     return (
-      <MessageWrapper className={props.className}>
+      <section className={props.className}>
         <div>
           <div className='info'>
             {/* @ts-ignore */}
@@ -370,7 +363,7 @@ export const MessageComponent: FC<Message> = memo((props) => {
             {props.content}
           </div>
         </div>
-      </MessageWrapper>
+      </section>
     );
   } else if (props.type === "image") {
     return "";

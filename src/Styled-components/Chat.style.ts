@@ -384,4 +384,4 @@ export const ImagesPanel = styled(animated.aside)`
   }
 `;
 
-export const Message = styled(animated.section)``;
+export const GifPanel = styled(animated.aside)``;
