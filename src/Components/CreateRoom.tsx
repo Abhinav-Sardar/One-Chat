@@ -37,7 +37,7 @@ import { Link, useHistory } from "react-router-dom";
 import { animated, useSpring, useSprings } from "react-spring";
 import PleaseWait from "./PleaseWait";
 //@ts-ignore
-const socket = io.connect(constants.serverName);
+const socket = io(constants.serverName);
 
 const CreateRoom: FunctionalComponent = () => {
   const history = useHistory();
@@ -49,10 +49,12 @@ const CreateRoom: FunctionalComponent = () => {
     number: 42,
     isNew: true,
   });
+
   const [loading, setLoading] = useState<boolean>(false);
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
   useEffect(() => {
     if (isModalOpen === true) {
       //@ts-ignore
@@ -90,11 +92,8 @@ const CreateRoom: FunctionalComponent = () => {
   }, [maxAvatarIndex]);
 
   function handleSubmit(e: FormEvent): void {
-    if (socket.disconnected) {
-      socket.connect();
-    }
-    //@ts-ignore
-    console.log(socket);
+    setIsConnecting(true);
+    socket.connect();
     e.preventDefault();
     const res = validator(name, room);
     if (res) {
@@ -103,9 +102,13 @@ const CreateRoom: FunctionalComponent = () => {
         //@ts-ignore
         socket.removeAllListeners("rooms-back");
         if (IsRoomThere(rooms, room)) {
-          socket.disconnect(true);
+          setTimeout(() => {
+            setIsConnecting(false);
+            //@ts-ignore
+            socket.disconnect(true);
 
-          toast.error(constants.roomAlreadyExistsError);
+            toast.error(constants.roomAlreadyExistsError);
+          }, 1000);
         } else {
           console.log("You are free to proceeed");
           const newUser: user = {
@@ -114,10 +117,16 @@ const CreateRoom: FunctionalComponent = () => {
             name: name,
           };
           setUser(newUser);
+          //@ts-ignore
           socket.disconnect(true);
-          history.push(`/room/${room}`);
+          setTimeout(() => {
+            setIsConnecting(false);
+            history.push(`/room/${room}`);
+          }, 1000);
         }
       });
+    } else {
+      setIsConnecting(false);
     }
   }
 
@@ -140,118 +149,122 @@ const CreateRoom: FunctionalComponent = () => {
 
   return (
     <>
-      <Page style={appear}>
-        <h1 className='purpose'>Create</h1>
-        <Form onSubmit={(e) => handleSubmit(e)}>
-          <div className='field'>
-            <span>Name</span>
-            <br />
-            <input
-              type='text'
-              /* @ts-ignore */
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              spellCheck
-              required
-              placeholder='Your Name'
-              autoFocus
-            />
-          </div>
-          <div className='field'>
-            <span>Room Name</span>
-            <br />
-            <input
-              type='text'
-              //@ts-ignore
-              value={room}
-              onChange={(e) => setRoom(e.target.value)}
-              spellCheck
-              required
-              placeholder='Name Your Room'
-            />
-          </div>
-          <div className='field'>
-            <span>Avatar</span>
-            {currentAvatar && parse(currentAvatar)}
-            <br />
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className='choose__avatar'
-              type='button'
-            >
-              <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
+      {isConnecting ? (
+        <PleaseWait />
+      ) : (
+        <Page style={appear}>
+          <h1 className='purpose'>Create</h1>
+          <Form onSubmit={(e) => handleSubmit(e)}>
+            <div className='field'>
+              <span>Name</span>
+              <br />
+              <input
+                type='text'
+                /* @ts-ignore */
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                spellCheck
+                required
+                placeholder='Your Name'
+                autoFocus
+              />
+            </div>
+            <div className='field'>
+              <span>Room Name</span>
+              <br />
+              <input
+                type='text'
+                //@ts-ignore
+                value={room}
+                onChange={(e) => setRoom(e.target.value)}
+                spellCheck
+                required
+                placeholder='Name Your Room'
+              />
+            </div>
+            <div className='field'>
+              <span>Avatar</span>
+              {currentAvatar && parse(currentAvatar)}
+              <br />
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className='choose__avatar'
+                type='button'
+              >
+                <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
+              </button>
+            </div>
+            <button type='submit' className='submit'>
+              Create Room
             </button>
-          </div>
-          <button type='submit' className='submit'>
-            Create Room
-          </button>
-        </Form>
-        <Modal
-          open={isModalOpen}
-          styles={{
-            modal: {
-              background: constants.appAccentColor,
-              color: "white",
-            },
-          }}
-          onClose={() => handleClose()}
-          closeIcon={
-            <FaTimes
-              fill='red'
-              fontSize={"2vw"}
-              style={{
-                margin: "1vh 0",
-              }}
-            />
-          }
-        >
-          <AvatarActionBtns>
-            <h1>Choose your avatar</h1>
-          </AvatarActionBtns>
-          <AvatarsWrapper>
-            <AvatarsComponent
-              avatars={avatars}
-              currentAvatar={currentAvatar}
-              setCurrentAvatar={setCurrentAvatar}
-            />
-          </AvatarsWrapper>
-          <br />
-          <AvatarActionBtns>
-            {loading ? (
-              <h2 className='loader'>Loading . . .</h2>
-            ) : (
-              <>
-                {maxAvatarIndex.number < 300 ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        setLoading(true);
-                        setMaxAvatar((prev) => {
-                          return { isNew: false, number: prev.number + 24 };
-                        });
-                      }}
-                    >
-                      <span>Load More</span>
-                      <HiOutlineArrowDown />
-                    </button>
-                  </>
-                ) : (
-                  ""
-                )}
-              </>
-            )}
-          </AvatarActionBtns>
-        </Modal>
-        <Button
-          onClick={() => {
-            window.location.assign("/");
-            socket.disconnect(true);
-          }}
-        >
-          <span>Back To Home</span> <FaHome />
-        </Button>{" "}
-      </Page>
-      )
+          </Form>
+          <Modal
+            open={isModalOpen}
+            styles={{
+              modal: {
+                background: constants.appAccentColor,
+                color: "white",
+              },
+            }}
+            onClose={() => handleClose()}
+            closeIcon={
+              <FaTimes
+                fill='red'
+                fontSize={"2vw"}
+                style={{
+                  margin: "1vh 0",
+                }}
+              />
+            }
+          >
+            <AvatarActionBtns>
+              <h1>Choose your avatar</h1>
+            </AvatarActionBtns>
+            <AvatarsWrapper>
+              <AvatarsComponent
+                avatars={avatars}
+                currentAvatar={currentAvatar}
+                setCurrentAvatar={setCurrentAvatar}
+              />
+            </AvatarsWrapper>
+            <br />
+            <AvatarActionBtns>
+              {loading ? (
+                <h2 className='loader'>Loading . . .</h2>
+              ) : (
+                <>
+                  {maxAvatarIndex.number < 300 ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setLoading(true);
+                          setMaxAvatar((prev) => {
+                            return { isNew: false, number: prev.number + 24 };
+                          });
+                        }}
+                      >
+                        <span>Load More</span>
+                        <HiOutlineArrowDown />
+                      </button>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </>
+              )}
+            </AvatarActionBtns>
+          </Modal>
+          <Button
+            onClick={() => {
+              history.push("/");
+              //@ts-ignore
+              socket.disconnect(true);
+            }}
+          >
+            <span>Back To Home</span> <FaHome />
+          </Button>{" "}
+        </Page>
+      )}
     </>
   );
 };

@@ -19,6 +19,8 @@ import io from "socket.io-client";
 //@ts-ignore
 import Scroll from "react-scroll-to-bottom";
 import { RiFileGifLine, RiFileGifFill } from "react-icons/ri";
+//@ts-ignore
+import Ripples from "react-ripples";
 import {
   FaRegSmile,
   FaSmile,
@@ -55,7 +57,6 @@ import {
   MeetControls,
   EmojiPanel,
   ImagesPanel,
-  GifPanel,
 } from "../Styled-components/Chat.style";
 
 import {
@@ -66,6 +67,7 @@ import {
   EmojiPanelInfo,
   MessageComponent,
   ImagesContent,
+  GifContent,
 } from "./Chat.SubComponents";
 //@ts-ignore
 
@@ -73,7 +75,7 @@ import { Pop, ForeignMessagePop } from "../Images/Accumulator";
 import Banned from "./Banned";
 
 //@ts-ignore
-const socket = io.connect(constants.serverName);
+const socket = io(constants.serverName);
 
 export const MessageContext = createContext<any>(null);
 const ChatComponent: FC = () => {
@@ -136,6 +138,7 @@ const ChatComponent: FC = () => {
       alert(msg);
     });
     socket.on("ban", () => {
+      //@ts-ignore
       socket.disconnect(true);
       setIsBanned(true);
     });
@@ -144,13 +147,11 @@ const ChatComponent: FC = () => {
     console.log(users);
   }, [users]);
   useEffect(() => {
+    socket.connect();
     document.title = `Room - ${user.currentRoomName}`;
     socketCode();
     setInterval(() => {
       setIsFullScreen(document.fullscreenElement ? true : false);
-      if (socket.disconnected) {
-        socket.connect();
-      }
     }, 500);
     socket.emit("new-user", {
       name: user.name,
@@ -364,6 +365,7 @@ const ChatComponent: FC = () => {
   const LeaveRoom = () => {
     history.push("/");
     sessionStorage.clear();
+    //@ts-ignore
     socket.disconnect(true);
   };
 
@@ -408,7 +410,21 @@ const ChatComponent: FC = () => {
                 );
               })}
               {gifsTransition((style, item) => {
-                return item ? <GifPanel style={style}>HOI BOI</GifPanel> : "";
+                return item ? (
+                  <ImagesPanel style={style}>
+                    <SidePanelHeaderComponent
+                      onClose={() => setGifsOpen(false)}
+                      style={{
+                        borderBottom: `1px solid ${oppositeTheme}`,
+                      }}
+                    >
+                      Gifs
+                    </SidePanelHeaderComponent>
+                    <GifContent />
+                  </ImagesPanel>
+                ) : (
+                  ""
+                );
               })}
               {shareTransition((style, item) => {
                 return item ? (

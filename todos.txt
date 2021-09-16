@@ -1,6 +1,0 @@
-:- Make public and private rooms 
-:- Make docs for the app
-:- Fix chat issues (if any)
-:- implement images
-:- fix ugly designs
-:- Fix time

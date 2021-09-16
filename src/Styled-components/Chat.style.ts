@@ -87,6 +87,8 @@ export const MeetControls = styled(animated.footer)`
 
       width: 50vw;
       border: 2px solid gray;
+      padding: 0 0.5vw;
+      font-family: "Comfortaa", cursive;
       &:focus {
         border: 2px solid ${constants.appAccentColor};
         color: ${constants.appAccentColor};
@@ -202,7 +204,7 @@ export const SharePanel = styled(animated.aside)`
   h3 {
     width: 100%;
     text-align: center;
-    font-family: "Mulish", sans-serif;
+    font-family: "Comfortaa", sans-serif;
     font-size: 1.4vw;
   }
   h2 {
@@ -211,10 +213,10 @@ export const SharePanel = styled(animated.aside)`
     flex-direction: column;
     align-items: center;
     text-align: center;
-    font-family: "Roboto", sans-serif;
+    font-family: "Poppins", sans-serif;
     margin: 2vh 0;
     font-size: 1.2vw;
-    letter-spacing: 1px;
+
     .copy {
       color: ${constants.appAccentColor};
       width: 70%;
@@ -279,11 +281,11 @@ export const EmojiPanel = styled(animated.aside)`
       width: 2vw;
       height: 2vw;
       cursor: pointer;
-      &:active {
-        transform: scale(0.8);
-      }
       &::selection {
         background-color: transparent;
+      }
+      &:active {
+        transform: scale(0.8);
       }
     }
   }
@@ -341,6 +343,9 @@ export const ImagesPanel = styled(animated.aside)`
     }
     a {
       color: ${constants.appAccentColor};
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -383,5 +388,3 @@ export const ImagesPanel = styled(animated.aside)`
     }
   }
 `;
-
-export const GifPanel = styled(animated.aside)``;

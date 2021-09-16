@@ -1,8 +1,22 @@
 import React, { ReactElement } from "react";
 import { toast } from "react-toastify";
 
+import { MdRoomService } from "react-icons/md";
 const devUrl = "http://localhost:1919/";
 const prodUrl = "https://one-chat-server.herokuapp.com";
+const initialGifs = [
+  "https://c.tenor.com/kwv_MuCidz8AAAAM/yes-will-ferrell.gif",
+  "https://c.tenor.com/qA0mIzGwVoMAAAAM/sorry.gif",
+  "https://c.tenor.com/ppqVQB1PoBAAAAAM/tom-y-jerry-tom-and-jerry.gif",
+  "https://c.tenor.com/4fD9lfLzfg4AAAAS/shocked-shock.gif",
+  "https://c.tenor.com/xLKveNp-xMQAAAAS/laughing-laugh.gif",
+  "https://c.tenor.com/Pjx76Nn_W_8AAAAS/wtf-what-do-you-mean.gif",
+  "https://c.tenor.com/SNIM3SI-mtIAAAAS/kummeli-thumbs-up.gif",
+  "https://c.tenor.com/Q3406JOSa5wAAAAM/angry-anger.gif",
+  "https://c.tenor.com/-BVQhBulOmAAAAAM/bruce-almighty-morgan-freeman.gif",
+  "https://c.tenor.com/spXl5MzCo64AAAAM/family-guy-woah.gif",
+];
+
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
   serverName: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
@@ -22,6 +36,7 @@ export const constants = {
   roomDoesntExistError: "A room with that name doesn't exist",
   roomAlreadyExistsError: "A room with same name already exists",
   tenorApiKey: process.env.REACT_APP_TENOR_API_KEY,
+  initialGifs,
 };
 
 export function accentColorChecker(): void {
@@ -174,19 +189,36 @@ export const copy: (content: string) => void = async (content: string) => {
   await navigator.clipboard.writeText(content);
 };
 
-export const setApiUrl: (query: string) => string = (query: string) => {
-  let str = `https://api.pexels.com/v1/search?query=${query}&orientation=landscape&per_page=40`;
+export const setApiUrl: (query: string, type: "image" | "gif") => string = (
+  query: string,
+  type: "image" | "gif"
+) => {
+  const str =
+    type === "image"
+      ? `https://api.pexels.com/v1/search?query=${query}&orientation=landscape&per_page=40`
+      : `https://g.tenor.com/v1/search?&key=${constants.tenorApiKey}&q=${query}&contentfilter=high&mediafilter=high&limit=30`;
   return str;
 };
 
-export const fetchPexelsApi: (url: string) => any = async (url: string) => {
-  const res = await fetch(url, {
-    headers: {
-      Authorization: constants.PEXELS_API_KEY,
-    },
-  });
-  const result = await res.json();
-  return result;
+export const fetchApi: (url: string, type: "gif" | "image") => any = async (
+  url: string,
+  type: "image" | "gif"
+) => {
+  let res;
+  if (type === "image") {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: constants.PEXELS_API_KEY,
+      },
+    });
+    const result = await response.json();
+    res = result;
+  } else {
+    const response = await fetch(url);
+    const json = response.json();
+    res = json;
+  }
+  return res;
 };
 
 export const ToastContainerConfig = {
@@ -235,11 +267,21 @@ export const validator: (name: string, room: string) => boolean = (
 ) => {
   let valueToBeReturned: boolean = false;
   if (room && room.trim() && name && name.trim()) {
-    if (room.includes(" ")) {
-      toast.error("Room Names Cannot have spaces");
+    if (name.length >= 26) {
       valueToBeReturned = false;
+
+      toast.error("Name Too Long!");
+    } else if (room.length >= 26) {
+      valueToBeReturned = false;
+
+      toast.error("Room Name Too Long!");
     } else {
-      valueToBeReturned = true;
+      if (room.includes(" ")) {
+        toast.error("Room Names Cannot have spaces");
+        valueToBeReturned = false;
+      } else {
+        valueToBeReturned = true;
+      }
     }
   } else {
     toast.error("Invalid Name Or Room Name");
@@ -265,11 +307,4 @@ export const IsRoomThere: (rooms: room[], searchKey: string) => boolean = (
     valueToBeReturned = false;
   }
   return valueToBeReturned;
-};
-
-export type contentType = {
-  usersOpen: boolean;
-  shareOpen: boolean;
-  emojiOpen: boolean;
-  imgsOpen: boolean;
 };

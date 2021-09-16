@@ -1,3 +1,4 @@
+import { animated } from "@react-spring/web";
 import styled from "styled-components";
 import { constants } from "../Constants";
 
@@ -36,6 +37,7 @@ export const StyledStickyHeader = styled.div`
 `;
 
 export const MainContent = styled.main`
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,6 +51,7 @@ export const MainContent = styled.main`
     animation: jump 2s infinite linear;
     transition: 400ms ease-in-out;
   }
+
   > * {
     margin: 2vw 0;
   }
@@ -73,7 +76,7 @@ export const ActionButton = styled.button`
   border: 0;
   width: 14vw;
   height: 5vw;
-  margin: 2vw 1vw;
+  margin: 1vw 1vw;
   border-radius: 10px;
   font-size: 1.3vw;
   transition: 0.4s ease-in;
@@ -101,7 +104,13 @@ export const ActionButton = styled.button`
 `;
 
 export const ActionsButtonWrapper = styled.div`
-  width: 100vw;
+  margin: auto;
+  width: 50vw;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+`;
+
+export const CustomMainPage = styled(animated.div)`
+  background: linear-gradient(60deg, ${constants.appAccentColor}, #fff);
 `;

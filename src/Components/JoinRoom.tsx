@@ -38,6 +38,7 @@ import { useSpring } from "react-spring";
 import Avatars from "./Avatars";
 import ReactTooltip from "react-tooltip";
 import ChatComponent from "./ChatComponent";
+import PleaseWait from "./PleaseWait";
 //@ts-ignore
 const socket = io(constants.serverName);
 
@@ -58,6 +59,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   const [name, setName] = useState<string>("");
   const [isDone, setIsDone] = useState<boolean>(false);
   const history = useHistory();
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
   useEffect(() => {
     if (isModalOpen === true) {
@@ -68,6 +70,11 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   useEffect(() => {
     document.title = "Join A Room";
     sessionStorage.clear();
+    setInterval(() => {
+      if (socket.disconnected) {
+        socket.connect();
+      }
+    }, 500);
   }, []);
   function handleClose() {
     setIsModalOpen(false);
@@ -96,9 +103,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   }, [avatars]);
 
   function handleSubmit(e: FormEvent): void {
-    if (socket.disconnected) {
-      socket.connect();
-    }
+    setIsConnecting(true);
     e.preventDefault();
     const newRoom = isAuth ? roomName : room;
     const res = validator(name, newRoom);
@@ -120,16 +125,27 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
           socket.disconnect(true);
 
           if (!isAuth) {
-            history.push("/room/" + newRoom);
+            setTimeout(() => {
+              setIsConnecting(false);
+              history.push("/room/" + newRoom);
+            }, 1000);
           } else {
-            setIsDone(true);
+            setTimeout(() => {
+              setIsConnecting(false);
+              setIsDone(true);
+            }, 1000);
           }
         } else {
-          //@ts-ignore
-          socket.disconnect(true);
-          toast.error(constants.roomDoesntExistError);
+          setTimeout(() => {
+            setIsConnecting(false);
+            //@ts-ignore
+            socket.disconnect(true);
+            toast.error(constants.roomDoesntExistError);
+          }, 1000);
         }
       });
+    } else {
+      setIsConnecting(false);
     }
   }
 
@@ -146,7 +162,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
 
   return (
     <>
-      {isDone ? (
+      {isConnecting ? (
+        <PleaseWait />
+      ) : isDone ? (
         <ChatComponent />
       ) : (
         <Page style={appear}>

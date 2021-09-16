@@ -17,7 +17,7 @@ import {
   ShareProps,
   UsersInChatProps,
   copy,
-  fetchPexelsApi,
+  fetchApi,
   setApiUrl,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
@@ -125,24 +125,24 @@ export const SharePanelInfo: FC<ShareProps> = memo(
         >
           Share
         </SidePanelHeaderComponent>
+        <h3>Users can join this room by :</h3>
 
         <h2>
-          Simply go to this URL
+          Simply by going to this URL
           <br />
           <a>{roomUrl}</a>
           <br />
           <CopyBtn text={roomUrl} />
         </h2>
         <h1 className='breaker'>OR</h1>
-        <h3>Users can join this room by :</h3>
         <h2>
-          Go to this URL <br />
+          Going to this URL <br />
           <a>{joinUrl}</a>
           <br />
           <CopyBtn text={joinUrl} />
           <br />
-          and write {roomName} as the name of the room <br />
-          and fill out the other information.
+          and writing {roomName} as the name of the room <br />
+          and filling out the other information.
         </h2>
       </>
     );
@@ -393,6 +393,7 @@ export const ImagesContent: FC<{}> = memo(() => {
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
     false
   );
+  const [text, setText] = useState<string>("");
   const [cachedSearches, setCachedSearches] = useState();
   useEffect(() => {
     //@ts-ignore
@@ -401,7 +402,7 @@ export const ImagesContent: FC<{}> = memo(() => {
   async function fetchData() {
     try {
       //@ts-ignore
-      const res = await fetchPexelsApi(setApiUrl(inputRef.current.value));
+      const res = await fetchApi(setApiUrl(text, "image"), "image");
 
       console.log(res);
       if (res.photos.length === 0) {
@@ -420,11 +421,11 @@ export const ImagesContent: FC<{}> = memo(() => {
 
     if (
       //@ts-ignore
-      !inputRef.current.value ||
+      !text ||
       //@ts-ignore
-      !inputRef.current.value.trim() ||
+      !text.trim() ||
       //@ts-ignore
-      inputRef.current.value.length >= 30
+      text.length >= 30
     ) {
       toast.error(constants.ImageInputErrorMsgs);
       setIsFetching(false);
@@ -438,22 +439,28 @@ export const ImagesContent: FC<{}> = memo(() => {
   return (
     <>
       <form onSubmit={(e) => handleSubmit(e)}>
-        <input type='text' ref={inputRef} />
+        <input
+          type='text'
+          ref={inputRef}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder='Search For Images'
+        />
         <button type='submit'>
           <FaSearch />
         </button>
       </form>
+      <div className='sponsor'>
+        <span>Images Provided By</span>
+        <a href='https://www.pexels.com' target='_blank'>
+          Pexels
+        </a>
+      </div>
+
       {isFetching === true ? (
         <IsFetching />
       ) : isFetching === false ? (
         <>
-          <div className='sponsor'>
-            <span>Images Provided By</span>
-            <a href='https://www.pexels.com' target='_blank'>
-              Pexels
-            </a>
-          </div>
-
           <h1>initial</h1>
         </>
       ) : isFetching === "Failed" ? (
@@ -470,7 +477,7 @@ const IsFetching: FC = () => {
     <>
       <div className='status__wrapper'>
         <FaSpinner className='fetching-svg' />
-        <h1 className='phrase'>Fetching Images ...</h1>
+        <h1 className='phrase'>Fetching ...</h1>
       </div>
     </>
   );
@@ -481,13 +488,13 @@ const FailedFetch: FC = () => {
     <>
       <div className='status__wrapper'>
         <BiSad className='error-svg' />
-        <h1 className='error-content'>Couldn't find any images</h1>
+        <h1 className='error-content'>No items found!</h1>
       </div>
     </>
   );
 };
-
 const GotImages: FC<{ result: any }> = memo(({ result }) => {
+  console.log(result);
   return (
     <>
       <div className='images__wrapper'>
@@ -498,3 +505,65 @@ const GotImages: FC<{ result: any }> = memo(({ result }) => {
     </>
   );
 });
+
+export const GifContent: FC = () => {
+  const inputRef = useRef();
+  const [content, setContent] = useState<object>({});
+  const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
+    false
+  );
+  const [text, setText] = useState<string>("");
+  useEffect(() => {
+    //@ts-ignore
+    inputRef.current.focus();
+  }, []);
+  async function fetchData() {
+    try {
+      //@ts-ignore
+      const res = await fetchApi(setApiUrl(text, "gif"), "gif");
+      console.log(res);
+      setIsFetching(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  function handleSubmit(e: FormEvent) {
+    setIsFetching(true);
+    e.preventDefault();
+    fetchData();
+  }
+  return (
+    <>
+      <form onSubmit={(e) => handleSubmit(e)}>
+        <input
+          placeholder='Search for GIFs'
+          type='text'
+          ref={inputRef}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <button type='submit'>
+          <FaSearch />
+        </button>
+      </form>
+      <div className='sponsor'>
+        <span>GIFs Provided By</span>
+        <a href='https://www.tenor.com' target='_blank'>
+          Tenor
+        </a>
+      </div>
+
+      {isFetching === true ? (
+        <IsFetching />
+      ) : isFetching === false ? (
+        <>
+          <h1>initial</h1>
+        </>
+      ) : isFetching === "Failed" ? (
+        <FailedFetch />
+      ) : (
+        <GotImages result={content} />
+      )}
+    </>
+  );
+};

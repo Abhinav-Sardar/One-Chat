@@ -11,6 +11,8 @@ import Chat from "./Components/Chat";
 import JoinRoom from "./Components/JoinRoom";
 import { useSpring, animated } from "react-spring";
 import { ToastContainer } from "react-toastify";
+import { CustomMainPage } from "./Styled-components/Mainpage.styled";
+import Report from "./Components/Report";
 
 export const SelfClientContext = createContext<[user, any]>([
   {
@@ -28,9 +30,6 @@ const App: FC = () => {
     name: "",
   });
 
-  useEffect(() => {
-    accentColorChecker();
-  }, []);
   const fade = useSpring({ from: { opacity: 0 }, to: { opacity: 1 } });
   return (
     <Fragment>
@@ -38,9 +37,9 @@ const App: FC = () => {
         <Router>
           <Switch>
             <Route path='/' exact>
-              <animated.div style={fade}>
+              <CustomMainPage style={fade}>
                 <MainPage />
-              </animated.div>
+              </CustomMainPage>
             </Route>
             <Route path='/create'>
               <CreateRoom />
@@ -58,7 +57,11 @@ const App: FC = () => {
                 <Chat />
               </animated.div>
             </Route>
-
+            <Route path='/report'>
+              <animated.div style={fade}>
+                <Report />
+              </animated.div>
+            </Route>
             <Route path='*'>
               <animated.div style={fade}>
                 <NotFoundPage />

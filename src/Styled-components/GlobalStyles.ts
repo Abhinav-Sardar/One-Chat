@@ -8,19 +8,7 @@ export const GlobalStyles = createGlobalStyle`
    
 }
 
-[tooltip-content] {
-  position:relative ; 
 
-}
-[tooltip-content]::before {
-    content:attr(tooltip-content) ; 
-    height:3vw ; 
-    width:3vw ; 
-    color:red ; 
-  }
-  body {
-  overflow:hidden ; 
-}
 .mainChat {
   display:flex ; 
   flex-direction:column ;
@@ -197,4 +185,8 @@ a {
    #reset {
      animation:2s spin linear infinite ; 
    }
+
+
+
+
 `;

@@ -28,10 +28,10 @@ export const Form = styled.form`
   button.submit {
     color: #053fb3;
     background-color: yellow;
-    padding: 1vw 4vw;
+    padding: 0.5vw 2.5vw;
     transition: 300ms ease-in-out;
     font-size: 1.5vw;
-    border-radius: 20px;
+    border-radius: 10px;
     border: 1px solid yellow;
     font-family: "Poppins", sans-serif;
     &:hover {

@@ -1,12 +1,13 @@
 import { FC, Fragment, useEffect, memo } from "react";
 import { StyledStickyHeader } from "../Styled-components/Mainpage.styled";
 import { IoChatboxSharp } from "react-icons/io5";
-import { constants } from "../Constants";
+import { accentColorChecker, constants } from "../Constants";
 import { MainContent } from "../Styled-components/Mainpage.styled";
 import { BsFillChatSquareFill } from "react-icons/bs";
 import { TiPlus } from "react-icons/ti";
-import { FaBrush, FaComments } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaBrush, FaComments, FaGithubSquare } from "react-icons/fa";
+import { Link, useHistory } from "react-router-dom";
+import { MdReport } from "react-icons/md";
 import {
   ActionButton,
   ActionsButtonWrapper,
@@ -15,17 +16,18 @@ import {
 const MainPage: FC = () => {
   useEffect(() => {
     document.title = "One-Chat";
-    document.getElementById(
-      "root"
-    ).style.background = `linear-gradient(60deg, ${constants.appAccentColor}, #fff)`;
-    console.log(document.getElementsByClassName("logo")[0].innerHTML);
+    accentColorChecker();
   }, []);
   return (
-    <Fragment>
+    <div
+      style={{
+        height: "100%",
+      }}
+    >
       <ThisHeader />
       <ThisMain />
       <ThisButtons />
-    </Fragment>
+    </div>
   );
 };
 
@@ -55,23 +57,35 @@ function ThisMain(): JSX.Element {
 }
 
 function ThisButtons(): JSX.Element {
+  const history = useHistory();
   return (
     <ActionsButtonWrapper>
-      <Link to='/create'>
-        <ActionButton>
-          Create a room <TiPlus className='plus' />
+      <ActionButton onClick={() => history.push("/create")}>
+        Create a room <TiPlus className='plus' />
+      </ActionButton>
+      <ActionButton onClick={() => history.push("/join")}>
+        Join a room <IoChatboxSharp />
+      </ActionButton>
+      <ActionButton onClick={() => history.push("/customize")}>
+        Customize <FaBrush />
+      </ActionButton>
+      <a href='https://github.com/Abhinav-Sardar/One-Chat' target='_blank'>
+        <ActionButton
+          style={{
+            width: "19vw",
+          }}
+        >
+          View Project On Github
+          <FaGithubSquare
+            style={{
+              fontSize: "2.5vw",
+            }}
+          />
         </ActionButton>
-      </Link>
-      <Link to='/join'>
-        <ActionButton>
-          Join a room <IoChatboxSharp />
-        </ActionButton>
-      </Link>
-      <Link to='/customize'>
-        <ActionButton>
-          Customize <FaBrush />
-        </ActionButton>
-      </Link>
+      </a>
+      <ActionButton onClick={() => history.push("/report")}>
+        Report An Issue <MdReport style={{ fontSize: "2vw" }} />
+      </ActionButton>
     </ActionsButtonWrapper>
   );
 }
