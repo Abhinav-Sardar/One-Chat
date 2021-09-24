@@ -4,7 +4,12 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
 
 import CreateRoom from "./Components/CreateRoom";
-import { accentColorChecker, ToastContainerConfig, user } from "./Constants";
+import {
+  accentColorChecker,
+  constants,
+  ToastContainerConfig,
+  user,
+} from "./Constants";
 import Customize from "./Components/Customize";
 import "react-responsive-modal/styles.css";
 import Chat from "./Components/Chat";
@@ -13,6 +18,8 @@ import { useSpring, animated } from "react-spring";
 import { ToastContainer } from "react-toastify";
 import { CustomMainPage } from "./Styled-components/Mainpage.styled";
 import Report from "./Components/Report";
+import Docs from "./docs/Docs";
+import io from "socket.io-client";
 
 export const SelfClientContext = createContext<[user, any]>([
   {
@@ -60,6 +67,11 @@ const App: FC = () => {
             <Route path='/report'>
               <animated.div style={fade}>
                 <Report />
+              </animated.div>
+            </Route>
+            <Route path='/docs'>
+              <animated.div style={fade}>
+                <Docs />
               </animated.div>
             </Route>
             <Route path='*'>

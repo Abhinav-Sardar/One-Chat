@@ -48,12 +48,8 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
 }) => {
   const [user, setUser] = useContext(SelfClientContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [avatars, setAvatars] = useState<string[]>([]);
-  const [maxAvatarIndex, setMaxAvatar] = useState<maxAvatarType>({
-    number: 42,
-    isNew: true,
-  });
   const [loading, setLoading] = useState<boolean>(false);
+  const [avatars, setAvatars] = useState<string[]>([]);
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -67,42 +63,27 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       setTimeout(() => window.scroll(0, 0), 1000);
     }
   }, [isModalOpen]);
+
   useEffect(() => {
     document.title = "Join A Room";
     sessionStorage.clear();
-    setInterval(() => {
-      if (socket.disconnected) {
-        socket.connect();
+    const init = () => {
+      const initAvatars = [];
+      for (let i = 0; i < 50; i++) {
+        initAvatars.push(returnRandomAvatar());
       }
-    }, 500);
+      setAvatars(initAvatars);
+      setCurrentAvatar(initAvatars[0]);
+      console.log(currentAvatar);
+    };
+    init();
   }, []);
   function handleClose() {
     setIsModalOpen(false);
   }
-  useEffect(() => {
-    if (maxAvatarIndex.isNew) {
-      let acc = [];
-      while (acc.length !== maxAvatarIndex.number) {
-        acc.push(returnRandomAvatar());
-      }
-      setAvatars(acc);
-    } else {
-      let acc = [...avatars];
-      while (acc.length !== maxAvatarIndex.number) {
-        acc.push(returnRandomAvatar());
-      }
-      setAvatars(acc);
-    }
-    setLoading(false);
-    console.log(maxAvatarIndex);
-  }, [maxAvatarIndex]);
-  useEffect(() => {
-    if (avatars.length === 42) {
-      setCurrentAvatar(avatars[0]);
-    }
-  }, [avatars]);
 
   function handleSubmit(e: FormEvent): void {
+    socket.connect();
     setIsConnecting(true);
     e.preventDefault();
     const newRoom = isAuth ? roomName : room;
@@ -253,29 +234,13 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
               <Avatars
                 avatars={avatars}
                 currentAvatar={currentAvatar}
-                setCurrentAvatar={setCurrentAvatar}
+                onClick={(newAvatar: string) => {
+                  setIsModalOpen(false);
+                  setCurrentAvatar(newAvatar);
+                }}
               />
             </AvatarsWrapper>
             <br />
-            <AvatarActionBtns>
-              {loading ? (
-                <h2 className='loader'>Loading . . .</h2>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      setLoading(true);
-                      setMaxAvatar((prev) => {
-                        return { isNew: false, number: prev.number + 24 };
-                      });
-                    }}
-                  >
-                    <span>Load More</span>
-                    <HiOutlineArrowDown />
-                  </button>
-                </>
-              )}
-            </AvatarActionBtns>
           </Modal>
           <Button
             onClick={() => {

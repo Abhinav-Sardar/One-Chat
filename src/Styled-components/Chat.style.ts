@@ -373,6 +373,9 @@ export const ImagesPanel = styled(animated.aside)`
     }
   }
   .images__wrapper {
+    .btns {
+      display: flex;
+    }
     width: 100%;
     display: flex;
     overflow-y: auto;
@@ -381,10 +384,91 @@ export const ImagesPanel = styled(animated.aside)`
     justify-content: flex-start;
 
     img {
-      height: 8vw;
-      width: 80%;
+      height: 10vw;
+      width: 90%;
       margin: 1vw 0;
-      border: 1px solid #232424;
+      border-radius: 10px;
+      border: 3px solid ${constants.appAccentColor};
+    }
+  }
+`;
+
+export const BanModalContent = styled.div`
+  > * {
+    margin: 2vw 0;
+  }
+  margin-top: 2vw;
+  text-align: center;
+  .header {
+    font-family: "Quicksand", sans-serif;
+    font-size: 3vw;
+  }
+  .form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    input {
+      width: 60%;
+      height: 2.5vw;
+      border-radius: 10px;
+      border: 0;
+      font-size: 1.2vw;
+      font-family: "Quicksand", sans-serif;
+      font-weight: 550;
+      color: ${constants.appAccentColor};
+      padding: 0 0.5vw;
+    }
+    button.submit__ban {
+      margin-left: 1vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 3vw;
+      width: 3vw;
+      border-radius: 50%;
+      outline: 0;
+      border: 0;
+      &:active {
+        transform: scale(0.8);
+      }
+      svg {
+        color: ${constants.appAccentColor};
+        font-size: 1.5vw;
+      }
+    }
+  }
+  .actionsWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    button {
+      transition: 400ms ease-in-out;
+      width: 30%;
+      height: 4vw;
+      margin: 0 2vw;
+      font-size: 1.5vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: ${constants.appAccentColor};
+      background-color: white;
+      border: 0;
+
+      border-radius: 10px;
+
+      &:hover {
+        background-color: ${constants.appAccentColor};
+        color: white;
+        border: 3px solid white;
+      }
+      svg {
+        font-size: 2vw;
+      }
+      > * {
+        margin: 0 1vw;
+      }
     }
   }
 `;

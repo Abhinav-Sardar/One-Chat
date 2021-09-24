@@ -8,6 +8,7 @@ import { TiPlus } from "react-icons/ti";
 import { FaBrush, FaComments, FaGithubSquare } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { MdReport } from "react-icons/md";
+import { GoBook } from "react-icons/go";
 import {
   ActionButton,
   ActionsButtonWrapper,
@@ -85,6 +86,14 @@ function ThisButtons(): JSX.Element {
       </a>
       <ActionButton onClick={() => history.push("/report")}>
         Report An Issue <MdReport style={{ fontSize: "2vw" }} />
+      </ActionButton>
+      <ActionButton
+        onClick={() => history.push("/docs")}
+        style={{
+          width: "20vw",
+        }}
+      >
+        Read Documentation <GoBook style={{ fontSize: "2vw" }} />
       </ActionButton>
     </ActionsButtonWrapper>
   );

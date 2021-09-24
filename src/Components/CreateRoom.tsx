@@ -45,12 +45,7 @@ const CreateRoom: FunctionalComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [avatars, setAvatars] = useState<string[]>([]);
   const [user, setUser] = useContext(SelfClientContext);
-  const [maxAvatarIndex, setMaxAvatar] = useState<maxAvatarType>({
-    number: 42,
-    isNew: true,
-  });
 
-  const [loading, setLoading] = useState<boolean>(false);
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -64,32 +59,22 @@ const CreateRoom: FunctionalComponent = () => {
   function handleClose() {
     setIsModalOpen(false);
   }
-  function setAvatarIcon(avatar: string): void {
-    handleClose();
-    setCurrentAvatar(avatar);
-  }
+
   useEffect(() => {
     sessionStorage.clear();
 
     document.title = "Create A Room";
+    const init = () => {
+      const initAvatars = [];
+      for (let i = 0; i < 50; i++) {
+        initAvatars.push(returnRandomAvatar());
+      }
+      setAvatars(initAvatars);
+      setCurrentAvatar(initAvatars[0]);
+      console.log(currentAvatar);
+    };
+    init();
   }, []);
-
-  useEffect(() => {
-    if (maxAvatarIndex.isNew) {
-      let acc = [];
-      while (acc.length !== maxAvatarIndex.number) {
-        acc.push(returnRandomAvatar());
-      }
-      setAvatars(acc);
-    } else {
-      let acc = [...avatars];
-      while (acc.length !== maxAvatarIndex.number) {
-        acc.push(returnRandomAvatar());
-      }
-      setAvatars(acc);
-    }
-    setLoading(false);
-  }, [maxAvatarIndex]);
 
   function handleSubmit(e: FormEvent): void {
     setIsConnecting(true);
@@ -129,12 +114,6 @@ const CreateRoom: FunctionalComponent = () => {
       setIsConnecting(false);
     }
   }
-
-  useEffect(() => {
-    if (avatars.length === 42) {
-      setCurrentAvatar(avatars[0]);
-    }
-  }, [avatars]);
 
   const appear = useSpring({
     from: {
@@ -224,35 +203,12 @@ const CreateRoom: FunctionalComponent = () => {
               <AvatarsComponent
                 avatars={avatars}
                 currentAvatar={currentAvatar}
-                setCurrentAvatar={setCurrentAvatar}
+                onClick={(newAvatar: string) => {
+                  setCurrentAvatar(newAvatar);
+                  setIsModalOpen(false);
+                }}
               />
             </AvatarsWrapper>
-            <br />
-            <AvatarActionBtns>
-              {loading ? (
-                <h2 className='loader'>Loading . . .</h2>
-              ) : (
-                <>
-                  {maxAvatarIndex.number < 300 ? (
-                    <>
-                      <button
-                        onClick={() => {
-                          setLoading(true);
-                          setMaxAvatar((prev) => {
-                            return { isNew: false, number: prev.number + 24 };
-                          });
-                        }}
-                      >
-                        <span>Load More</span>
-                        <HiOutlineArrowDown />
-                      </button>
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </>
-              )}
-            </AvatarActionBtns>
           </Modal>
           <Button
             onClick={() => {

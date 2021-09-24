@@ -4,9 +4,9 @@ import { getRandomKey } from "../Constants";
 type voidFunc = () => void;
 const Avatars: FC<{
   avatars: string[];
-  setCurrentAvatar: Dispatch<SetStateAction<string>>;
+  onClick: (newAvatar: string) => void;
   currentAvatar: string;
-}> = memo(({ avatars, setCurrentAvatar, currentAvatar }) => {
+}> = memo(({ avatars, onClick, currentAvatar }) => {
   return (
     <>
       {avatars.map((avatar) => {
@@ -19,7 +19,7 @@ const Avatars: FC<{
         } else {
           return (
             //@ts-ignore
-            <div onClick={() => setCurrentAvatar(avatar)} key={getRandomKey()}>
+            <div onClick={() => onClick(avatar)} key={getRandomKey()}>
               {parse(avatar)}
             </div>
           );

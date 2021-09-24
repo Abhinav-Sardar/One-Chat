@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import { constants } from "../Constants";
 export const GlobalStyles = createGlobalStyle`
 

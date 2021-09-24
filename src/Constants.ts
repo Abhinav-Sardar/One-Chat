@@ -72,7 +72,7 @@ export interface HeaderProps {
 export interface UsersInChatProps {
   theme: string;
   users: ChatUser[];
-  onBan: (user: string) => void;
+  onBan: (user: string, reason: string) => void;
   isHost: boolean;
 }
 
@@ -196,7 +196,7 @@ export const setApiUrl: (query: string, type: "image" | "gif") => string = (
   const str =
     type === "image"
       ? `https://api.pexels.com/v1/search?query=${query}&orientation=landscape&per_page=40`
-      : `https://g.tenor.com/v1/search?&key=${constants.tenorApiKey}&q=${query}&contentfilter=high&mediafilter=high&limit=30`;
+      : `https://g.tenor.com/v1/search?&key=${constants.tenorApiKey}&q=${query}&contentfilter=medium&mediafilter=medium&limit=30`;
   return str;
 };
 

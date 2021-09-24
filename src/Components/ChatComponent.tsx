@@ -85,14 +85,13 @@ const ChatComponent: FC = () => {
   const [shareOpen, setShareOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
   const [imgsOpen, setImgsOpen] = useState<boolean>(false);
-  const [isBanned, setIsBanned] = useState<boolean>(false);
+  const [isBanned, setIsBanned] = useState<[boolean, string]>([false, ""]);
   const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
   const history = useHistory();
   const [text, setText] = useState<string>("");
   const user = useContext(SelfClientContext)[0];
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [users, setUsers] = useState<ChatUser[]>([]);
-  const ScrollRef = useRef(null);
   const inputRef = useRef(null);
   const [msgs, setMsgs] = useState<Message[]>([]);
   const [isHost, setisHost] = useState<boolean>(false);
@@ -137,10 +136,10 @@ const ChatComponent: FC = () => {
       setUsers(mems);
       alert(msg);
     });
-    socket.on("ban", () => {
+    socket.on("ban", (reason) => {
       //@ts-ignore
       socket.disconnect(true);
-      setIsBanned(true);
+      setIsBanned([true, reason]);
     });
   };
   useEffect(() => {
@@ -148,11 +147,7 @@ const ChatComponent: FC = () => {
   }, [users]);
   useEffect(() => {
     socket.connect();
-    document.title = `Room - ${user.currentRoomName}`;
     socketCode();
-    setInterval(() => {
-      setIsFullScreen(document.fullscreenElement ? true : false);
-    }, 500);
     socket.emit("new-user", {
       name: user.name,
       roomName: user.currentRoomName,
@@ -160,6 +155,10 @@ const ChatComponent: FC = () => {
       host: false,
       id: socket.id,
     });
+    document.title = `Room - ${user.currentRoomName}`;
+    setInterval(() => {
+      setIsFullScreen(document.fullscreenElement ? true : false);
+    }, 500);
   }, []);
   useEffect(() => {
     setOppositeTheme(theme === "#232424" ? "#fff" : "#232424");
@@ -196,7 +195,12 @@ const ChatComponent: FC = () => {
       inputRef.current.focus();
     }
   }
-
+  useEffect(() => {
+    window.onpopstate = () => {
+      //@ts-ignore
+      socket.disconnect(true);
+    };
+  }, []);
   function Icons(): JSX.Element {
     return (
       <>
@@ -371,14 +375,14 @@ const ChatComponent: FC = () => {
 
   return (
     <>
-      {isBanned ? (
-        <Banned />
+      {isBanned[0] ? (
+        <Banned reason={isBanned[1]} />
       ) : (
         <>
           <ChatPage style={backgroundAnimation}>
             <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
             <RemainingChatArea style={colorSetter}>
-              <ChatArea theme={oppositeTheme} ref={ScrollRef}>
+              <ChatArea theme={oppositeTheme}>
                 <Scroll className='rstb' followButtonClassName='scrollButton'>
                   {msgs.length > 0 &&
                     msgs.map((msg) => (
@@ -401,7 +405,9 @@ const ChatComponent: FC = () => {
                         isHost={isHost}
                         users={users}
                         theme={oppositeTheme}
-                        onBan={(user) => socket.emit("ban-user", user)}
+                        onBan={(user, reason) =>
+                          socket.emit("ban-user", user, reason)
+                        }
                       />
                     </UsersSection>
                   </>

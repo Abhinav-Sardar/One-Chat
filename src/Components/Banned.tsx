@@ -5,7 +5,7 @@ import { constants } from "../Constants";
 import { Button } from "../Styled-components/Customize.style";
 import { GiHighKick } from "react-icons/gi";
 import { useHistory } from "react-router";
-const Banned: FC = () => {
+const Banned: FC<{ reason: string }> = ({ reason }) => {
   document.title = "You have been kicked";
   const history = useHistory();
   return (
@@ -29,14 +29,24 @@ const Banned: FC = () => {
             margin: "3vw 0",
           }}
         />
-        <h2
+        <span
           style={{
             fontFamily: '"Poppins" , sans-serif',
             fontSize: "3vw",
+            color: constants.appAccentColor,
           }}
         >
           You have been kicked from the room.
-        </h2>
+        </span>
+        <span
+          style={{
+            fontFamily: '"Poppins" , sans-serif',
+            fontSize: "2vw",
+            color: constants.appAccentColor,
+          }}
+        >
+          Reason :- {reason}
+        </span>
         <Button onClick={() => history.push("/")}>
           <span>Go back to home</span>
           <FaHome />

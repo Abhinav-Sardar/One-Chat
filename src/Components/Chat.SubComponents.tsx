@@ -17,14 +17,15 @@ import {
   ShareProps,
   UsersInChatProps,
   copy,
-  fetchApi,
-  setApiUrl,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy } from "react-icons/md";
+import Modal from "react-responsive-modal";
 
 import {
+  BanModalContent,
   EmojiPanel,
+  ImagesPanel,
   MeetInfo,
   SidePanelHeader,
   User,
@@ -35,10 +36,11 @@ import { FaTimes, FaSearch, FaSpinner, FaCrown } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
 import Emojis from "../Images/Accumulator";
 import { MessageContext } from "./ChatComponent";
-import { BiSad } from "react-icons/bi";
+import { BiSad, BiSend } from "react-icons/bi";
 import { HiOutlineBan } from "react-icons/hi";
 import { SelfClientContext } from "../App";
-import { useSpring } from "react-spring";
+import { Button } from "../Styled-components/Customize.style";
+import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   const [hours, setHours] = useState<number>(new Date().getHours());
@@ -61,7 +63,23 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
 export const UsersPanelInfo: FC<UsersInChatProps> = memo(
   ({ theme, users, onBan, isHost }) => {
     const { name } = useContext(SelfClientContext)[0];
-
+    const [userToBeBannned, setUserToBeBanned] = useState<string>("");
+    const [modalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [banText, setBanText] = useState<string>("");
+    const ban = () => {
+      if (banText && banText.trim()) {
+        if (banText.length >= 51) {
+          toast.error("Reason Length Too Big!");
+        } else {
+          onBan(userToBeBannned, banText);
+          setBanText("");
+          setIsModalOpen(false);
+          setUserToBeBanned("");
+        }
+      } else {
+        toast.error("Invalid Reason");
+      }
+    };
     return (
       <>
         <div
@@ -83,7 +101,11 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
                 ) : (
                   <HiOutlineBan
                     className='ban__icon'
-                    onClick={() => onBan(user.name)}
+                    onClick={() => {
+                      setUserToBeBanned(user.name);
+                      setIsModalOpen(true);
+                    }}
+                    style={{ cursor: "pointer" }}
                   />
                 )}
                 {user.host === true ? <FaCrown className='host__crown' /> : ""}
@@ -106,6 +128,64 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
             );
           }
         })}
+        <Modal
+          closeOnEsc={true}
+          open={modalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setUserToBeBanned("");
+          }}
+          closeIcon={<FaTimes style={{ color: "white ", fontSize: "2vw" }} />}
+          styles={{
+            modal: {
+              backgroundColor: constants.appAccentColor,
+              color: "white",
+              width: "50vw",
+              padding: "2vw 0",
+            },
+            closeIcon: {
+              outline: "none",
+              border: "none",
+            },
+          }}
+        >
+          <BanModalContent>
+            <div className='header'>Reason For Your Ban</div>
+
+            <div
+              style={{
+                fontFamily: '"Poppins" , sans-serif',
+                fontSize: "2vw",
+              }}
+            >
+              Tell Us Why You Want To Ban User '{userToBeBannned}'
+            </div>
+            <div className='form'>
+              <input
+                type='text'
+                value={banText}
+                onChange={(e) => setBanText(e.target.value)}
+              />
+              <button className='submit__ban' onClick={ban}>
+                <BiSend />
+              </button>
+            </div>
+            <div className='actionsWrapper'>
+              <button
+                className='action'
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setUserToBeBanned("");
+                }}
+              >
+                <span>Cancel</span> <FaTimes />
+              </button>
+              <button className='action' onClick={ban}>
+                <span>Ban</span> <HiOutlineBan />
+              </button>
+            </div>
+          </BanModalContent>
+        </Modal>
       </>
     );
   }
@@ -229,11 +309,17 @@ export const EmojiPanelInfo: FC = () => {
         />
       </div>
       <div className='emojis__wrapper'>
-        {emojiResourceType === "human" && <HumansComponent />}
-        {emojiResourceType === "animals" && <AnimalComponent />}
-        {emojiResourceType === "food" && <FoodComponent />}
-        {emojiResourceType === "objects" && <ObjectsComponent />}
-        {emojiResourceType === "signs" && <SignsComponent />}
+        {emojiResourceType === "human" ? (
+          <HumansComponent />
+        ) : emojiResourceType === "animals" ? (
+          <AnimalComponent />
+        ) : emojiResourceType === "food" ? (
+          <FoodComponent />
+        ) : emojiResourceType === "objects" ? (
+          <ObjectsComponent />
+        ) : (
+          <SignsComponent />
+        )}
       </div>
     </EmojiPanel>
   );
@@ -387,32 +473,81 @@ export const MessageComponent: FC<Message> = memo((props) => {
 //   }
 // };
 
-export const ImagesContent: FC<{}> = memo(() => {
+export const ImagesContent: FC = memo(() => {
   const inputRef = useRef();
-  const [content, setContent] = useState<object>({});
+  const [images, setImages] = useState();
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
     false
   );
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
-  const [cachedSearches, setCachedSearches] = useState();
+
+  const [currentImgUrl, setCurrentImgUrl] = useState<string>("");
+  const paginate: (isPrev: boolean) => void = (isPrev: boolean) => {
+    setIsFetching(true);
+    //@ts-ignore
+    fetchData(isPrev ? images.prev_page : images.next_page);
+  };
+  const Images: FC = () => {
+    return (
+      <div className='images__wrapper'>
+        {/* @ts-ignore */}
+        {images.photos.map((img) => (
+          <img
+            key={getRandomKey()}
+            src={img.src.landscape}
+            //eslint-disable-nexxt-line
+            alt={`Photo Taken By ${img.photographer} `}
+            onClick={() => {
+              setCurrentImgUrl(() => {
+                setIsModalOpen(true);
+                return img.src.landscape;
+              });
+            }}
+          />
+        ))}
+        <div className='btns'>
+          {/* @ts-ignore */}
+          {images.prev_page ? (
+            <Button onClick={() => paginate(true)}>
+              <AiOutlineArrowLeft />
+            </Button>
+          ) : (
+            ""
+          )}
+          {/* @ts-ignore */}
+          {images.next_page ? (
+            <Button onClick={() => paginate(false)}>
+              <AiOutlineArrowRight />{" "}
+            </Button>
+          ) : (
+            ""
+          )}
+        </div>
+      </div>
+    );
+  };
   useEffect(() => {
     //@ts-ignore
     inputRef.current.focus();
+    fetchData("https://api.pexels.com/v1/curated");
   }, []);
-  async function fetchData() {
-    try {
-      //@ts-ignore
-      const res = await fetchApi(setApiUrl(text, "image"), "image");
-
-      console.log(res);
-      if (res.photos.length === 0) {
-        setIsFetching("Failed");
-      } else {
-        setContent(res);
-        setIsFetching("Got");
-      }
-    } catch (error) {
-      console.error(error);
+  async function fetchData(paginatedUrl?: string) {
+    const url = paginatedUrl
+      ? paginatedUrl
+      : `https://api.pexels.com/v1/search?query=${text}&orientation=landscape&per_page=40&page=1`;
+    const response = await fetch(url, {
+      headers: {
+        //@ts-ignore
+        Authorization: constants.PEXELS_API_KEY,
+      },
+    });
+    const result = await response.json();
+    if (result.photos.length === 0) {
+      setIsFetching("Failed");
+    } else {
+      setImages(result);
+      setIsFetching("Got");
     }
   }
 
@@ -431,13 +566,24 @@ export const ImagesContent: FC<{}> = memo(() => {
       setIsFetching(false);
     } else {
       setIsFetching(true);
-
       fetchData();
     }
   };
 
   return (
     <>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        closeIcon={<FaTimes style={{ color: "white", fontSize: "2vw" }} />}
+        styles={{
+          modal: {
+            backgroundColor: constants.appAccentColor,
+          },
+        }}
+      >
+        <img src={currentImgUrl} alt='Image Loading' />
+      </Modal>
       <form onSubmit={(e) => handleSubmit(e)}>
         <input
           type='text'
@@ -446,6 +592,7 @@ export const ImagesContent: FC<{}> = memo(() => {
           onChange={(e) => setText(e.target.value)}
           placeholder='Search For Images'
         />
+
         <button type='submit'>
           <FaSearch />
         </button>
@@ -460,13 +607,18 @@ export const ImagesContent: FC<{}> = memo(() => {
       {isFetching === true ? (
         <IsFetching />
       ) : isFetching === false ? (
-        <>
-          <h1>initial</h1>
-        </>
+        <h1
+          style={{
+            marginTop: "1vw",
+            fontFamily: '"Poppins" , sans-serif',
+          }}
+        >
+          One Sec
+        </h1>
       ) : isFetching === "Failed" ? (
         <FailedFetch />
       ) : (
-        <GotImages result={content} />
+        <Images />
       )}
     </>
   );
@@ -493,18 +645,6 @@ const FailedFetch: FC = () => {
     </>
   );
 };
-const GotImages: FC<{ result: any }> = memo(({ result }) => {
-  console.log(result);
-  return (
-    <>
-      <div className='images__wrapper'>
-        {result.photos.map((p: any) => (
-          <img src={p.src.original} alt='' />
-        ))}
-      </div>
-    </>
-  );
-});
 
 export const GifContent: FC = () => {
   const inputRef = useRef();
@@ -517,16 +657,7 @@ export const GifContent: FC = () => {
     //@ts-ignore
     inputRef.current.focus();
   }, []);
-  async function fetchData() {
-    try {
-      //@ts-ignore
-      const res = await fetchApi(setApiUrl(text, "gif"), "gif");
-      console.log(res);
-      setIsFetching(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  async function fetchData() {}
   function handleSubmit(e: FormEvent) {
     setIsFetching(true);
     e.preventDefault();
@@ -562,7 +693,8 @@ export const GifContent: FC = () => {
       ) : isFetching === "Failed" ? (
         <FailedFetch />
       ) : (
-        <GotImages result={content} />
+        // <GotImages result={content} />
+        <span></span>
       )}
     </>
   );
