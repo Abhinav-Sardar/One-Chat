@@ -86,7 +86,9 @@ svg:root {
   .content {
     img {
    height:15vw ; 
-   width:25vw ; 
+   width:70% ;
+   text-align:center ;
+   margin-left:15% ;;   
     }
     color:white ;
   border-radius:10px ; 
@@ -96,7 +98,8 @@ svg:root {
     font-size:1.45vw ; 
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
-    padding:0.5vw ; 
+    padding:.5vw ; 
+    
   }
 }
 .Incoming {

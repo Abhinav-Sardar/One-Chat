@@ -56,6 +56,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   const [isDone, setIsDone] = useState<boolean>(false);
   const history = useHistory();
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const roomRef = useRef();
 
   useEffect(() => {
     if (isModalOpen === true) {
@@ -122,6 +123,8 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             //@ts-ignore
             socket.disconnect(true);
             toast.error(constants.roomDoesntExistError);
+            //@ts-ignore
+            roomRef.current.focus();
           }, 1000);
         }
       });
@@ -186,9 +189,10 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                   value={room}
                   spellCheck
                   required
-                  placeholder='Name Your Room'
+                  placeholder='Name Of The Room You Want To Join'
                   onChange={(e) => setRoom(e.target.value)}
                   autoFocus={isAuth ? true : false}
+                  ref={roomRef}
                 />
               </div>
             )}

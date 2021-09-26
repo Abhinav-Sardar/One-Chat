@@ -50,6 +50,7 @@ const CreateRoom: FunctionalComponent = () => {
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const roomRef = useRef();
   useEffect(() => {
     if (isModalOpen === true) {
       //@ts-ignore
@@ -93,6 +94,8 @@ const CreateRoom: FunctionalComponent = () => {
             socket.disconnect(true);
 
             toast.error(constants.roomAlreadyExistsError);
+            //@ts-ignore
+            roomRef.current.focus();
           }, 1000);
         } else {
           console.log("You are free to proceeed");
@@ -159,6 +162,7 @@ const CreateRoom: FunctionalComponent = () => {
                 spellCheck
                 required
                 placeholder='Name Your Room'
+                ref={roomRef}
               />
             </div>
             <div className='field'>

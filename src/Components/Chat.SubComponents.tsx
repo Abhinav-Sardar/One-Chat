@@ -17,13 +17,14 @@ import {
   ShareProps,
   UsersInChatProps,
   copy,
+  validateModal,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy } from "react-icons/md";
 import Modal from "react-responsive-modal";
 
 import {
-  BanModalContent,
+  ModalContent,
   EmojiPanel,
   ImagesPanel,
   MeetInfo,
@@ -149,7 +150,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
             },
           }}
         >
-          <BanModalContent>
+          <ModalContent>
             <div className='header'>Reason For Your Ban</div>
 
             <div
@@ -184,7 +185,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
                 <span>Ban</span> <HiOutlineBan />
               </button>
             </div>
-          </BanModalContent>
+          </ModalContent>
         </Modal>
       </>
     );
@@ -252,7 +253,7 @@ export const SidePanelHeaderComponent: FC<PanelHeaderProps> = memo(
         <SidePanelHeader style={style ? style : {}}>
           <span>{children}</span>
 
-          <FaTimes onClick={onClose} />
+          <FaTimes onClick={onClose} style={{ cursor: "pointer" }} />
         </SidePanelHeader>
       </>
     );
@@ -430,10 +431,8 @@ export const MessageComponent: FC<Message> = memo((props) => {
       <section className={props.className}>
         <div>
           <div className='info'>
-            {/* @ts-ignore */}
             {parse(props.profilePic)}
             <span>
-              {/* @ts-ignore */}
               {props.className === "Outgoing"
                 ? `${props.author} (You)`
                 : props.author}{" "}
@@ -452,7 +451,31 @@ export const MessageComponent: FC<Message> = memo((props) => {
       </section>
     );
   } else if (props.type === "image") {
-    return "";
+    return (
+      <section className={props.className}>
+        <div>
+          <div className='info'>
+            {parse(props.profilePic)}
+            <span>
+              {props.className === "Outgoing"
+                ? `${props.author} (You)`
+                : props.author}{" "}
+              - {ReturnFormattedDate(props.created_at)}
+            </span>
+          </div>
+          <div
+            className='content'
+            style={{
+              backgroundColor: props.accentColor,
+            }}
+          >
+            <img src={props.content} alt='Image Loading' />
+            <br />
+            {props.caption}
+          </div>
+        </div>
+      </section>
+    );
   }
 
   // else if (props.type === "tooltip") {
@@ -473,12 +496,15 @@ export const MessageComponent: FC<Message> = memo((props) => {
 //   }
 // };
 
-export const ImagesContent: FC = memo(() => {
+export const ImagesContent: FC<{
+  onImgSubmit: (imgUrl: string, caption: string) => void;
+}> = memo(({ onImgSubmit }) => {
   const inputRef = useRef();
   const [images, setImages] = useState();
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
     false
   );
+  const [caption, setCaption] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
 
@@ -554,16 +580,10 @@ export const ImagesContent: FC = memo(() => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (
-      //@ts-ignore
-      !text ||
-      //@ts-ignore
-      !text.trim() ||
-      //@ts-ignore
-      text.length >= 30
-    ) {
+    if (!validateModal(text)) {
       toast.error(constants.ImageInputErrorMsgs);
       setIsFetching(false);
+      fetchData("https://api.pexels.com/v1/curated");
     } else {
       setIsFetching(true);
       fetchData();
@@ -582,7 +602,42 @@ export const ImagesContent: FC = memo(() => {
           },
         }}
       >
-        <img src={currentImgUrl} alt='Image Loading' />
+        <ModalContent>
+          <div className='header'>Add A Caption</div>
+          <img src={currentImgUrl} alt='Image Loading' />
+          <div className='form'>
+            <input
+              type='text'
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+            />
+          </div>
+
+          <div className='actionsWrapper'>
+            <button
+              onClick={() => {
+                setIsModalOpen(false);
+                setCurrentImgUrl("");
+              }}
+            >
+              Cancel <FaTimes />
+            </button>
+            <button
+              onClick={() => {
+                if (!validateModal(caption)) {
+                  toast.error("Invalid Message Or Message Length Too Long!");
+                } else {
+                  onImgSubmit(currentImgUrl, caption);
+                  setIsModalOpen(false);
+                  setCaption("");
+                  setCurrentImgUrl("");
+                }
+              }}
+            >
+              Post <BiSend />
+            </button>
+          </div>
+        </ModalContent>
       </Modal>
       <form onSubmit={(e) => handleSubmit(e)}>
         <input
@@ -699,3 +754,11 @@ export const GifContent: FC = () => {
     </>
   );
 };
+
+/**
+ *
+ * d3pno32ne32
+ * r32
+ * rr32
+ * Dhand dhand dhan dha da  phusssshhh
+ */

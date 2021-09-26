@@ -19,8 +19,7 @@ import io from "socket.io-client";
 //@ts-ignore
 import Scroll from "react-scroll-to-bottom";
 import { RiFileGifLine, RiFileGifFill } from "react-icons/ri";
-//@ts-ignore
-import Ripples from "react-ripples";
+
 import {
   FaRegSmile,
   FaSmile,
@@ -35,7 +34,6 @@ import {
 import { FiShare2 } from "react-icons/fi";
 import { useSpring, useTransition } from "react-spring";
 import { toast } from "react-toastify";
-import ReactTooltip from "react-tooltip";
 import { SelfClientContext } from "../App";
 import {
   ChatUser,
@@ -74,7 +72,6 @@ import {
 import { Pop, ForeignMessagePop } from "../Images/Accumulator";
 import Banned from "./Banned";
 
-//@ts-ignore
 const socket = io(constants.serverName);
 
 export const MessageContext = createContext<any>(null);
@@ -142,9 +139,7 @@ const ChatComponent: FC = () => {
       setIsBanned([true, reason]);
     });
   };
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
+
   useEffect(() => {
     socket.connect();
     socketCode();
@@ -204,11 +199,6 @@ const ChatComponent: FC = () => {
   function Icons(): JSX.Element {
     return (
       <>
-        <ReactTooltip
-          place='top'
-          type={theme === "#232424" ? "light" : "dark"}
-          effect='solid'
-        />
         {!emojiOpen ? (
           <FaRegSmile
             onClick={() => setEmojiOpen(!emojiOpen)}
@@ -476,7 +466,28 @@ const ChatComponent: FC = () => {
                       >
                         Images
                       </SidePanelHeaderComponent>
-                      <ImagesContent />
+                      <ImagesContent
+                        onImgSubmit={(imgUrl, caption) => {
+                          const newMessage: Message = {
+                            author: user.name,
+
+                            created_at: new Date(),
+                            accentColor: constants.appAccentColor,
+                            content: imgUrl,
+                            type: "image",
+                            className: "Outgoing",
+                            profilePic: user.avatarSvg,
+                            caption: caption,
+                          };
+
+                          setMsgs((p) => [...p, newMessage]);
+                          socket.emit("message", {
+                            ...newMessage,
+                            className: "Incoming",
+                            profilePic: "",
+                          });
+                        }}
+                      />
                     </ImagesPanel>
                   </>
                 ) : (

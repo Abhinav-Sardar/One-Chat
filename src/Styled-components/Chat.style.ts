@@ -393,15 +393,19 @@ export const ImagesPanel = styled(animated.aside)`
   }
 `;
 
-export const BanModalContent = styled.div`
+export const ModalContent = styled.div`
   > * {
-    margin: 2vw 0;
+    margin: 1.7vw 0;
+  }
+  img {
+    width: 45vw;
   }
   margin-top: 2vw;
   text-align: center;
   .header {
     font-family: "Quicksand", sans-serif;
     font-size: 3vw;
+    color: white;
   }
   .form {
     width: 100%;
@@ -467,7 +471,7 @@ export const BanModalContent = styled.div`
         font-size: 2vw;
       }
       > * {
-        margin: 0 1vw;
+        margin: 0 0.5vw;
       }
     }
   }

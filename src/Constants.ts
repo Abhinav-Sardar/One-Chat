@@ -181,7 +181,7 @@ export type Message = {
   type: "text" | "image" | "tooltip" | "reply";
   created_at?: Date;
   author?: string;
-  className: "Incoming" | "Outgoing" | "" | "Left" | "Entered";
+  className: "Incoming" | "Outgoing";
   caption?: string;
 };
 
@@ -305,6 +305,16 @@ export const IsRoomThere: (rooms: room[], searchKey: string) => boolean = (
     valueToBeReturned = true;
   } else {
     valueToBeReturned = false;
+  }
+  return valueToBeReturned;
+};
+
+export const validateModal: (text: string) => boolean = (text: string) => {
+  let valueToBeReturned = false;
+  if (!text || !text.trim() || text.length >= 50) {
+    valueToBeReturned = false;
+  } else {
+    valueToBeReturned = true;
   }
   return valueToBeReturned;
 };
