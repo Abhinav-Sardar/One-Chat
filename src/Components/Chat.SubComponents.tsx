@@ -7,6 +7,8 @@ import {
   useRef,
   FormEvent,
 } from "react";
+import axios from "axios";
+
 import {
   constants,
   getRandomKey,
@@ -562,13 +564,13 @@ export const ImagesContent: FC<{
     const url = paginatedUrl
       ? paginatedUrl
       : `https://api.pexels.com/v1/search?query=${text}&orientation=landscape&per_page=40&page=1`;
-    const response = await fetch(url, {
+    const response = await axios.get(url, {
       headers: {
-        //@ts-ignore
         Authorization: constants.PEXELS_API_KEY,
       },
     });
-    const result = await response.json();
+    const result = await response.data;
+    console.log(result);
     if (result.photos.length === 0) {
       setIsFetching("Failed");
     } else {
