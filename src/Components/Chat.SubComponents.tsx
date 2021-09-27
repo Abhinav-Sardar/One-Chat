@@ -508,7 +508,7 @@ export const ImagesContent: FC<{
   );
   const [caption, setCaption] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>(constants.PEXELS_API_KEY);
 
   const [currentImgUrl, setCurrentImgUrl] = useState<string>("");
   const paginate: (isPrev: boolean) => void = (isPrev: boolean) => {
@@ -566,9 +566,7 @@ export const ImagesContent: FC<{
       : `https://api.pexels.com/v1/search?query=${text}&orientation=landscape&per_page=40&page=1`;
     const response = await axios.get(url, {
       headers: {
-        Authorization:
-          "563492ad6f91700001000001e2f383c41efa4b889123dc24cdf343a3",
-        "Access-Control-Allow-Origin": "*",
+        Authorization: constants.PEXELS_API_KEY,
       },
     });
     const result = await response.data;
