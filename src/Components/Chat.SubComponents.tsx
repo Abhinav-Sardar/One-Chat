@@ -566,7 +566,9 @@ export const ImagesContent: FC<{
       : `https://api.pexels.com/v1/search?query=${text}&orientation=landscape&per_page=40&page=1`;
     const response = await axios.get(url, {
       headers: {
-        Authorization: constants.PEXELS_API_KEY,
+        Authorization:
+          "563492ad6f91700001000001e2f383c41efa4b889123dc24cdf343a3",
+        "Access-Control-Allow-Origin": "*",
       },
     });
     const result = await response.data;
