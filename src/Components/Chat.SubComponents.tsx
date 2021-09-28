@@ -508,7 +508,7 @@ export const ImagesContent: FC<{
   );
   const [caption, setCaption] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [text, setText] = useState<string>(constants.PEXELS_API_KEY);
+  const [text, setText] = useState<string>("");
 
   const [currentImgUrl, setCurrentImgUrl] = useState<string>("");
   const paginate: (isPrev: boolean) => void = (isPrev: boolean) => {
