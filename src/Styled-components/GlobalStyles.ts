@@ -87,8 +87,7 @@ svg:root {
     img {
    height:15vw ; 
    width:70% ;
-   text-align:center ;
-   margin-left:15% ;;   
+
     }
     color:white ;
   border-radius:10px ; 

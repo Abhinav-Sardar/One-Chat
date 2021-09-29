@@ -123,8 +123,12 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             //@ts-ignore
             socket.disconnect(true);
             toast.error(constants.roomDoesntExistError);
-            //@ts-ignore
-            roomRef.current.focus();
+            if (!isAuth) {
+              //@ts-ignore
+              roomRef.current.focus();
+            } else {
+              return;
+            }
           }, 1000);
         }
       });
@@ -135,11 +139,11 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
 
   const appear = useSpring({
     from: {
-      transform: "scale(0.4)",
+      width: "0vw",
       opacity: 0,
     },
     to: {
-      transform: "scale(1)",
+      width: "100vw",
       opacity: 1,
     },
   });

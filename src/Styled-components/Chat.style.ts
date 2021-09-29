@@ -419,7 +419,7 @@ export const ModalContent = styled.div`
       border-radius: 10px;
       border: 0;
       font-size: 1.2vw;
-      font-family: "Quicksand", sans-serif;
+      font-family: "Poppins", sans-serif;
       font-weight: 550;
       color: ${constants.appAccentColor};
       padding: 0 0.5vw;

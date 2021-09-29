@@ -18,17 +18,16 @@ const MainPage: FC = () => {
   useEffect(() => {
     document.title = "One-Chat";
     accentColorChecker();
+    document.querySelector(
+      "html"
+    ).style.background = `linear-gradient(60deg , ${constants.appAccentColor} , #fff)`;
   }, []);
   return (
-    <div
-      style={{
-        height: "100%",
-      }}
-    >
+    <>
       <ThisHeader />
       <ThisMain />
       <ThisButtons />
-    </div>
+    </>
   );
 };
 

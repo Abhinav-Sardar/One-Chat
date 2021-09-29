@@ -53,7 +53,7 @@ export const MainContent = styled.main`
   }
 
   > * {
-    margin: 2vw 0;
+    margin: 0.8vw 0;
   }
   .info {
     width: 100vw;
@@ -111,6 +111,4 @@ export const ActionsButtonWrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-export const CustomMainPage = styled(animated.div)`
-  background: linear-gradient(60deg, ${constants.appAccentColor}, #fff);
-`;
+export const CustomMainPage = styled(animated.div)``;

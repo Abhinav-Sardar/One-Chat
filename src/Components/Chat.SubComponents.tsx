@@ -8,7 +8,7 @@ import {
   FormEvent,
 } from "react";
 import axios from "axios";
-
+import useSwr from "swr";
 import {
   constants,
   getRandomKey,
@@ -428,6 +428,7 @@ const FoodComponent: FC = memo(() => {
 
 //@ts-ignore
 export const MessageComponent: FC<Message> = memo((props) => {
+  const ref = useRef();
   if (props.type === "text") {
     return (
       <section className={props.className}>
@@ -454,7 +455,12 @@ export const MessageComponent: FC<Message> = memo((props) => {
     );
   } else if (props.type === "image") {
     return (
-      <section className={props.className}>
+      <section
+        className={props.className}
+        ref={ref}
+        //@ts-ignore
+        onClick={() => ref.current.scrollIntoView(false)}
+      >
         <div>
           <div className='info'>
             {parse(props.profilePic)}
@@ -469,9 +475,17 @@ export const MessageComponent: FC<Message> = memo((props) => {
             className='content'
             style={{
               backgroundColor: props.accentColor,
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <img src={props.content} alt='Image Loading' />
+            <img
+              src={props.content}
+              alt='Image Loading'
+              style={{
+                alignSelf: "center",
+              }}
+            />
             <br />
             {props.caption}
           </div>
@@ -502,25 +516,64 @@ export const ImagesContent: FC<{
   onImgSubmit: (imgUrl: string, caption: string) => void;
 }> = memo(({ onImgSubmit }) => {
   const inputRef = useRef();
-  const [images, setImages] = useState();
+
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
     false
   );
+  const [url, setUrl] = useState<string>("https://api.pexels.com/v1/curated");
   const [caption, setCaption] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
-
+  const { data } = useSwr(url, fetchData);
   const [currentImgUrl, setCurrentImgUrl] = useState<string>("");
   const paginate: (isPrev: boolean) => void = (isPrev: boolean) => {
     setIsFetching(true);
     //@ts-ignore
-    fetchData(isPrev ? images.prev_page : images.next_page);
+    setUrl(isPrev ? data?.prev_page : data?.next_page);
   };
+  useEffect(() => {
+    //@ts-ignore
+    inputRef.current.focus();
+  }, []);
+
+  async function fetchData() {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: constants.PEXELS_API_KEY,
+      },
+    });
+    let returned = null;
+    const result = await response.data;
+    console.log(result);
+    if (result.photos.length === 0) {
+      setIsFetching("Failed");
+    } else {
+      setIsFetching("Got");
+      returned = result;
+    }
+    return returned;
+  }
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!validateModal(text)) {
+      toast.error(constants.ImageInputErrorMsgs);
+      setIsFetching(false);
+      setUrl("https://api.pexels.com/v1/curated");
+    } else {
+      setIsFetching(true);
+      setUrl(
+        `https://api.pexels.com/v1/search?query=${text}&orientation=landscape&per_page=40`
+      );
+    }
+  };
+
   const Images: FC = () => {
     return (
       <div className='images__wrapper'>
         {/* @ts-ignore */}
-        {images.photos.map((img) => (
+        {data?.photos.map((img) => (
           <img
             key={getRandomKey()}
             src={img.src.landscape}
@@ -536,7 +589,7 @@ export const ImagesContent: FC<{
         ))}
         <div className='btns'>
           {/* @ts-ignore */}
-          {images.prev_page ? (
+          {data?.prev_page ? (
             <Button onClick={() => paginate(true)}>
               <AiOutlineArrowLeft />
             </Button>
@@ -544,7 +597,7 @@ export const ImagesContent: FC<{
             ""
           )}
           {/* @ts-ignore */}
-          {images.next_page ? (
+          {data?.next_page ? (
             <Button onClick={() => paginate(false)}>
               <AiOutlineArrowRight />{" "}
             </Button>
@@ -555,43 +608,6 @@ export const ImagesContent: FC<{
       </div>
     );
   };
-  useEffect(() => {
-    //@ts-ignore
-    inputRef.current.focus();
-    fetchData("https://api.pexels.com/v1/curated");
-  }, []);
-  async function fetchData(paginatedUrl?: string) {
-    const url = paginatedUrl
-      ? paginatedUrl
-      : `https://api.pexels.com/v1/search?query=${text}&orientation=landscape&per_page=40&page=1`;
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: constants.PEXELS_API_KEY,
-      },
-    });
-    const result = await response.data;
-    console.log(result);
-    if (result.photos.length === 0) {
-      setIsFetching("Failed");
-    } else {
-      setImages(result);
-      setIsFetching("Got");
-    }
-  }
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!validateModal(text)) {
-      toast.error(constants.ImageInputErrorMsgs);
-      setIsFetching(false);
-      fetchData("https://api.pexels.com/v1/curated");
-    } else {
-      setIsFetching(true);
-      fetchData();
-    }
-  };
-
   return (
     <>
       <Modal
