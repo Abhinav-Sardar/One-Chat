@@ -390,6 +390,13 @@ export const ImagesPanel = styled(animated.aside)`
       border-radius: 10px;
       border: 3px solid ${constants.appAccentColor};
     }
+    .gif {
+      height: 12.5vw;
+      width: 93%;
+      margin: 1vw 0;
+      border-radius: 10px;
+      border: 3px solid ${constants.appAccentColor};
+    }
   }
 `;
 
@@ -399,6 +406,8 @@ export const ModalContent = styled.div`
   }
   img {
     width: 45vw;
+    height: 23vw;
+    border-radius: 10px;
   }
   margin-top: 2vw;
   text-align: center;

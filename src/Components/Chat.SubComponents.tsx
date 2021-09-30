@@ -37,7 +37,7 @@ import parse from "html-react-parser";
 import { toast } from "react-toastify";
 import { FaTimes, FaSearch, FaSpinner, FaCrown } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
-import Emojis from "../Images/Accumulator";
+import Emojis, { Pop } from "../Images/Accumulator";
 import { MessageContext } from "./ChatComponent";
 import { BiSad, BiSend } from "react-icons/bi";
 import { HiOutlineBan } from "react-icons/hi";
@@ -428,7 +428,6 @@ const FoodComponent: FC = memo(() => {
 
 //@ts-ignore
 export const MessageComponent: FC<Message> = memo((props) => {
-  const ref = useRef();
   if (props.type === "text") {
     return (
       <section className={props.className}>
@@ -455,12 +454,7 @@ export const MessageComponent: FC<Message> = memo((props) => {
     );
   } else if (props.type === "image") {
     return (
-      <section
-        className={props.className}
-        ref={ref}
-        //@ts-ignore
-        onClick={() => ref.current.scrollIntoView(false)}
-      >
+      <section className={props.className}>
         <div>
           <div className='info'>
             {parse(props.profilePic)}
@@ -558,7 +552,7 @@ export const ImagesContent: FC<{
     e.preventDefault();
 
     if (!validateModal(text)) {
-      toast.error(constants.ImageInputErrorMsgs);
+      toast.error(constants.imageInputErrorMsg);
       setIsFetching(false);
       setUrl("https://api.pexels.com/v1/curated");
     } else {
@@ -569,7 +563,7 @@ export const ImagesContent: FC<{
     }
   };
 
-  const Images: FC = () => {
+  const Images: FC = memo(() => {
     return (
       <div className='images__wrapper'>
         {/* @ts-ignore */}
@@ -607,7 +601,7 @@ export const ImagesContent: FC<{
         </div>
       </div>
     );
-  };
+  });
   return (
     <>
       <Modal
@@ -636,6 +630,7 @@ export const ImagesContent: FC<{
               onClick={() => {
                 setIsModalOpen(false);
                 setCurrentImgUrl("");
+                setCaption("");
               }}
             >
               Cancel <FaTimes />
@@ -649,6 +644,7 @@ export const ImagesContent: FC<{
                   setIsModalOpen(false);
                   setCaption("");
                   setCurrentImgUrl("");
+                  Pop.play();
                 }
               }}
             >
@@ -680,14 +676,7 @@ export const ImagesContent: FC<{
       {isFetching === true ? (
         <IsFetching />
       ) : isFetching === false ? (
-        <h1
-          style={{
-            marginTop: "1vw",
-            fontFamily: '"Poppins" , sans-serif',
-          }}
-        >
-          One Sec
-        </h1>
+        <Images />
       ) : isFetching === "Failed" ? (
         <FailedFetch />
       ) : (
@@ -719,25 +708,125 @@ const FailedFetch: FC = () => {
   );
 };
 
-export const GifContent: FC = () => {
+export const GifContent: FC<{
+  onGifSubmit: (gifUrl: string, caption: string) => void;
+}> = ({ onGifSubmit }) => {
   const inputRef = useRef();
-  const [content, setContent] = useState<object>({});
+  const [text, setText] = useState<string>("");
+  const [pos, setPos] = useState<number>(0);
+  const [url, setUrl] = useState(
+    `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}&pos=${pos}`
+  );
+  const { data } = useSwr(url, fetchData);
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
     false
   );
-  const [text, setText] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [currentGifUrl, setCurrentGifUrl] = useState<string>("");
+  const [caption, setCaption] = useState<string>("");
   useEffect(() => {
     //@ts-ignore
     inputRef.current.focus();
   }, []);
-  async function fetchData() {}
-  function handleSubmit(e: FormEvent) {
-    setIsFetching(true);
-    e.preventDefault();
-    fetchData();
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+  async function fetchData() {
+    const result = await (await axios.get(url)).data;
+    let valueToBeReturned = null;
+    if (result.results.length === 0) {
+      setIsFetching("Failed");
+      setPos(0);
+    } else {
+      valueToBeReturned = result.results;
+      setIsFetching("Got");
+      setPos(parseInt(result.next));
+    }
+
+    return valueToBeReturned;
   }
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setIsFetching(true);
+    if (!validateModal(text)) {
+      toast.error(constants.imageInputErrorMsg);
+      setIsFetching(false);
+    } else {
+      console.log("Reached Here!");
+      setUrl(
+        `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&q=${text}&contentfilter=medium&limit=40&pos=${pos}`
+      );
+    }
+  }
+  const Images: FC = memo(() => {
+    return (
+      <div className='images__wrapper'>
+        {data?.map((gif: any) => (
+          <img
+            className='gif'
+            src={gif.media[0].tinygif.url}
+            key={gif.id}
+            alt='Loading ...'
+            onClick={() => {
+              setCurrentGifUrl(gif.media[0].tinygif.url);
+              setIsModalOpen(true);
+            }}
+          />
+        ))}
+      </div>
+    );
+  });
   return (
     <>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        closeIcon={<FaTimes style={{ color: "white", fontSize: "2vw" }} />}
+        styles={{
+          modal: {
+            backgroundColor: constants.appAccentColor,
+          },
+        }}
+      >
+        <ModalContent>
+          <div className='header'>Add A Caption</div>
+          <img src={currentGifUrl} alt='Image Loading' />
+          <div className='form'>
+            <input
+              type='text'
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+            />
+          </div>
+
+          <div className='actionsWrapper'>
+            <button
+              onClick={() => {
+                setIsModalOpen(false);
+                setCurrentGifUrl("");
+                setCaption("");
+              }}
+            >
+              Cancel <FaTimes />
+            </button>
+            <button
+              onClick={() => {
+                if (!validateModal(caption)) {
+                  toast.error("Invalid Message Or Message Length Too Long!");
+                } else {
+                  onGifSubmit(currentGifUrl, caption);
+                  setIsModalOpen(false);
+                  setCaption("");
+                  setCurrentGifUrl("");
+                  Pop.play();
+                }
+              }}
+            >
+              Post <BiSend />
+            </button>
+          </div>
+        </ModalContent>
+      </Modal>
       <form onSubmit={(e) => handleSubmit(e)}>
         <input
           placeholder='Search for GIFs'
@@ -766,8 +855,7 @@ export const GifContent: FC = () => {
       ) : isFetching === "Failed" ? (
         <FailedFetch />
       ) : (
-        // <GotImages result={content} />
-        <span></span>
+        <Images />
       )}
     </>
   );

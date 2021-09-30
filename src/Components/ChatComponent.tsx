@@ -416,7 +416,28 @@ const ChatComponent: FC = () => {
                     >
                       Gifs
                     </SidePanelHeaderComponent>
-                    <GifContent />
+                    <GifContent
+                      onGifSubmit={(gifurl, caption) => {
+                        const newMessage: Message = {
+                          author: user.name,
+
+                          created_at: new Date(),
+                          accentColor: constants.appAccentColor,
+                          content: gifurl,
+                          type: "image",
+                          className: "Outgoing",
+                          profilePic: user.avatarSvg,
+                          caption: caption,
+                        };
+
+                        setMsgs((p) => [...p, newMessage]);
+                        socket.emit("message", {
+                          ...newMessage,
+                          className: "Incoming",
+                          profilePic: "",
+                        });
+                      }}
+                    />
                   </ImagesPanel>
                 ) : (
                   ""

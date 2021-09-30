@@ -130,7 +130,7 @@ svg:root {
   .content {
     img {
       height:15vw ; 
-      width:25vw ; 
+      width:30vw ; 
     }
     color:white ; 
   border-radius:10px ; 

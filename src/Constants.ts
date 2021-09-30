@@ -31,7 +31,7 @@ export const constants = {
   },
   copySuccess: "Copied ✅. Share this Url with anyone you trust",
   PEXELS_API_KEY: "563492ad6f91700001000001e2f383c41efa4b889123dc24cdf343a3",
-  ImageInputErrorMsgs:
+  imageInputErrorMsg:
     "The provided input was invalid or too long! The limit is 30",
   roomDoesntExistError: "A room with that name doesn't exist",
   roomAlreadyExistsError: "A room with same name already exists",
