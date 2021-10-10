@@ -10,24 +10,28 @@ import JoinRoom from "./JoinRoom";
 const Chat: FC = () => {
   const [user, _] = useContext(SelfClientContext);
   const [infoThere, setInfoThere] = useState<boolean>(false);
+  const [isPrivate, setIsPrivate] = useState<boolean | "Join">(null);
   //@ts-ignore
   const { roomId } = useParams();
   useEffect(() => {
     if (
       user.avatarSvg !== "" &&
       user.name !== "" &&
-      user.currentRoomName !== ""
+      user.currentRoomName !== "" &&
+      (user.hasCreatedPrivateRoom === "Join" ||
+        typeof user.hasCreatedPrivateRoom === "boolean")
     ) {
+      setIsPrivate(user.hasCreatedPrivateRoom);
       setInfoThere(true);
     } else {
       setInfoThere(false);
     }
   }, []);
-  //@ts-ignore
+
   return (
     <>
       {infoThere ? (
-        <ChatComponent />
+        <ChatComponent isPrivate={isPrivate} />
       ) : (
         <JoinRoom isAuth={true} roomName={roomId} />
       )}

@@ -101,6 +101,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             name: name,
             currentRoomName: newRoom,
             avatarSvg: currentAvatar,
+            hasCreatedPrivateRoom: "Join",
           };
           setUser(newUser);
           //@ts-ignore
@@ -153,7 +154,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       {isConnecting ? (
         <PleaseWait />
       ) : isDone ? (
-        <ChatComponent />
+        <ChatComponent isPrivate={"Join"} />
       ) : (
         <Page style={appear}>
           <h1 className='purpose'>Join</h1>
@@ -173,15 +174,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             </div>
             {isAuth ? (
               <div className='field'>
-                <h2
-                  style={{
-                    color: "white",
-                    fontFamily: '"Poppins" , arial , sans-serif',
-                    fontSize: "1.7vw",
-                  }}
-                >
-                  Room Name:{roomName}
-                </h2>
+                <span>Room Name:{roomName}</span>
               </div>
             ) : (
               <div className='field'>

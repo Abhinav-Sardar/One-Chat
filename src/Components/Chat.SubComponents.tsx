@@ -8,6 +8,7 @@ import {
   FormEvent,
 } from "react";
 import axios from "axios";
+
 import useSwr from "swr";
 import {
   constants,
@@ -20,9 +21,12 @@ import {
   UsersInChatProps,
   copy,
   validateModal,
+  numOrStr,
+  returnUpdatedDate,
+  decrypt,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
-import { MdContentCopy } from "react-icons/md";
+import { MdContentCopy, MdGif } from "react-icons/md";
 import Modal from "react-responsive-modal";
 
 import {
@@ -38,22 +42,34 @@ import { toast } from "react-toastify";
 import { FaTimes, FaSearch, FaSpinner, FaCrown } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
 import Emojis, { Pop } from "../Images/Accumulator";
-import { MessageContext } from "./ChatComponent";
-import { BiSad, BiSend } from "react-icons/bi";
+
+import { BiSad, BiSend, BiTimeFive } from "react-icons/bi";
 import { HiOutlineBan } from "react-icons/hi";
 import { SelfClientContext } from "../App";
 import { Button } from "../Styled-components/Customize.style";
-import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
+import {
+  AiOutlineArrowLeft,
+  AiOutlineArrowRight,
+  AiOutlineGif,
+} from "react-icons/ai";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
-  const [hours, setHours] = useState<number>(new Date().getHours());
-  const [minutes, setMinutes] = useState<number>(new Date().getMinutes());
-  const [seconds, setSeconds] = useState<string>("");
+  //@ts-ignore
+  const [time, setTime] = useState<numOrStr>(returnUpdatedDate());
+  //@ts-ignore
+  const [hours, minutes, seconds] = time;
 
+  useEffect(() => {
+    setInterval(() => {
+      //@ts-ignore
+      setTime(returnUpdatedDate());
+    }, 1000);
+  }, []);
   return (
     <MeetInfo style={{ color: constants.appAccentColor }}>
       <span className='roomName'>Room - {roomName}</span>
       <span className='roomName'>
+        <BiTimeFive />
         {hours}:{minutes}:{seconds}
       </span>
       <button onClick={onClick}>
@@ -85,14 +101,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
     };
     return (
       <>
-        <div
-          className='length'
-          style={{
-            borderTop: `1px solid ${theme}`,
-          }}
-        >
-          Number Of Users :{users.length}
-        </div>
+        <div className='length'>Number Of Users :{users.length}</div>
         {users.map((user) => {
           if (isHost) {
             return (
@@ -202,6 +211,7 @@ export const SharePanelInfo: FC<ShareProps> = memo(
       <>
         <SidePanelHeaderComponent
           style={{
+            borderTop: `1px solid ${theme}`,
             borderBottom: `1px solid ${theme}`,
           }}
           onClose={onClose}
@@ -329,7 +339,6 @@ export const EmojiPanelInfo: FC = () => {
 };
 
 const HumansComponent: FC = memo(() => {
-  const setText = useContext(MessageContext);
   return (
     <>
       {HumanRelatedEmojis.map((h) => (
@@ -338,7 +347,10 @@ const HumansComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setText((prev: string) => (prev += h));
+            //@ts-ignore
+            const el: HTMLInputElement =
+              document.getElementById("message__input");
+            el.value += h;
           }}
         >
           {h}
@@ -348,7 +360,6 @@ const HumansComponent: FC = memo(() => {
   );
 });
 const SignsComponent: FC = memo(() => {
-  const setText = useContext(MessageContext);
   return (
     <>
       {Symbols.map((h) => (
@@ -357,7 +368,10 @@ const SignsComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setText((prev: string) => (prev += h));
+            //@ts-ignore
+            const el: HTMLInputElement =
+              document.getElementById("message__input");
+            el.value += h;
           }}
         >
           {h}
@@ -367,7 +381,6 @@ const SignsComponent: FC = memo(() => {
   );
 });
 const ObjectsComponent: FC = memo(() => {
-  const setText = useContext(MessageContext);
   return (
     <>
       {Objects.map((h) => (
@@ -376,7 +389,10 @@ const ObjectsComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setText((prev: string) => (prev += h));
+            //@ts-ignore
+            const el: HTMLInputElement =
+              document.getElementById("message__input");
+            el.value += h;
           }}
         >
           {h}
@@ -387,7 +403,6 @@ const ObjectsComponent: FC = memo(() => {
 });
 
 const AnimalComponent: FC = memo(() => {
-  const setText = useContext(MessageContext);
   return (
     <>
       {Animals.map((h) => (
@@ -396,7 +411,10 @@ const AnimalComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setText((prev: string) => (prev += h));
+            //@ts-ignore
+            const el: HTMLInputElement =
+              document.getElementById("message__input");
+            el.value += h;
           }}
         >
           {h}
@@ -407,7 +425,6 @@ const AnimalComponent: FC = memo(() => {
 });
 
 const FoodComponent: FC = memo(() => {
-  const setText = useContext(MessageContext);
   return (
     <>
       {Food.map((h) => (
@@ -416,7 +433,10 @@ const FoodComponent: FC = memo(() => {
           //@ts-ignore
           key={getRandomKey()}
           onClick={() => {
-            setText((prev: string) => (prev += h));
+            //@ts-ignore
+            const el: HTMLInputElement =
+              document.getElementById("message__input");
+            el.value += h;
           }}
         >
           {h}
@@ -447,11 +467,13 @@ export const MessageComponent: FC<Message> = memo((props) => {
               backgroundColor: props.accentColor,
             }}
           >
-            {props.content}
+            {decrypt(props.content)}
           </div>
         </div>
       </section>
     );
+  } else if (props.type === "gif") {
+    return <GifMessage props={props} key={getRandomKey()} />;
   } else if (props.type === "image") {
     return (
       <section className={props.className}>
@@ -709,14 +731,16 @@ const FailedFetch: FC = () => {
 };
 
 export const GifContent: FC<{
-  onGifSubmit: (gifUrl: string, caption: string) => void;
-}> = ({ onGifSubmit }) => {
+  onGifSubmit: (gifUrl: string, caption: string, preview: string) => void;
+}> = memo(({ onGifSubmit }) => {
   const inputRef = useRef();
   const [text, setText] = useState<string>("");
-  const [pos, setPos] = useState<number>(0);
-  const [url, setUrl] = useState(
-    `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}&pos=${pos}`
+  const [pos, setPos] = useState<number | null | string>(0);
+  const [url, setUrl] = useState<string>(
+    `https://g.tenor.com/v1/trending?key=12e12e12`
   );
+  const [prevPos, setPrevPos] = useState<number | null | string>(0);
+
   const { data } = useSwr(url, fetchData);
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
     false
@@ -724,23 +748,28 @@ export const GifContent: FC<{
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentGifUrl, setCurrentGifUrl] = useState<string>("");
   const [caption, setCaption] = useState<string>("");
+  const [preview, setPreview] = useState<string>("");
+  const [term, setTerm] = useState<string>("");
   useEffect(() => {
     //@ts-ignore
     inputRef.current.focus();
   }, []);
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+
   async function fetchData() {
     const result = await (await axios.get(url)).data;
+    console.log(result);
     let valueToBeReturned = null;
-    if (result.results.length === 0) {
+    if (result.results.length === 0 && Number(result.next) === 0) {
       setIsFetching("Failed");
       setPos(0);
     } else {
       valueToBeReturned = result.results;
       setIsFetching("Got");
-      setPos(parseInt(result.next));
+      setPos((prev) => {
+        setPrevPos(prev);
+        return Number(result.next);
+      });
+      console.log(pos, prevPos);
     }
 
     return valueToBeReturned;
@@ -760,20 +789,51 @@ export const GifContent: FC<{
   }
   const Images: FC = memo(() => {
     return (
-      <div className='images__wrapper'>
-        {data?.map((gif: any) => (
-          <img
-            className='gif'
-            src={gif.media[0].tinygif.url}
-            key={gif.id}
-            alt='Loading ...'
-            onClick={() => {
-              setCurrentGifUrl(gif.media[0].tinygif.url);
-              setIsModalOpen(true);
-            }}
-          />
-        ))}
-      </div>
+      <>
+        <div className='images__wrapper'>
+          {data?.map((gif: any) => (
+            <img
+              className='gif'
+              src={gif.media[0].tinygif.url}
+              key={gif.id}
+              alt='Loading ...'
+              onClick={() => {
+                setCurrentGifUrl(gif.media[0].tinygif.url);
+                setIsModalOpen(true);
+                setPreview(gif.media[0].tinygif.preview);
+              }}
+            />
+          ))}
+          <div className='btns'>
+            {prevPos !== 0 ? (
+              <Button
+                onClick={() =>
+                  setUrl(
+                    `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&pos=${prevPos}&q=${text}`
+                  )
+                }
+              >
+                <AiOutlineArrowLeft />
+              </Button>
+            ) : (
+              ""
+            )}
+            {pos !== 0 ? (
+              <Button
+                onClick={() =>
+                  setUrl(
+                    `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&pos=${pos}&q=${text}`
+                  )
+                }
+              >
+                <AiOutlineArrowRight />
+              </Button>
+            ) : (
+              ""
+            )}
+          </div>
+        </div>
+      </>
     );
   });
   return (
@@ -805,6 +865,7 @@ export const GifContent: FC<{
                 setIsModalOpen(false);
                 setCurrentGifUrl("");
                 setCaption("");
+                setPreview("");
               }}
             >
               Cancel <FaTimes />
@@ -814,10 +875,11 @@ export const GifContent: FC<{
                 if (!validateModal(caption)) {
                   toast.error("Invalid Message Or Message Length Too Long!");
                 } else {
-                  onGifSubmit(currentGifUrl, caption);
+                  onGifSubmit(currentGifUrl, caption, preview);
                   setIsModalOpen(false);
                   setCaption("");
                   setCurrentGifUrl("");
+                  setPreview("");
                   Pop.play();
                 }
               }}
@@ -859,7 +921,7 @@ export const GifContent: FC<{
       )}
     </>
   );
-};
+});
 
 /**
  *
@@ -868,3 +930,64 @@ export const GifContent: FC<{
  * rr32
  * Dhand dhand dhan dha da  phusssshhh
  */
+
+const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  return (
+    <section className={props.className}>
+      <div>
+        <div className='info'>
+          {parse(props.profilePic)}
+          <span>
+            {props.className === "Outgoing"
+              ? `${props.author} (You)`
+              : props.author}{" "}
+            - {ReturnFormattedDate(props.created_at)}
+          </span>
+        </div>
+        <div
+          className='content'
+          style={{
+            backgroundColor: props.accentColor,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              position: "relative",
+            }}
+          >
+            {" "}
+            <img
+              src={isPlaying ? props.content : props.preview_url}
+              alt='Image Loading'
+              style={{
+                alignSelf: "center",
+              }}
+            />
+            {!isPlaying ? (
+              <AiOutlineGif
+                className='gifPlayer'
+                onClick={() => {
+                  setIsPlaying(true);
+
+                  setInterval(() => {
+                    setIsPlaying(false);
+                  }, 6000);
+                }}
+              />
+            ) : (
+              ""
+            )}
+          </div>
+          <br />
+
+          {props.caption}
+        </div>
+      </div>
+    </section>
+  );
+});

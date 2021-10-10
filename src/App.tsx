@@ -19,13 +19,14 @@ import { ToastContainer } from "react-toastify";
 import { CustomMainPage } from "./Styled-components/Mainpage.styled";
 import Report from "./Components/Report";
 import Docs from "./docs/Docs";
-import io from "socket.io-client";
+import axios from "axios";
 
 export const SelfClientContext = createContext<[user, any]>([
   {
     avatarSvg: "",
     currentRoomName: "",
     name: "",
+    hasCreatedPrivateRoom: false,
   },
   "",
 ]);
@@ -35,7 +36,15 @@ const App: FC = () => {
     avatarSvg: "",
     currentRoomName: "",
     name: "",
+    hasCreatedPrivateRoom: false,
   });
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+  const fetchRooms = async () => {
+    const response = await axios.get(`${constants.serverName}rooms`);
+    console.log(response);
+  };
 
   const fade = useSpring({ from: { opacity: 0 }, to: { opacity: 1 } });
   return (

@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 import { MdRoomService } from "react-icons/md";
 const devUrl = "http://localhost:1919/";
-const prodUrl = "https://one-chat-server.herokuapp.com";
+const prodUrl = "https://one-chat-server.herokuapp.com/";
 const initialGifs = [
   "https://c.tenor.com/kwv_MuCidz8AAAAM/yes-will-ferrell.gif",
   "https://c.tenor.com/qA0mIzGwVoMAAAAM/sorry.gif",
@@ -49,6 +49,7 @@ export type user = {
   name: string;
   currentRoomName: string;
   avatarSvg: string;
+  hasCreatedPrivateRoom: boolean | "Join";
 };
 
 export type maxAvatarType = {
@@ -178,47 +179,16 @@ export type Message = {
   profilePic?: string;
   accentColor?: string;
   content: string;
-  type: "text" | "image" | "tooltip" | "reply";
+  type: "text" | "image" | "tooltip" | "reply" | "gif";
   created_at?: Date;
   author?: string;
   className: "Incoming" | "Outgoing";
   caption?: string;
+  preview_url?: string;
 };
 
 export const copy: (content: string) => void = async (content: string) => {
   await navigator.clipboard.writeText(content);
-};
-
-export const setApiUrl: (query: string, type: "image" | "gif") => string = (
-  query: string,
-  type: "image" | "gif"
-) => {
-  const str =
-    type === "image"
-      ? `https://api.pexels.com/v1/search?query=${query}&orientation=landscape&per_page=40`
-      : `https://g.tenor.com/v1/search?&key=${constants.tenorApiKey}&q=${query}&contentfilter=medium&mediafilter=medium&limit=30`;
-  return str;
-};
-
-export const fetchApi: (url: string, type: "gif" | "image") => any = async (
-  url: string,
-  type: "image" | "gif"
-) => {
-  let res;
-  if (type === "image") {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: constants.PEXELS_API_KEY,
-      },
-    });
-    const result = await response.json();
-    res = result;
-  } else {
-    const response = await fetch(url);
-    const json = response.json();
-    res = json;
-  }
-  return res;
 };
 
 export const ToastContainerConfig = {
@@ -232,16 +202,17 @@ export const MeetInputAttributesConfig = {
   placeholder: "Say Something ...",
   type: "text",
   name: "",
-  id: "",
   spellCheck: false,
+  id: "message__input",
+  autoComplete: "off",
 };
 
 export const FooterExpanderConfig = {
   from: {
-    width: "0vw",
+    opacity: 0,
   },
   to: {
-    width: "100vw",
+    opacity: 1,
   },
 };
 
@@ -293,7 +264,7 @@ export const validator: (name: string, room: string) => boolean = (
 export type room = {
   name: string;
   members: ChatUser[];
-  public?: boolean;
+  isPrivate?: boolean;
 };
 export const IsRoomThere: (rooms: room[], searchKey: string) => boolean = (
   rooms: room[],
@@ -311,10 +282,227 @@ export const IsRoomThere: (rooms: room[], searchKey: string) => boolean = (
 
 export const validateModal: (text: string) => boolean = (text: string) => {
   let valueToBeReturned = false;
-  if (!text || !text.trim() || text.length >= 50) {
+  if (!text || !text.trim() || text.length >= 150) {
     valueToBeReturned = false;
   } else {
     valueToBeReturned = true;
+  }
+  return valueToBeReturned;
+};
+export type numOrStr = number | string;
+export const returnUpdatedDate: () => [numOrStr, numOrStr, numOrStr] = () => {
+  let valueToBeReturned: [numOrStr, numOrStr, numOrStr] = [1, 1, 1];
+  const now = new Date();
+  const seconds = now.getSeconds();
+  const minutes = now.getMinutes();
+  const hours = now.getHours();
+  if (String(seconds).length === 1) {
+    valueToBeReturned[2] = `0${seconds}`;
+  } else {
+    valueToBeReturned[2] = seconds;
+  }
+  if (String(minutes).length === 1) {
+    valueToBeReturned[1] = `0${minutes}`;
+  } else {
+    valueToBeReturned[1] = minutes;
+  }
+  if (String(hours).length === 1) {
+    valueToBeReturned[0] = `0${hours}`;
+  } else {
+    valueToBeReturned[0] = hours;
+  }
+  return valueToBeReturned;
+};
+
+const encryptScheme: any = {
+  "`": "~",
+  "~": "`",
+  "1": "!",
+  "!": "1",
+  "2": "@",
+  "@": "2",
+  "3": "#",
+  "#": "3",
+  "4": "$",
+  $: "4",
+  "5": "%",
+  "%": "5",
+  "6": "^",
+  "^": "6",
+  "7": "&",
+  "&": "7",
+  "8": "*",
+  "*": "8",
+  "9": "(",
+  "(": "9",
+  "0": ")",
+  ")": "0",
+  "-": "_",
+  _: "-",
+  "+": "=",
+  "=": "+",
+  q: "a",
+  a: "q",
+  Q: "A",
+  A: "Q",
+  w: "s",
+  s: "w",
+  W: "S",
+  S: "W",
+  e: "d",
+  d: "e",
+  E: "D",
+  D: "E",
+  r: "f",
+  f: "r",
+  R: "F",
+  F: "R",
+  t: "g",
+  g: "t",
+  T: "G",
+  G: "T",
+  y: "h",
+  h: "y",
+  Y: "H",
+  H: "Y",
+  u: "j",
+  j: "u",
+  U: "J",
+  J: "U",
+  i: "k",
+  k: "i",
+  I: "K",
+  K: "I",
+  o: "l",
+  l: "o",
+  O: "L",
+  L: "O",
+  p: "p",
+  P: "P",
+  " ": " ",
+  "[": "{",
+  "{": "[",
+  "}": "]",
+  "]": "}",
+  "\\": "|",
+  "|": "\\",
+  ";": ":",
+  ":": ";",
+  '"': "'",
+  "'": '"',
+  "<": ">",
+  ">": "<",
+  ",": ".",
+  ".": ",",
+  "/": "?",
+  "?": "/",
+  "": "",
+};
+
+const decryptScheme: any = {
+  "0": ")",
+  "1": "!",
+  "2": "@",
+  "3": "#",
+  "4": "$",
+  "5": "%",
+  "6": "^",
+  "7": "&",
+  "8": "*",
+  "9": "(",
+  ")": "0",
+  "!": "1",
+  "@": "2",
+  "#": "3",
+  $: "4",
+  "%": "5",
+  "^": "6",
+  "&": "7",
+  "*": "8",
+  "(": "9",
+  "~": "`",
+  "`": "~",
+  _: "-",
+  "-": "_",
+  "=": "+",
+  "+": "=",
+  a: "q",
+  q: "a",
+  A: "Q",
+  Q: "A",
+  s: "w",
+  w: "s",
+  S: "W",
+  W: "S",
+  d: "e",
+  e: "d",
+  D: "E",
+  E: "D",
+  f: "r",
+  r: "f",
+  F: "R",
+  R: "F",
+  g: "t",
+  t: "g",
+  G: "T",
+  T: "G",
+  h: "y",
+  y: "h",
+  H: "Y",
+  Y: "H",
+  j: "u",
+  u: "j",
+  J: "U",
+  U: "J",
+  k: "i",
+  i: "k",
+  K: "I",
+  I: "K",
+  l: "o",
+  o: "l",
+  L: "O",
+  O: "L",
+  p: "p",
+  P: "P",
+  " ": " ",
+  "{": "[",
+  "[": "{",
+  "]": "}",
+  "}": "]",
+  "|": "\\",
+  "\\": "|",
+  ":": ";",
+  ";": ":",
+  "'": '"',
+  '"': "'",
+  ">": "<",
+  "<": ">",
+  ".": ",",
+  ",": ".",
+  "?": "/",
+  "/": "?",
+  "": "",
+};
+
+export const encrypt: (string: string) => string = (string: string) => {
+  let valueToBeReturned = "";
+  for (let i = 0; i < string.length; i++) {
+    if (encryptScheme[string[i]] !== undefined) {
+      valueToBeReturned += encryptScheme[string[i]];
+    } else {
+      valueToBeReturned += string[i];
+    }
+  }
+  return valueToBeReturned;
+};
+export const decrypt: (string: string) => string = (string: string) => {
+  let valueToBeReturned = "";
+  for (let i = 0; i < string.length; i++) {
+    if (decryptScheme[string[i]] !== undefined) {
+      valueToBeReturned += encryptScheme[string[i]];
+    } else {
+      valueToBeReturned += string[i];
+    }
   }
   return valueToBeReturned;
 };

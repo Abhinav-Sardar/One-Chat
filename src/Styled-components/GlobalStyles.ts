@@ -17,7 +17,7 @@ body {
   height:100vh ; 
   width:100vw; 
   overflow-x: hidden;
-  scroll-behavior: smooth;
+  
   > *:not(.logo , .tagline)::selection {
     background:white ; 
     color:${constants.appAccentColor}
@@ -87,6 +87,7 @@ svg:root {
     img {
    height:15vw ; 
    width:70% ;
+   border-radius:5px ; 
 
     }
     color:white ;
@@ -131,10 +132,10 @@ svg:root {
     img {
       height:15vw ; 
       width:30vw ; 
+      border-radius:5px
     }
     color:white ; 
-  border-radius:10px ; 
-
+    border-radius:10px ; 
     background:whitesmoke; 
     width:45vw ;  ; 
     font-size:1.45vw ; 
@@ -148,7 +149,6 @@ svg:root {
 }
 
 .rstb {
-  border: 1px solid black;
 	height:100% ; 
 	width: 100%;
 	overflow-y: auto;
@@ -156,6 +156,8 @@ svg:root {
 	flex-direction: column;
 	overflow-y:auto ; 
 	overflow-x: hidden;
+
+
 }
 a {
   cursor:default ; 
@@ -183,12 +185,25 @@ a {
 * {
      scrollbar-width: auto;
      scrollbar-color: ${constants.appAccentColor} lightgray;
+     
    }
    #reset {
      animation:2s spin linear infinite ; 
    }
+.gifPlayer {
+position: absolute;
+right: 43%;
+top: 38%;
+font-size: 3vw;
+color: white;
+border: 4px solid white;
+padding: 1vw;
+border-radius: 50%;
+border-style: dashed;
+cursor:pointer ; 
+}
 
-
-
-
+.react-scroll-to-bottom--css-rfavi-1n7m0yu {
+  scrollbar-width: thin;
+}
 `;

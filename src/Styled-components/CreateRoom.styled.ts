@@ -24,7 +24,8 @@ export const Page = styled(animated.div)`
 `;
 
 export const Form = styled.form`
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
   button.submit {
     color: #053fb3;
     background-color: yellow;
@@ -42,8 +43,10 @@ export const Form = styled.form`
   background-color: #053fb3;
   overflow-y: auto;
   border: 1px solid black;
-  height: 36vw;
-  width: 40vw;
+  height: 40vw;
+  width: 45vw;
+  border-radius: 20px;
+  border: 0;
 
   display: flex;
   justify-content: space-around;
@@ -138,11 +141,7 @@ export const AvatarsWrapper = styled.div`
     margin: 0.5vw;
   }
 `;
-const loader = keyframes`
-  to {
-          transform: rotate(360deg);
-}
-`;
+
 export const AvatarActionBtns = styled.div`
   display: flex;
   flex-direction: row;
@@ -181,6 +180,44 @@ export const AvatarActionBtns = styled.div`
       padding: 0;
       margin-left: 0.5vw;
       color: white;
+    }
+  }
+`;
+const num = 4;
+const height = `${num / 2}vw`;
+const width = `${num}vw`;
+const br = `${num / 4}vw`;
+export const Toggler = styled.label`
+  margin: 0 1vw;
+  cursor: pointer;
+  input {
+    display: none;
+    &:checked ~ div {
+      background: ${constants.appAccentColor};
+    }
+    &:checked ~ div::after {
+      transform: translateX(${height});
+    }
+  }
+  div {
+    position: relative;
+    width: ${width};
+    height: ${height};
+    border-radius: ${br};
+    background: #ccc;
+    transition: background 0.4s;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: ${height};
+      width: 2vw;
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+      border-radius: ${br};
+      transition: transform 0.4s;
     }
   }
 `;

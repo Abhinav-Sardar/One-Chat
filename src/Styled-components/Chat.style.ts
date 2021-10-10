@@ -17,6 +17,11 @@ export const MeetInfo = styled(animated.section)`
       color: white;
       background-color: ${constants.appAccentColor};
     }
+    display: flex;
+    align-items: center;
+    svg {
+      margin-right: 0.5vw;
+    }
   }
   button {
     border-radius: 10px;
@@ -120,6 +125,8 @@ export const ChatArea = styled.div`
   overflow-y: auto;
   position: relative;
   border-right: 1px solid ${(pr) => pr.theme};
+  border-top: 1px solid ${(pr) => pr.theme};
+  border-left: 1px solid ${(pr) => pr.theme};
   overflow: hidden;
 `;
 
@@ -457,7 +464,7 @@ export const ModalContent = styled.div`
     display: flex;
     justify-content: center;
     button {
-      transition: 400ms ease-in-out;
+      transition: 600ms ease-in-out;
       width: 30%;
       height: 4vw;
       margin: 0 2vw;
@@ -466,6 +473,7 @@ export const ModalContent = styled.div`
       justify-content: center;
       align-items: center;
       color: ${constants.appAccentColor};
+      font-family: "Poppins", sans-serif;
       background-color: white;
       border: 0;
 

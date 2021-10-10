@@ -3,9 +3,9 @@ import { StyledStickyHeader } from "../Styled-components/Mainpage.styled";
 import { IoChatboxSharp } from "react-icons/io5";
 import { accentColorChecker, constants } from "../Constants";
 import { MainContent } from "../Styled-components/Mainpage.styled";
-import { BsFillChatSquareFill } from "react-icons/bs";
+
 import { TiPlus } from "react-icons/ti";
-import { FaBrush, FaComments, FaGithubSquare } from "react-icons/fa";
+import { FaBrush, FaComments, FaEye, FaGithubSquare } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { MdReport } from "react-icons/md";
 import { GoBook } from "react-icons/go";
@@ -83,6 +83,15 @@ function ThisButtons(): JSX.Element {
           />
         </ActionButton>
       </a>
+      <ActionButton
+        style={{
+          padding: "0 1vw",
+          width: "16vw",
+        }}
+      >
+        View Public Rooms
+        <FaEye style={{ fontSize: "2vw" }} />
+      </ActionButton>
       <ActionButton onClick={() => history.push("/report")}>
         Report An Issue <MdReport style={{ fontSize: "2vw" }} />
       </ActionButton>

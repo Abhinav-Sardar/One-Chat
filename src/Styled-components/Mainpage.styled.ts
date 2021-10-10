@@ -104,11 +104,10 @@ export const ActionButton = styled.button`
 `;
 
 export const ActionsButtonWrapper = styled.div`
-  margin: auto;
-  width: 70vw;
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+  width: 100vw;
+  justify-content: center;
 `;
 
 export const CustomMainPage = styled(animated.div)``;

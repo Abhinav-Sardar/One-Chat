@@ -4,9 +4,11 @@ import GreenApple from "./GreenApple.png";
 import Heart from "./Heart.png";
 import Smile from "./Smile.png";
 //@ts-ignore
-import ForeignPop from "./ForeignPop.mp3";
+import ForeignPop from "../Sounds/ForeignPop.mp3";
 //@ts-ignore
-import PopSound from "./Pop Sound 🎉.mp3";
+import PopSound from "../Sounds/Pop Sound 🎉.mp3";
+//@ts-ignore
+import Kick from "../Sounds/Kick.mp3";
 
 const obj = {
   car: {
@@ -34,3 +36,4 @@ const obj = {
 export default obj;
 export const Pop = new Audio(PopSound);
 export const ForeignMessagePop = new Audio(ForeignPop);
+export const KickSound = new Audio(Kick);

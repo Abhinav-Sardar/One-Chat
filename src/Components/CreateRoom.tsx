@@ -8,6 +8,7 @@ import {
   AvatarActionBtns,
   AvatarsWrapper,
   Page,
+  Toggler,
 } from "../Styled-components/CreateRoom.styled";
 import { SelfClientContext } from "../App";
 import io from "socket.io-client";
@@ -50,6 +51,7 @@ const CreateRoom: FunctionalComponent = () => {
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const roomRef = useRef();
   useEffect(() => {
     if (isModalOpen === true) {
@@ -102,6 +104,7 @@ const CreateRoom: FunctionalComponent = () => {
           const newUser: user = {
             avatarSvg: currentAvatar,
             currentRoomName: room,
+            hasCreatedPrivateRoom: isPrivate,
             name: name,
           };
           setUser(newUser);
@@ -176,6 +179,30 @@ const CreateRoom: FunctionalComponent = () => {
               >
                 <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
               </button>
+            </div>
+            <div className='field'>
+              <span>Private Or Public Room</span>
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <span>{isPrivate ? "Private" : "Public"}</span>
+                <Toggler>
+                  <input
+                    type='checkbox'
+                    id='pp-check'
+                    //@ts-ignore
+                    onChange={(e) => {
+                      setIsPrivate(e.target.checked);
+                    }}
+                  />
+                  <div></div>
+                </Toggler>
+              </div>
             </div>
             <button type='submit' className='submit'>
               Create Room

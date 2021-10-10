@@ -5,9 +5,11 @@ import { constants } from "../Constants";
 import { Button } from "../Styled-components/Customize.style";
 import { GiHighKick } from "react-icons/gi";
 import { useHistory } from "react-router";
+import { KickSound } from "../Images/Accumulator";
 const Banned: FC<{ reason: string }> = ({ reason }) => {
   document.title = "You have been kicked";
   const history = useHistory();
+  KickSound.play();
   return (
     <>
       <div
