@@ -36,6 +36,7 @@ import {
   MeetInfo,
   SidePanelHeader,
   User,
+  Indicator,
 } from "../Styled-components/Chat.style";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
@@ -508,14 +509,17 @@ export const MessageComponent: FC<Message> = memo((props) => {
         </div>
       </section>
     );
-  }
-
-  // else if (props.type === "tooltip") {
-  //   if (props.className === "Entered") {
-  //     return <Tooltip content={props.content} className={props.className} />;
-  //   }
-  // }
-  else {
+  } else if (props.type === "indicator") {
+    return (
+      <Indicator
+        className='tooltip'
+        style={{ backgroundColor: props.background }}
+      >
+        <span>{props.content}</span>
+        <props.Icon />
+      </Indicator>
+    );
+  } else {
     return <span></span>;
   }
 });

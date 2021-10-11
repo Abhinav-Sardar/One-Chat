@@ -13,7 +13,7 @@ import {
   AiOutlineFileImage,
 } from "react-icons/ai";
 import { FiMaximize, FiMinimize } from "react-icons/fi";
-import { BiSend } from "react-icons/bi";
+import { BiSend, BiHappy } from "react-icons/bi";
 import { useHistory } from "react-router";
 import io from "socket.io-client";
 //@ts-ignore
@@ -29,6 +29,8 @@ import {
   FaMoon,
   FaTrashAlt,
   FaTimes,
+  FaLock,
+  FaRegSadTear,
 } from "react-icons/fa";
 
 import { FiShare2 } from "react-icons/fi";
@@ -91,7 +93,14 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
     const [users, setUsers] = useState<ChatUser[]>([]);
     const inputRef = useRef(null);
-    const [msgs, setMsgs] = useState<Message[]>([]);
+    const [msgs, setMsgs] = useState<Message[]>([
+      {
+        content: "Messages are encrypted for security",
+        type: "indicator",
+        Icon: FaLock,
+        background: constants.appAccentColor,
+      },
+    ]);
     const [isHost, setisHost] = useState<boolean>(false);
     const [oppositeTheme, setOppositeTheme] = useState<"#fff" | "#232424">(
       "#232424"
@@ -103,6 +112,15 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       });
       socket.on("user-left", (leftUser: string, newUsers: ChatUser[]) => {
         setUsers((prev) => newUsers);
+        setMsgs((p) => [
+          ...p,
+          {
+            content: `${leftUser} has left the chat`,
+            type: "indicator",
+            Icon: FaRegSadTear,
+            background: "#fc1302",
+          },
+        ]);
       });
       socket.on("message", (newMessage: Message) => {
         const parsed: ChatUser[] = JSON.parse(sessionStorage.getItem("users"));
@@ -119,20 +137,58 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       });
       socket.on("new-user-join", (newusers: ChatUser[], user: string) => {
         setUsers((prev) => newusers);
-        // setMsgs((p) => [
-        //   ...p,
-        //   {
-        //     className: "Entered",
-        //     content: `${user} Joined The Chat.`,
-        //     type: "tooltip",
-        //   },
-        // ]);
+        setMsgs((p) => {
+          return [
+            ...p,
+            {
+              content: `${user} has joined the chat`,
+              type: "indicator",
+              Icon: BiHappy,
+              background: "#0cfc1c",
+            },
+          ];
+        });
       });
 
-      socket.on("host", () => setisHost(true));
-      socket.on("user-banned", (newusers: ChatUser[], msg: string) => {
-        setUsers(newusers);
-        alert(msg);
+      socket.on("host", () => {
+        setisHost(true);
+        console.log("i am host");
+        setMsgs((p) => [
+          ...p,
+          {
+            content: `You are the host`,
+            type: "indicator",
+            Icon: BiHappy,
+            background: "#0cfc1c",
+          },
+        ]);
+      });
+      socket.on(
+        "new-host",
+        (userLeft: string, newUsers: ChatUser[], newHost: string) => {
+          setUsers((p) => newUsers);
+          setMsgs((p) => [
+            ...p,
+            {
+              content: `${userLeft} has left the chat. ${newHost} is now the host.`,
+              type: "indicator",
+              Icon: FaRegSadTear,
+              background: "#fc1302",
+            },
+          ]);
+        }
+      );
+      socket.on("user-banned", (newUsers: ChatUser[], msg: string) => {
+        setUsers((p) => newUsers);
+        setMsgs((p) => [
+          ...p,
+          {
+            content: msg,
+            type: "indicator",
+            Icon: FaRegSadTear,
+            background: "#fc1302",
+          },
+        ]);
       });
       socket.on("ban", (reason) => {
         //@ts-ignore

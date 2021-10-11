@@ -179,12 +179,14 @@ export type Message = {
   profilePic?: string;
   accentColor?: string;
   content: string;
-  type: "text" | "image" | "tooltip" | "reply" | "gif";
+  type: "text" | "image" | "indicator" | "reply" | "gif";
   created_at?: Date;
   author?: string;
-  className: "Incoming" | "Outgoing";
+  className?: "Incoming" | "Outgoing";
   caption?: string;
   preview_url?: string;
+  Icon?: any;
+  background?: string;
 };
 
 export const copy: (content: string) => void = async (content: string) => {
@@ -238,11 +240,11 @@ export const validator: (name: string, room: string) => boolean = (
 ) => {
   let valueToBeReturned: boolean = false;
   if (room && room.trim() && name && name.trim()) {
-    if (name.length >= 26) {
+    if (name.length >= 20) {
       valueToBeReturned = false;
 
       toast.error("Name Too Long!");
-    } else if (room.length >= 26) {
+    } else if (room.length >= 20) {
       valueToBeReturned = false;
 
       toast.error("Room Name Too Long!");

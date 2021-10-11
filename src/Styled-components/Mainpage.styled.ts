@@ -6,20 +6,16 @@ export const StyledStickyHeader = styled.div`
   border: 1.5px solid lightgray;
   width: 100vw;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   padding: 2vh 0vh;
   align-items: center;
   color: ${constants.appAccentColor};
-  position: sticky;
   background-color: whitesmoke;
   text-decoration: none;
   border-bottom: 1px solid black;
-  z-index: 8;
-  top: 0;
 
   .logo {
     height: 100%;
-    margin-left: 2vw;
     display: flex;
     align-items: center;
   }

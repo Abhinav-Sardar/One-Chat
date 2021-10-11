@@ -493,3 +493,22 @@ export const ModalContent = styled.div`
     }
   }
 `;
+
+export const Indicator = styled.div`
+  color: white;
+  width: 70%;
+  display: flex;
+  margin: 1vw auto;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5vw 0.5vw;
+  border-radius: 10px;
+  span {
+    font-family: "Poppins", sans-serif;
+    font-size: 150%;
+  }
+  svg {
+    font-size: 1.8vw;
+    margin-left: 3vw;
+  }
+`;
