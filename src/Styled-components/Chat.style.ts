@@ -52,7 +52,10 @@ export const RemainingChatArea = styled(animated.div)`
   display: flex;
   flex-direction: row;
   height: 78%;
-  justify-content: flex-start;
+  justify-content: flex-start; 
+  & > * {
+    scrollbar-width:thin !important ; 
+  }
 `;
 
 export const MeetControls = styled(animated.footer)`
@@ -127,7 +130,10 @@ export const ChatArea = styled.div`
   border-right: 1px solid ${(pr) => pr.theme};
   border-top: 1px solid ${(pr) => pr.theme};
   border-left: 1px solid ${(pr) => pr.theme};
-  overflow: hidden;
+    scrollbar-width:thin !important; 
+    scroll-behavior: smooth;
+  
+
 `;
 
 export const UsersSection = styled(animated.aside)`
@@ -205,57 +211,52 @@ export const ChatPage = styled(animated.div)`
 `;
 
 export const SharePanel = styled(animated.aside)`
-  flex-direction: column;
-  overflow-y: auto;
-
-  h3 {
-    width: 100%;
-    text-align: center;
-    font-family: "Comfortaa", sans-serif;
-    font-size: 1.4vw;
+  > * {
+    text-align:center;
   }
-  h2 {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    font-family: "Poppins", sans-serif;
-    margin: 2vh 0;
-    font-size: 1.2vw;
-
+  .header {
+    color:${constants.appAccentColor};
+    font-size:1.6vw ; 
+    font-family:'Poppins' , sans-serif;
+  }
+  .description {
+    font-family:'Quicksand' , sans-serif;
+    font-size:1.4vw
+  }
+  .url {
+    width:95% ; 
+    font-style: italic;
+    font-size:1.3vw;
+    font-family:'Robotto', sans-serif;
+    color: ${constants.appAccentColor};
+    margin-top: 1vw;
+  
+  }
     .copy {
-      color: ${constants.appAccentColor};
-      width: 70%;
-      font-size: 1.5vw;
-      background-color: transparent;
-      &:hover {
-        color: white;
-        background-color: ${constants.appAccentColor};
+      background-color: ${constants.appAccentColor};
+      color:white ; 
+      transition: 400ms ease;
+      border:1px solid ${constants.appAccentColor};
+      width:50%;
+      display:flex ; 
+      align-items:center;
+      margin: 0 auto;
+      justify-content: space-around;
+      height:3vw;
+      font-size:1.4vw;
+      font-family:'Quicksand', sans-serif;
+      border-radius:10px;
+      svg {
+        font-size:1.5vw;
       }
-      border-radius: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    margin-top: 1vw;
 
-      border: 1px solid ${constants.appAccentColor};
-      padding: 0.5vw 0;
-      transition: 400ms ease-in-out;
-      outline: 0;
-    }
-    a {
-      color: ${constants.appAccentColor};
-      font-size: 1.3vw;
-      margin: 0.5vw 0;
-      word-break: break-all;
-      width: 90%;
-    }
+      &:hover {
+        background-color:white ; 
+        color:${constants.appAccentColor};
+      }
   }
-  .breaker {
-    font-family: "Poppins", sans-serif;
-    font-size: 1.6vw;
-    text-align: center;
-  }
+  
 `;
 
 export const EmojiPanel = styled(animated.aside)`
@@ -485,11 +486,10 @@ export const ModalContent = styled.div`
         border: 3px solid white;
       }
       svg {
-        font-size: 2vw;
+        font-size: 1.8vw;
+        margin-left:1.5vw;
       }
-      > * {
-        margin: 0 0.5vw;
-      }
+
     }
   }
 `;
@@ -504,8 +504,9 @@ export const Indicator = styled.div`
   padding: 0.5vw 0.5vw;
   border-radius: 10px;
   span {
-    font-family: "Poppins", sans-serif;
-    font-size: 150%;
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1.5vw ; 
+  
   }
   svg {
     font-size: 1.8vw;

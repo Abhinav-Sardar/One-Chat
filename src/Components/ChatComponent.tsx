@@ -48,6 +48,7 @@ import {
   FooterExpanderConfig,
   config,
   encrypt,
+  useSharedPanelValue,
 } from "../Constants";
 import {
   ChatPage,
@@ -72,7 +73,7 @@ import {
 } from "./Chat.SubComponents";
 //@ts-ignore
 
-import { Pop, ForeignMessagePop } from "../Images/Accumulator";
+import { Pop, ForeignMessagePop, KickSound } from "../Images/Accumulator";
 import Banned from "./Banned";
 
 const socket = io(constants.serverName);
@@ -80,15 +81,15 @@ const socket = io(constants.serverName);
 const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
   ({ isPrivate }) => {
     const footerAndHeaderExpander = useSpring(FooterExpanderConfig);
-
-    const [usersOpen, setUsersOpen] = useState<boolean>(false);
-    const [shareOpen, setShareOpen] = useState<boolean>(false);
-    const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
-    const [imgsOpen, setImgsOpen] = useState<boolean>(false);
     const [isBanned, setIsBanned] = useState<[boolean, string]>([false, ""]);
     const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
     const history = useHistory();
 
+    const [usersOpen, setUsersOpen] = useSharedPanelValue().users;
+    const [shareOpen, setShareOpen] = useSharedPanelValue().share;
+    const [emojiOpen, setEmojiOpen] = useSharedPanelValue().emoji;
+    const [imgsOpen, setImgsOpen] = useSharedPanelValue().images;
+    const [gifsOpen, setGifsOpen] = useSharedPanelValue().gifs;
     const [user, setUser] = useContext(SelfClientContext);
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
     const [users, setUsers] = useState<ChatUser[]>([]);
@@ -101,11 +102,52 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         background: constants.appAccentColor,
       },
     ]);
+    useEffect(() => {
+      if (emojiOpen === true) {
+        setShareOpen(false);
+        setUsersOpen(false);
+        setImgsOpen(false);
+        setGifsOpen(false);
+      }
+    }, [emojiOpen]);
+    useEffect(() => {
+      if (gifsOpen === true) {
+        setShareOpen(false);
+        setUsersOpen(false);
+        setImgsOpen(false);
+        setEmojiOpen(false);
+      }
+    }, [gifsOpen]);
+    useEffect(() => {
+      if (imgsOpen === true) {
+        setShareOpen(false);
+        setUsersOpen(false);
+        setEmojiOpen(false);
+        setGifsOpen(false);
+      }
+    }, [imgsOpen]);
+    useEffect(() => {
+      if (shareOpen === true) {
+        setEmojiOpen(false);
+        setUsersOpen(false);
+        setImgsOpen(false);
+        setGifsOpen(false);
+      }
+    }, [shareOpen]);
+
+    useEffect(() => {
+      if (usersOpen === true) {
+        setShareOpen(false);
+        setEmojiOpen(false);
+        setImgsOpen(false);
+        setGifsOpen(false);
+      }
+    }, [usersOpen]);
     const [isHost, setisHost] = useState<boolean>(false);
     const [oppositeTheme, setOppositeTheme] = useState<"#fff" | "#232424">(
       "#232424"
     );
-    const [gifsOpen, setGifsOpen] = useState<boolean>(false);
+
     const socketCode = () => {
       socket.on("room-info", (newUsers: ChatUser[]) => {
         setUsers((prev) => newUsers);
@@ -123,14 +165,12 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         ]);
       });
       socket.on("message", (newMessage: Message) => {
-        const parsed: ChatUser[] = JSON.parse(sessionStorage.getItem("users"));
         setMsgs((p) => [
           ...p,
           {
             ...newMessage,
+
             created_at: new Date(newMessage.created_at),
-            profilePic: parsed.find((p) => p.name === newMessage.author)
-              .profilePic,
           },
         ]);
         Pop.play();
@@ -217,9 +257,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     useEffect(() => {
       setOppositeTheme(theme === "#232424" ? "#fff" : "#232424");
     }, [theme]);
-    useEffect(() => {
-      sessionStorage.setItem("users", JSON.stringify(users));
-    }, [users]);
     function handleSubmit(e: FormEvent): void {
       e.preventDefault();
       const el: HTMLInputElement = document.querySelector(
@@ -246,7 +283,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         socket.emit("message", {
           ...newMessage,
           className: "Incoming",
-          profilePic: "",
         });
         el.value = "";
         inputRef.current.focus();
@@ -365,47 +401,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         </>
       );
     }
-    useEffect(() => {
-      if (emojiOpen === true) {
-        setShareOpen(false);
-        setUsersOpen(false);
-        setImgsOpen(false);
-        setGifsOpen(false);
-      }
-    }, [emojiOpen]);
-    useEffect(() => {
-      if (gifsOpen === true) {
-        setShareOpen(false);
-        setUsersOpen(false);
-        setImgsOpen(false);
-        setEmojiOpen(false);
-      }
-    }, [gifsOpen]);
-    useEffect(() => {
-      if (imgsOpen === true) {
-        setShareOpen(false);
-        setUsersOpen(false);
-        setEmojiOpen(false);
-        setGifsOpen(false);
-      }
-    }, [imgsOpen]);
-    useEffect(() => {
-      if (shareOpen === true) {
-        setEmojiOpen(false);
-        setUsersOpen(false);
-        setImgsOpen(false);
-        setGifsOpen(false);
-      }
-    }, [shareOpen]);
 
-    useEffect(() => {
-      if (usersOpen === true) {
-        setShareOpen(false);
-        setEmojiOpen(false);
-        setImgsOpen(false);
-        setGifsOpen(false);
-      }
-    }, [usersOpen]);
     const backgroundAnimation = useSpring({ backgroundColor: theme });
     const colorSetter = useSpring({
       color: oppositeTheme,
@@ -419,7 +415,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     const gifsTransition = useTransition(gifsOpen, config);
     const LeaveRoom = () => {
       history.push("/");
-      sessionStorage.clear();
+
       //@ts-ignore
       socket.disconnect(true);
       setUser({
@@ -427,6 +423,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         avatarSvg: "",
         currentRoomName: "",
       });
+      KickSound.play();
     };
 
     return (
@@ -439,11 +436,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
               <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
               <RemainingChatArea style={colorSetter}>
                 <ChatArea theme={oppositeTheme}>
-                  <Scroll
-                    className='rstb'
-                    followButtonClassName='scrollButton'
-                    initialScrollBehavior={"smooth"}
-                  >
+                  <Scroll className='rstb' followButtonClassName='scrollButton'>
                     {msgs.length > 0 &&
                       msgs.map((msg) => (
                         <MessageComponent {...msg} key={getRandomKey()} />
@@ -521,11 +514,16 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                 {shareTransition((style, item) => {
                   return item ? (
                     <SharePanel style={style}>
-                      <SharePanelInfo
-                        onClose={() => setShareOpen(false)}
-                        theme={oppositeTheme}
-                        roomName={user.currentRoomName}
-                      />
+                      <SidePanelHeaderComponent
+                        style={{
+                          borderTop: `1px solid ${oppositeTheme}`,
+                          borderBottom: `1px solid ${oppositeTheme}`,
+                        }}
+                        onClose={() => setShareOpen((p: boolean) => false)}
+                      >
+                        Share
+                      </SidePanelHeaderComponent>
+                      <SharePanelInfo roomName={user.currentRoomName} />
                     </SharePanel>
                   ) : (
                     ""

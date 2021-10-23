@@ -33,7 +33,7 @@ export const StyledStickyHeader = styled.div`
 `;
 
 export const MainContent = styled.main`
-  height: 100%;
+  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,4 +106,4 @@ export const ActionsButtonWrapper = styled.div`
   justify-content: center;
 `;
 
-export const CustomMainPage = styled(animated.div)``;
+

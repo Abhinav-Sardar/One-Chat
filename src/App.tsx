@@ -16,7 +16,7 @@ import Chat from "./Components/Chat";
 import JoinRoom from "./Components/JoinRoom";
 import { useSpring, animated } from "react-spring";
 import { ToastContainer } from "react-toastify";
-import { CustomMainPage } from "./Styled-components/Mainpage.styled";
+
 import Report from "./Components/Report";
 import Docs from "./docs/Docs";
 import axios from "axios";
@@ -53,9 +53,9 @@ const App: FC = () => {
         <Router>
           <Switch>
             <Route path='/' exact>
-              <CustomMainPage style={fade}>
+              <animated.div style={fade}>
                 <MainPage />
-              </CustomMainPage>
+              </animated.div>
             </Route>
             <Route path='/create'>
               <CreateRoom />

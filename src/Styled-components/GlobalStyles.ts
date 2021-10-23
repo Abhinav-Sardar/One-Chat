@@ -1,14 +1,51 @@
 import { createGlobalStyle } from "styled-components";
 import { constants } from "../Constants";
 export const GlobalStyles = createGlobalStyle`
-
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    @keyframes jump {
+      10% {
+        transform: translateY(2px);
+      }
+      20% {
+        transform: translateY(4px);
+      }
+      30% {
+        transform: translateYY(5px);
+      }
+      40% {
+        transform: translateY(6px);
+      }
+      50% {
+        transform: translateY(8px);
+      }
+      60% {
+        transform: translateY(6px);
+      }
+      70% {
+        transform: translateY(4px);
+      }
+      80% {
+        transform: translateY(3px);
+      }
+      90% {
+        transform: translateY(2px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+    a {
+      text-decoration: none;
+    }
 * {
     padding:0 ; 
     margin:0 ; 
    
 }
-
-
 .mainChat {
   display:flex ; 
   flex-direction:column ;
@@ -67,8 +104,7 @@ svg:root {
   .info {
     margin:0.1vw 0 ; 
     display:flex ; 
-    align-items: center;
-
+    align-items:center ; 
     svg {
       height:4vw ; 
       width:4vw ; 
@@ -91,15 +127,20 @@ svg:root {
 
     }
     color:white ;
-  border-radius:10px ; 
-
+    border-radius:10px ; 
     background:${constants.appAccentColor} ; 
     width:45vw ;  ; 
-    font-size:1.45vw ; 
+
+    padding:.5vw ; 
+    span {
+      font-size:1.45vw ; 
     font-family: "Poppins" , sans-serif;
     word-break: break-all;
-    padding:.5vw ; 
-    
+    }
+    .caption {
+    align-self:center;
+    margin-top:1vw ; 
+    }
   }
 }
 .Incoming {
@@ -133,7 +174,7 @@ svg:root {
       height:15vw ; 
       width:30vw ; 
       border-radius:5px
-    }
+    } ; 
     color:white ; 
     border-radius:10px ; 
     background:whitesmoke; 
@@ -156,8 +197,9 @@ svg:root {
 	flex-direction: column;
 	overflow-y:auto ; 
 	overflow-x: hidden;
-
-
+   > * {
+  scrollbar-width: thin !important;
+   }
 }
 a {
   cursor:default ; 
@@ -166,8 +208,8 @@ a {
 .scrollButton {
   border:1px solid white ; 
   background:${constants.appAccentColor} !important ; 
-  height:2vw !important; 
-  width:2vw !important; 
+  height:1.5vw !important; 
+  width:1.5vw !important; 
   border-radius:50% !important; 
   &:hover {
     opacity:0.9 !important ; 
@@ -175,10 +217,7 @@ a {
   display:flex  !important; 
   justify-content: center !important ; 
   align-items: center !important;
-  i {
-    color:white  !important; 
-    font-size:1.5vw  ; 
-  }
+
 }
 
 
@@ -193,17 +232,15 @@ a {
 .gifPlayer {
 position: absolute;
 right: 43%;
-top: 38%;
-font-size: 3vw;
+top: 32%;
+font-size: 2.5vw;
 color: white;
-border: 4px solid white;
+border: 3.5px solid white;
 padding: 1vw;
 border-radius: 50%;
 border-style: dashed;
 cursor:pointer ; 
 }
 
-.react-scroll-to-bottom--css-rfavi-1n7m0yu {
-  scrollbar-width: thin;
-}
+
 `;

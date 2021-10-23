@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import { MdRoomService } from "react-icons/md";
@@ -79,8 +79,6 @@ export interface UsersInChatProps {
 
 export interface ShareProps {
   roomName: string;
-  theme: string;
-  onClose: () => void;
 }
 
 export interface PanelHeaderProps {
@@ -189,9 +187,7 @@ export type Message = {
   background?: string;
 };
 
-export const copy: (content: string) => void = async (content: string) => {
-  await navigator.clipboard.writeText(content);
-};
+
 
 export const ToastContainerConfig = {
   draggable: false,
@@ -508,3 +504,30 @@ export const decrypt: (string: string) => string = (string: string) => {
   }
   return valueToBeReturned;
 };
+
+type boolArrAndFunc = [boolean, any];
+export const useSharedPanelValue: () => {
+  users: boolArrAndFunc,
+  share: boolArrAndFunc,
+  emoji: boolArrAndFunc,
+  images: boolArrAndFunc,
+  gifs: boolArrAndFunc,
+} = () => {
+
+
+  const [usersOpen, setUsersOpen] = useState<boolean>(false);
+  const [shareOpen, setShareOpen] = useState<boolean>(false);
+  const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
+  const [imgsOpen, setImgsOpen] = useState<boolean>(false);
+  const [gifsOpen, setGifsOpen] = useState<boolean>(false);
+
+  return {
+
+    users: [usersOpen, setUsersOpen],
+    share: [shareOpen, setShareOpen],
+    emoji: [emojiOpen, setEmojiOpen],
+    images: [imgsOpen, setImgsOpen],
+    gifs: [gifsOpen, setGifsOpen],
+
+  }
+}

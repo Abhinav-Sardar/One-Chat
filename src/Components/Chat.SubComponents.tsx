@@ -19,11 +19,13 @@ import {
   ReturnFormattedDate,
   ShareProps,
   UsersInChatProps,
-  copy,
   validateModal,
   numOrStr,
   returnUpdatedDate,
   decrypt,
+  useSharedPanelValue,
+  exitFullScreen,
+  goFullScreen,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy, MdGif } from "react-icons/md";
@@ -40,7 +42,19 @@ import {
 } from "../Styled-components/Chat.style";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
-import { FaTimes, FaSearch, FaSpinner, FaCrown } from "react-icons/fa";
+import {
+  FaTimes,
+  FaSearch,
+  FaSpinner,
+  FaCrown,
+  FaMoon,
+  FaRegSmile,
+  FaShareAlt,
+  FaSmile,
+  FaSun,
+  FaTrashAlt,
+  FaUser,
+} from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
 import Emojis, { Pop } from "../Images/Accumulator";
 
@@ -49,10 +63,15 @@ import { HiOutlineBan } from "react-icons/hi";
 import { SelfClientContext } from "../App";
 import { Button } from "../Styled-components/Customize.style";
 import {
+  AiFillFileImage,
   AiOutlineArrowLeft,
   AiOutlineArrowRight,
+  AiOutlineFileImage,
   AiOutlineGif,
+  AiOutlineUser,
 } from "react-icons/ai";
+import { FiShare2, FiMinimize, FiMaximize } from "react-icons/fi";
+import { RiFileGifLine, RiFileGifFill } from "react-icons/ri";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   //@ts-ignore
@@ -204,44 +223,22 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
   }
 );
 
-export const SharePanelInfo: FC<ShareProps> = memo(
-  ({ roomName, theme, onClose }) => {
-    const roomUrl = `${window.location.origin}/room/${roomName}`;
-    const joinUrl = `${window.location.origin}/join`;
-    return (
-      <>
-        <SidePanelHeaderComponent
-          style={{
-            borderTop: `1px solid ${theme}`,
-            borderBottom: `1px solid ${theme}`,
-          }}
-          onClose={onClose}
-        >
-          Share
-        </SidePanelHeaderComponent>
-        <h3>Users can join this room by :</h3>
-
-        <h2>
-          Simply by going to this URL
-          <br />
-          <a>{roomUrl}</a>
-          <br />
-          <CopyBtn text={roomUrl} />
-        </h2>
-        <h1 className='breaker'>OR</h1>
-        <h2>
-          Going to this URL <br />
-          <a>{joinUrl}</a>
-          <br />
-          <CopyBtn text={joinUrl} />
-          <br />
-          and writing {roomName} as the name of the room <br />
-          and filling out the other information.
-        </h2>
-      </>
-    );
-  }
-);
+export const SharePanelInfo: FC<ShareProps> = memo(({ roomName }) => {
+  const roomUrl = `${window.location.origin}/room/${roomName}`;
+  const joinUrl = `${window.location.origin}/join`;
+  return (
+    <>
+      <div className='header'>Users can join this room by :- </div>
+      <div className='description'>
+        <span>By Simply Going TO This URL</span>
+        <div className='url' onClick={() => window.open(roomUrl)}>
+          {roomUrl}
+        </div>
+        <CopyBtn text={roomUrl} />
+      </div>
+    </>
+  );
+});
 
 const CopyBtn: FC<{ text: string }> = memo(({ text }) => {
   return (
@@ -254,8 +251,8 @@ const CopyBtn: FC<{ text: string }> = memo(({ text }) => {
   );
 });
 
-function CopyToClipBoard(text: string): void {
-  copy(text);
+async function CopyToClipBoard(text: string): Promise<void> {
+  await navigator.clipboard.writeText(text);
   toast.info(constants.copySuccess);
 }
 
@@ -468,7 +465,7 @@ export const MessageComponent: FC<Message> = memo((props) => {
               backgroundColor: props.accentColor,
             }}
           >
-            {decrypt(props.content)}
+            <span>{decrypt(props.content)}</span>
           </div>
         </div>
       </section>
@@ -504,7 +501,7 @@ export const MessageComponent: FC<Message> = memo((props) => {
               }}
             />
             <br />
-            {props.caption}
+            <span className='caption'>{props.caption}</span>
           </div>
         </div>
       </section>
@@ -524,14 +521,6 @@ export const MessageComponent: FC<Message> = memo((props) => {
   }
 });
 
-// const Tooltip: FC<{ content: string; className: "Entered" | "Left" }> = ({
-//   className,
-//   content,
-// }) => {
-//   if (className === "Entered") {
-//   }
-// };
-
 export const ImagesContent: FC<{
   onImgSubmit: (imgUrl: string, caption: string) => void;
 }> = memo(({ onImgSubmit }) => {
@@ -541,9 +530,7 @@ export const ImagesContent: FC<{
     false
   );
   const [url, setUrl] = useState<string>("https://api.pexels.com/v1/curated");
-  const [caption, setCaption] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [text, setText] = useState<string>("");
   const { data } = useSwr(url, fetchData);
   const [currentImgUrl, setCurrentImgUrl] = useState<string>("");
   const paginate: (isPrev: boolean) => void = (isPrev: boolean) => {
@@ -576,7 +563,8 @@ export const ImagesContent: FC<{
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
+    const el: HTMLInputElement = document.querySelector("input#search__box");
+    const text = el.value;
     if (!validateModal(text)) {
       toast.error(constants.imageInputErrorMsg);
       setIsFetching(false);
@@ -644,11 +632,7 @@ export const ImagesContent: FC<{
           <div className='header'>Add A Caption</div>
           <img src={currentImgUrl} alt='Image Loading' />
           <div className='form'>
-            <input
-              type='text'
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-            />
+            <input type='text' id='caption__box' />
           </div>
 
           <div className='actionsWrapper'>
@@ -656,19 +640,21 @@ export const ImagesContent: FC<{
               onClick={() => {
                 setIsModalOpen(false);
                 setCurrentImgUrl("");
-                setCaption("");
               }}
             >
               Cancel <FaTimes />
             </button>
             <button
               onClick={() => {
+                const el: HTMLInputElement =
+                  document.querySelector("input#caption__box");
+                const caption = el.value;
                 if (!validateModal(caption)) {
                   toast.error("Invalid Message Or Message Length Too Long!");
                 } else {
                   onImgSubmit(currentImgUrl, caption);
                   setIsModalOpen(false);
-                  setCaption("");
+
                   setCurrentImgUrl("");
                   Pop.play();
                 }
@@ -683,8 +669,7 @@ export const ImagesContent: FC<{
         <input
           type='text'
           ref={inputRef}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          id='search__box'
           placeholder='Search For Images'
         />
 
@@ -738,12 +723,9 @@ export const GifContent: FC<{
   onGifSubmit: (gifUrl: string, caption: string, preview: string) => void;
 }> = memo(({ onGifSubmit }) => {
   const inputRef = useRef();
-  const [text, setText] = useState<string>("");
-  const [pos, setPos] = useState<number | null | string>(0);
   const [url, setUrl] = useState<string>(
-    `https://g.tenor.com/v1/trending?key=12e12e12`
+    `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}`
   );
-  const [prevPos, setPrevPos] = useState<number | null | string>(0);
 
   const { data } = useSwr(url, fetchData);
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
@@ -751,9 +733,7 @@ export const GifContent: FC<{
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentGifUrl, setCurrentGifUrl] = useState<string>("");
-  const [caption, setCaption] = useState<string>("");
   const [preview, setPreview] = useState<string>("");
-  const [term, setTerm] = useState<string>("");
   useEffect(() => {
     //@ts-ignore
     inputRef.current.focus();
@@ -761,19 +741,12 @@ export const GifContent: FC<{
 
   async function fetchData() {
     const result = await (await axios.get(url)).data;
-    console.log(result);
     let valueToBeReturned = null;
-    if (result.results.length === 0 && Number(result.next) === 0) {
+    if (result.results.length === 0 || Number(result.next) === 0) {
       setIsFetching("Failed");
-      setPos(0);
     } else {
       valueToBeReturned = result.results;
       setIsFetching("Got");
-      setPos((prev) => {
-        setPrevPos(prev);
-        return Number(result.next);
-      });
-      console.log(pos, prevPos);
     }
 
     return valueToBeReturned;
@@ -781,13 +754,15 @@ export const GifContent: FC<{
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setIsFetching(true);
+    const el: HTMLInputElement = document.querySelector("#search__box");
+    const text = el.value;
     if (!validateModal(text)) {
       toast.error(constants.imageInputErrorMsg);
       setIsFetching(false);
     } else {
       console.log("Reached Here!");
       setUrl(
-        `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&q=${text}&contentfilter=medium&limit=40&pos=${pos}`
+        `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&q=${text}&contentfilter=medium&limit=50`
       );
     }
   }
@@ -808,34 +783,6 @@ export const GifContent: FC<{
               }}
             />
           ))}
-          <div className='btns'>
-            {prevPos !== 0 ? (
-              <Button
-                onClick={() =>
-                  setUrl(
-                    `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&pos=${prevPos}&q=${text}`
-                  )
-                }
-              >
-                <AiOutlineArrowLeft />
-              </Button>
-            ) : (
-              ""
-            )}
-            {pos !== 0 ? (
-              <Button
-                onClick={() =>
-                  setUrl(
-                    `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&pos=${pos}&q=${text}`
-                  )
-                }
-              >
-                <AiOutlineArrowRight />
-              </Button>
-            ) : (
-              ""
-            )}
-          </div>
         </div>
       </>
     );
@@ -856,11 +803,7 @@ export const GifContent: FC<{
           <div className='header'>Add A Caption</div>
           <img src={currentGifUrl} alt='Image Loading' />
           <div className='form'>
-            <input
-              type='text'
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-            />
+            <input type='text' id='caption__box' />
           </div>
 
           <div className='actionsWrapper'>
@@ -868,7 +811,7 @@ export const GifContent: FC<{
               onClick={() => {
                 setIsModalOpen(false);
                 setCurrentGifUrl("");
-                setCaption("");
+
                 setPreview("");
               }}
             >
@@ -876,12 +819,14 @@ export const GifContent: FC<{
             </button>
             <button
               onClick={() => {
+                const el: HTMLInputElement =
+                  document.querySelector("input#caption__box");
+                const caption = el.value;
                 if (!validateModal(caption)) {
                   toast.error("Invalid Message Or Message Length Too Long!");
                 } else {
                   onGifSubmit(currentGifUrl, caption, preview);
                   setIsModalOpen(false);
-                  setCaption("");
                   setCurrentGifUrl("");
                   setPreview("");
                   Pop.play();
@@ -898,8 +843,7 @@ export const GifContent: FC<{
           placeholder='Search for GIFs'
           type='text'
           ref={inputRef}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          id='search__box'
         />
         <button type='submit'>
           <FaSearch />
@@ -914,10 +858,6 @@ export const GifContent: FC<{
 
       {isFetching === true ? (
         <IsFetching />
-      ) : isFetching === false ? (
-        <>
-          <h1>initial</h1>
-        </>
       ) : isFetching === "Failed" ? (
         <FailedFetch />
       ) : (
@@ -987,9 +927,8 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
               ""
             )}
           </div>
-          <br />
 
-          {props.caption}
+          <span className='caption'>{props.caption}</span>
         </div>
       </div>
     </section>
