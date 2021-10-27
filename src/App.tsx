@@ -14,12 +14,12 @@ import Customize from "./Components/Customize";
 import "react-responsive-modal/styles.css";
 import Chat from "./Components/Chat";
 import JoinRoom from "./Components/JoinRoom";
-import { useSpring, animated } from "react-spring";
 import { ToastContainer } from "react-toastify";
 
 import Report from "./Components/Report";
 import Docs from "./docs/Docs";
 import axios from "axios";
+import PublicRooms from "./Components/PublicRooms";
 
 export const SelfClientContext = createContext<[user, any]>([
   {
@@ -39,23 +39,16 @@ const App: FC = () => {
     hasCreatedPrivateRoom: false,
   });
   useEffect(() => {
-    fetchRooms();
+    accentColorChecker();
   }, []);
-  const fetchRooms = async () => {
-    const response = await axios.get(`${constants.serverName}rooms`);
-    console.log(response);
-  };
 
-  const fade = useSpring({ from: { opacity: 0 }, to: { opacity: 1 } });
   return (
     <Fragment>
       <SelfClientContext.Provider value={users}>
         <Router>
           <Switch>
             <Route path='/' exact>
-              <animated.div style={fade}>
-                <MainPage />
-              </animated.div>
+              <MainPage />
             </Route>
             <Route path='/create'>
               <CreateRoom />
@@ -64,29 +57,22 @@ const App: FC = () => {
               <JoinRoom isAuth={false} />
             </Route>
             <Route path='/customize'>
-              <animated.div style={fade}>
-                <Customize />
-              </animated.div>
+              <Customize />
             </Route>
             <Route path='/room/:roomId'>
-              <animated.div style={fade}>
-                <Chat />
-              </animated.div>
+              <Chat />
             </Route>
             <Route path='/report'>
-              <animated.div style={fade}>
-                <Report />
-              </animated.div>
+              <Report />
             </Route>
             <Route path='/docs'>
-              <animated.div style={fade}>
-                <Docs />
-              </animated.div>
+              <Docs />
+            </Route>
+            <Route path='/rooms/public'>
+              <PublicRooms />
             </Route>
             <Route path='*'>
-              <animated.div style={fade}>
-                <NotFoundPage />
-              </animated.div>
+              <NotFoundPage />
             </Route>
           </Switch>
         </Router>

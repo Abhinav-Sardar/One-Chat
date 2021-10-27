@@ -26,20 +26,6 @@ export const Page = styled(animated.div)`
 export const Form = styled.form`
   overflow-x: hidden;
   overflow-y: hidden;
-  button.submit {
-    color: #053fb3;
-    background-color: yellow;
-    padding: 0.5vw 2.5vw;
-    transition: 300ms ease-in-out;
-    font-size: 1.5vw;
-    border-radius: 10px;
-    border: 1px solid yellow;
-    font-family: "Poppins", sans-serif;
-    &:hover {
-      color: yellow;
-      background-color: #053fb3;
-    }
-  }
   background-color: #053fb3;
   overflow-y: auto;
   border: 1px solid black;
@@ -219,5 +205,19 @@ export const Toggler = styled.label`
       border-radius: ${br};
       transition: transform 0.4s;
     }
+  }
+`;
+export const FormSubmitBtn = styled.button`
+  color: #053fb3;
+  background-color: yellow;
+  padding: 0.5vw 2.5vw;
+  transition: 300ms ease-in-out;
+  font-size: 1.5vw;
+  border-radius: 10px;
+  border: 1px solid yellow;
+  font-family: "Poppins", sans-serif;
+  &:hover {
+    color: yellow;
+    background-color: #053fb3;
   }
 `;

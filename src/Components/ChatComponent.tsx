@@ -579,13 +579,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                               className: "Incoming",
                               profilePic: "",
                             });
-                            setTimeout(() => {
-                              console.log(
-                                document.querySelector(
-                                  ".react-scroll-to-bottom--css-lbkys-79elbk rstb"
-                                )
-                              );
-                            }, 800);
                           }}
                         />
                       </ImagesPanel>

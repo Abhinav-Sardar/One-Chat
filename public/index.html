@@ -46,16 +46,4 @@
       🙏</noscript
     >
   </body>
-  <script>
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker
-        .register(`${window.location.origin}/sw.js`)
-        .then((reg) => {
-          console.log("Opened service worker");
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  </script>
 </html>

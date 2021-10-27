@@ -90,7 +90,7 @@ export const Button = styled.button`
   }
   svg {
     padding: 0;
-    margin: 0 0.3vw;
+    margin: 0 0.6vw;
     color: white;
     font-size: 1.5vw;
   }

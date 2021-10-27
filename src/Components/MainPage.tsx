@@ -13,21 +13,25 @@ import {
   ActionButton,
   ActionsButtonWrapper,
 } from "../Styled-components/Mainpage.styled";
+import { FadedAnimationWrapper } from "./Chat.SubComponents";
 
 const MainPage: FC = () => {
   useEffect(() => {
     document.title = "One-Chat";
     accentColorChecker();
+    document.body.style.background = `linear-gradient(60deg , ${constants.appAccentColor} , #fff)`;
+
     document.querySelector(
-      "html"
-    ).style.background = `linear-gradient(60deg , ${constants.appAccentColor} , #fff)`;
+      "#root"
+      //@ts-ignore
+    )!.style.background = `linear-gradient(60deg , ${constants.appAccentColor} , #fff)`;
   }, []);
   return (
-    <>
+    <FadedAnimationWrapper>
       <ThisHeader />
       <ThisMain />
       <ThisButtons />
-    </>
+    </FadedAnimationWrapper>
   );
 };
 
@@ -88,6 +92,7 @@ function ThisButtons(): JSX.Element {
           padding: "0 1vw",
           width: "16vw",
         }}
+        onClick={() => history.push("/rooms/public")}
       >
         View Public Rooms
         <FaEye style={{ fontSize: "2vw" }} />

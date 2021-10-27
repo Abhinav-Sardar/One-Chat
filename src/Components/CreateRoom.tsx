@@ -7,6 +7,7 @@ import {
 import {
   AvatarActionBtns,
   AvatarsWrapper,
+  FormSubmitBtn,
   Page,
   Toggler,
 } from "../Styled-components/CreateRoom.styled";
@@ -21,14 +22,7 @@ import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
 import AvatarsComponent from "./Avatars";
-import {
-  constants,
-  IsRoomThere,
-  maxAvatarType,
-  user,
-  validator,
-  room,
-} from "../Constants";
+import { constants, IsRoomThere, user, validator, room } from "../Constants";
 
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
@@ -204,9 +198,9 @@ const CreateRoom: FunctionalComponent = () => {
                 </Toggler>
               </div>
             </div>
-            <button type='submit' className='submit'>
+            <FormSubmitBtn type='submit' className='submit'>
               Create Room
-            </button>
+            </FormSubmitBtn>
           </Form>
           <Modal
             open={isModalOpen}

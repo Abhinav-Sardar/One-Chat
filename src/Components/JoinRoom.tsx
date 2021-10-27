@@ -7,6 +7,7 @@ import {
 import {
   AvatarActionBtns,
   AvatarsWrapper,
+  FormSubmitBtn,
   Page,
 } from "../Styled-components/CreateRoom.styled";
 import { SelfClientContext } from "../App";
@@ -23,9 +24,7 @@ import {
   constants,
   getRandomKey,
   IsRoomThere,
-  maxAvatarType,
   user,
-  userInfoStorageKey,
   validator,
 } from "../Constants";
 import { AiOutlineReload } from "react-icons/ai";
@@ -205,9 +204,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                 <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
               </button>
             </div>
-            <button type='submit' className='submit'>
+            <FormSubmitBtn type='submit' className='submit'>
               Join Room
-            </button>
+            </FormSubmitBtn>
           </Form>
           <Modal
             open={isModalOpen}

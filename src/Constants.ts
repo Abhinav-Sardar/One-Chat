@@ -1,21 +1,19 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { FC, ReactElement, useEffect, useState } from "react";
+import { animated, useSpring } from "react-spring";
 import { toast } from "react-toastify";
-
-import { MdRoomService } from "react-icons/md";
+const docsContent = {
+  gettingStarted: {
+    why: `One-Chat was built with the intention of acting as a place for
+    One-Time chats. Messages here are not stored anywhere, they won't
+    persist and will get deleted as a particular conversation ends. Thats
+    what we mean by 'One-Time Chats'. Though deleting the messages as soon
+    the conversation ends might seem as a disadvantage, it makes One-Chat a lighteight chat app for short conversations..`,
+    privacy:
+      "In order to ensure privacy for people, we encrypt messages, send themto the server and decrypt them as soon as the message reaches the client Through this process, sensitive information will be protected in cases of data breaches and server failures. In addition, can also create public/private rooms. Public rooms will be displayed for others to join whearas private rooms won't be displayed. However, anyone can join private rooms too.",
+  },
+};
 const devUrl = "http://localhost:1919/";
 const prodUrl = "https://one-chat-server.herokuapp.com/";
-const initialGifs = [
-  "https://c.tenor.com/kwv_MuCidz8AAAAM/yes-will-ferrell.gif",
-  "https://c.tenor.com/qA0mIzGwVoMAAAAM/sorry.gif",
-  "https://c.tenor.com/ppqVQB1PoBAAAAAM/tom-y-jerry-tom-and-jerry.gif",
-  "https://c.tenor.com/4fD9lfLzfg4AAAAS/shocked-shock.gif",
-  "https://c.tenor.com/xLKveNp-xMQAAAAS/laughing-laugh.gif",
-  "https://c.tenor.com/Pjx76Nn_W_8AAAAS/wtf-what-do-you-mean.gif",
-  "https://c.tenor.com/SNIM3SI-mtIAAAAS/kummeli-thumbs-up.gif",
-  "https://c.tenor.com/Q3406JOSa5wAAAAM/angry-anger.gif",
-  "https://c.tenor.com/-BVQhBulOmAAAAAM/bruce-almighty-morgan-freeman.gif",
-  "https://c.tenor.com/spXl5MzCo64AAAAM/family-guy-woah.gif",
-];
 
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
@@ -36,12 +34,16 @@ export const constants = {
   roomDoesntExistError: "A room with that name doesn't exist",
   roomAlreadyExistsError: "A room with same name already exists",
   tenorApiKey: "5BH3UY2UAJ78",
-  initialGifs,
+
+  docsContent,
+  nameAlreadyThere:
+    "A person with the same name is already present in the room. Please try a different name.",
+  ONE_CHAT_LOCAL_STORAGE_KEY: "one-chat-accent-color",
 };
 
 export function accentColorChecker(): void {
-  if (!localStorage.getItem("one-chat-accent-color")) {
-    localStorage.setItem("one-chat-accent-color", "#bd14ca");
+  if (!localStorage.getItem(constants.ONE_CHAT_LOCAL_STORAGE_KEY)) {
+    localStorage.setItem(constants.ONE_CHAT_LOCAL_STORAGE_KEY, "#bd14ca");
   }
 }
 
@@ -52,18 +54,12 @@ export type user = {
   hasCreatedPrivateRoom: boolean | "Join";
 };
 
-export type maxAvatarType = {
-  isNew: boolean;
-  number: number;
-};
-
 export type ChatUser = {
   profilePic: string;
   name: string;
   host: boolean;
   id: string;
 };
-export const userInfoStorageKey: string = "one-chat-user-info";
 
 export interface HeaderProps {
   roomName: string;
@@ -187,8 +183,6 @@ export type Message = {
   background?: string;
 };
 
-
-
 export const ToastContainerConfig = {
   draggable: false,
   pauseOnHover: false,
@@ -262,7 +256,8 @@ export const validator: (name: string, room: string) => boolean = (
 export type room = {
   name: string;
   members: ChatUser[];
-  isPrivate?: boolean;
+  isPrivate: boolean | "Join";
+  membersLength?: number;
 };
 export const IsRoomThere: (rooms: room[], searchKey: string) => boolean = (
   rooms: room[],
@@ -507,14 +502,12 @@ export const decrypt: (string: string) => string = (string: string) => {
 
 type boolArrAndFunc = [boolean, any];
 export const useSharedPanelValue: () => {
-  users: boolArrAndFunc,
-  share: boolArrAndFunc,
-  emoji: boolArrAndFunc,
-  images: boolArrAndFunc,
-  gifs: boolArrAndFunc,
+  users: boolArrAndFunc;
+  share: boolArrAndFunc;
+  emoji: boolArrAndFunc;
+  images: boolArrAndFunc;
+  gifs: boolArrAndFunc;
 } = () => {
-
-
   const [usersOpen, setUsersOpen] = useState<boolean>(false);
   const [shareOpen, setShareOpen] = useState<boolean>(false);
   const [emojiOpen, setEmojiOpen] = useState<boolean>(false);
@@ -522,12 +515,10 @@ export const useSharedPanelValue: () => {
   const [gifsOpen, setGifsOpen] = useState<boolean>(false);
 
   return {
-
     users: [usersOpen, setUsersOpen],
     share: [shareOpen, setShareOpen],
     emoji: [emojiOpen, setEmojiOpen],
     images: [imgsOpen, setImgsOpen],
     gifs: [gifsOpen, setGifsOpen],
-
-  }
-}
+  };
+};

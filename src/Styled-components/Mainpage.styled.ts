@@ -1,4 +1,3 @@
-import { animated } from "@react-spring/web";
 import styled from "styled-components";
 import { constants } from "../Constants";
 
@@ -33,7 +32,6 @@ export const StyledStickyHeader = styled.div`
 `;
 
 export const MainContent = styled.main`
-  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -105,5 +103,3 @@ export const ActionsButtonWrapper = styled.div`
   width: 100vw;
   justify-content: center;
 `;
-
-

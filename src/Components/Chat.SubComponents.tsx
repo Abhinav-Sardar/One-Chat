@@ -72,6 +72,7 @@ import {
 } from "react-icons/ai";
 import { FiShare2, FiMinimize, FiMaximize } from "react-icons/fi";
 import { RiFileGifLine, RiFileGifFill } from "react-icons/ri";
+import { animated, useSpring } from "react-spring";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   //@ts-ignore
@@ -100,11 +101,12 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
 });
 
 export const UsersPanelInfo: FC<UsersInChatProps> = memo(
-  ({ theme, users, onBan, isHost }) => {
+  ({ theme, users, onBan }) => {
     const { name } = useContext(SelfClientContext)[0];
     const [userToBeBannned, setUserToBeBanned] = useState<string>("");
     const [modalOpen, setIsModalOpen] = useState<boolean>(false);
     const [banText, setBanText] = useState<string>("");
+    const isHost = users.find((user) => user.name === name).host;
     const ban = () => {
       if (banText && banText.trim()) {
         if (banText.length >= 51) {
@@ -727,7 +729,7 @@ export const GifContent: FC<{
     `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}`
   );
 
-  const { data } = useSwr(url, fetchData);
+  const { data, error } = useSwr(url, fetchData);
   const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
     false
   );
@@ -738,6 +740,11 @@ export const GifContent: FC<{
     //@ts-ignore
     inputRef.current.focus();
   }, []);
+  useEffect(() => {
+    if (error === true) {
+      setIsFetching("Failed");
+    }
+  }, [error]);
 
   async function fetchData() {
     const result = await (await axios.get(url)).data;
@@ -934,3 +941,13 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
     </section>
   );
 });
+
+export const FadedAnimationWrapper: FC = ({ children }) => {
+  const fadeAnimation = useSpring({
+    from: {
+      opacity: 0,
+    },
+    to: { opacity: 1 },
+  });
+  return <animated.div style={fadeAnimation}>{children}</animated.div>;
+};

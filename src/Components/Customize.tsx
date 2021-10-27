@@ -32,7 +32,14 @@ const Customize: FC = () => {
     }, 1000);
   }
   const bgColorChanger = useSpring({
-    background: color,
+    from: {
+      opacity: 0,
+      background: "white",
+    },
+    to: {
+      background: color,
+      opacity: 1,
+    },
   });
   useEffect(() => {
     document.title = "Customize";
