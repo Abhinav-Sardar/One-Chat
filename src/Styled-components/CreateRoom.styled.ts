@@ -114,16 +114,14 @@ export const AvatarsWrapper = styled.div`
     border: 2px solid yellow;
   }
   div {
-    border: 2px solid white;
+    border: 1.6px solid white;
+    cursor: pointer;
     svg {
       width: 5vw;
       height: 5vw;
       border-radius: 50%;
-
-      justify-content: center;
     }
     border-radius: 50%;
-
     margin: 0.5vw;
   }
 `;

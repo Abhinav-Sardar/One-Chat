@@ -3,7 +3,7 @@ import { FC } from "react";
 import { useParams } from "react-router-dom";
 
 import ChatComponent from "./ChatComponent";
-import { SelfClientContext } from "../App";
+import { SelfClientContext } from "../Context";
 
 import JoinRoom from "./JoinRoom";
 
@@ -14,6 +14,7 @@ const Chat: FC = () => {
   //@ts-ignore
   const { roomId } = useParams();
   useEffect(() => {
+    console.log(user);
     if (
       user.avatarSvg !== "" &&
       user.name !== "" &&

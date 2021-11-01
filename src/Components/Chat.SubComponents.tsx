@@ -17,7 +17,6 @@ import {
   Message,
   PanelHeaderProps,
   ReturnFormattedDate,
-  ShareProps,
   UsersInChatProps,
   validateModal,
   numOrStr,
@@ -26,6 +25,8 @@ import {
   useSharedPanelValue,
   exitFullScreen,
   goFullScreen,
+  clipText,
+  scrollMessageIntoView,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy, MdGif } from "react-icons/md";
@@ -39,6 +40,7 @@ import {
   SidePanelHeader,
   User,
   Indicator,
+  MiniatureReplyPreviewDiv,
 } from "../Styled-components/Chat.style";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
@@ -60,19 +62,20 @@ import Emojis, { Pop } from "../Images/Accumulator";
 
 import { BiSad, BiSend, BiTimeFive } from "react-icons/bi";
 import { HiOutlineBan } from "react-icons/hi";
-import { SelfClientContext } from "../App";
+import { ReplyContext, SelfClientContext } from "../Context";
 import { Button } from "../Styled-components/Customize.style";
 import {
-  AiFillFileImage,
   AiOutlineArrowLeft,
   AiOutlineArrowRight,
-  AiOutlineFileImage,
   AiOutlineGif,
-  AiOutlineUser,
 } from "react-icons/ai";
-import { FiShare2, FiMinimize, FiMaximize } from "react-icons/fi";
-import { RiFileGifLine, RiFileGifFill } from "react-icons/ri";
+
 import { animated, useSpring } from "react-spring";
+import {
+  BsArrow90DegLeft,
+  BsArrow90DegRight,
+  BsArrowReturnRight,
+} from "react-icons/bs";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   //@ts-ignore
@@ -225,38 +228,44 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
   }
 );
 
-export const SharePanelInfo: FC<ShareProps> = memo(({ roomName }) => {
+export const SharePanelInfo: FC = memo(() => {
+  const { currentRoomName: roomName } = useContext(SelfClientContext)[0];
   const roomUrl = `${window.location.origin}/room/${roomName}`;
   const joinUrl = `${window.location.origin}/join`;
   return (
     <>
-      <div className='header'>Users can join this room by :- </div>
+      <div className='header'>Users Can Join This Room By:-</div>
       <div className='description'>
-        <span>By Simply Going TO This URL</span>
-        <div className='url' onClick={() => window.open(roomUrl)}>
-          {roomUrl}
-        </div>
+        <span>Going to this url</span>
+        <div className='url'>{roomUrl}</div>
         <CopyBtn text={roomUrl} />
+      </div>
+      <div className='description' style={{ marginTop: "1vw" }}>
+        <span>Or By Going to The Join Url</span>
+        <div className='url'>{joinUrl}</div>
+        <CopyBtn text={joinUrl} />
+        <div className='description' style={{ fontSize: "1.5vw" }}>
+          And filling out the necessary information
+        </div>
       </div>
     </>
   );
 });
 
 const CopyBtn: FC<{ text: string }> = memo(({ text }) => {
+  const copy: () => void = async () => {
+    await navigator.clipboard.writeText(text);
+    toast.info(constants.copySuccess);
+  };
   return (
     <>
-      <button className='copy' onClick={() => CopyToClipBoard(text)}>
+      <button className='copy' onClick={copy}>
         <MdContentCopy />
         Copy Link
       </button>
     </>
   );
 });
-
-async function CopyToClipBoard(text: string): Promise<void> {
-  await navigator.clipboard.writeText(text);
-  toast.info(constants.copySuccess);
-}
 
 export const SidePanelHeaderComponent: FC<PanelHeaderProps> = memo(
   ({ children, onClose, style }) => {
@@ -446,11 +455,26 @@ const FoodComponent: FC = memo(() => {
   );
 });
 
-//@ts-ignore
 export const MessageComponent: FC<Message> = memo((props) => {
+  const [replyState, setReplyState] = useContext(ReplyContext);
+  const onClick = () => {
+    if (
+      replyState.id === props.id &&
+      replyState.isOpen === true &&
+      replyState.content.author === props.author
+    ) {
+      return;
+    } else {
+      setReplyState({
+        id: props.id,
+        isOpen: true,
+        content: props,
+      });
+    }
+  };
   if (props.type === "text") {
     return (
-      <section className={props.className}>
+      <section className={props.className} id={props.id}>
         <div>
           <div className='info'>
             {parse(props.profilePic)}
@@ -460,6 +484,12 @@ export const MessageComponent: FC<Message> = memo((props) => {
                 : props.author}{" "}
               - {ReturnFormattedDate(props.created_at)}
             </span>
+            {props.className === "Incoming" && (
+              <BsArrow90DegLeft className='reply' onClick={onClick} />
+            )}
+            {props.className === "Outgoing" && (
+              <BsArrow90DegRight className='reply' onClick={onClick} />
+            )}
           </div>
           <div
             className='content'
@@ -476,7 +506,7 @@ export const MessageComponent: FC<Message> = memo((props) => {
     return <GifMessage props={props} key={getRandomKey()} />;
   } else if (props.type === "image") {
     return (
-      <section className={props.className}>
+      <section className={props.className} id={props.id}>
         <div>
           <div className='info'>
             {parse(props.profilePic)}
@@ -486,6 +516,12 @@ export const MessageComponent: FC<Message> = memo((props) => {
                 : props.author}{" "}
               - {ReturnFormattedDate(props.created_at)}
             </span>
+            {props.className === "Incoming" && (
+              <BsArrow90DegLeft className='reply' onClick={onClick} />
+            )}
+            {props.className === "Outgoing" && (
+              <BsArrow90DegRight className='reply' onClick={onClick} />
+            )}
           </div>
           <div
             className='content'
@@ -496,14 +532,14 @@ export const MessageComponent: FC<Message> = memo((props) => {
             }}
           >
             <img
-              src={props.content}
+              src={decrypt(props.content)}
               alt='Image Loading'
               style={{
                 alignSelf: "center",
               }}
             />
             <br />
-            <span className='caption'>{props.caption}</span>
+            <span className='caption'>{decrypt(props.caption)}</span>
           </div>
         </div>
       </section>
@@ -519,7 +555,47 @@ export const MessageComponent: FC<Message> = memo((props) => {
       </Indicator>
     );
   } else {
-    return <span></span>;
+    return (
+      <section className={props.className} id={props.id}>
+        <div>
+          <div className='info'>
+            {parse(props.profilePic)}
+            <span>
+              {props.className === "Outgoing"
+                ? `${props.author} (You)`
+                : props.author}{" "}
+              - {ReturnFormattedDate(props.created_at)}
+            </span>
+            {props.className === "Incoming" && (
+              <BsArrow90DegLeft className='reply' onClick={onClick} />
+            )}
+            {props.className === "Outgoing" && (
+              <BsArrow90DegRight className='reply' onClick={onClick} />
+            )}
+          </div>
+          <div
+            className='content'
+            style={{
+              backgroundColor: props.accentColor,
+              borderBottomLeftRadius: 0,
+              borderBottomRightRadius: 0,
+            }}
+          >
+            <span>{decrypt(props.content)}</span>
+          </div>
+          <div className='reply-chip'>
+            <BsArrowReturnRight />
+            <span>Replying To...</span>
+          </div>
+          <div
+            className='reply-cont'
+            onClick={() => scrollMessageIntoView(props.to.id)}
+          >
+            <MiniatureReplyPreview props={props.to} isProd={true} />
+          </div>
+        </div>
+      </section>
+    );
   }
 });
 
@@ -747,7 +823,7 @@ export const GifContent: FC<{
   }, [error]);
 
   async function fetchData() {
-    const result = await (await axios.get(url)).data;
+    const result = (await axios.get(url)).data;
     let valueToBeReturned = null;
     if (result.results.length === 0 || Number(result.next) === 0) {
       setIsFetching("Failed");
@@ -884,8 +960,24 @@ export const GifContent: FC<{
 
 const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [replyState, setReplyState] = useContext(ReplyContext);
+  const onClick = () => {
+    if (
+      replyState.id === props.id &&
+      replyState.isOpen === true &&
+      replyState.content.author === props.author
+    ) {
+      return;
+    } else {
+      setReplyState({
+        id: props.id,
+        isOpen: true,
+        content: props,
+      });
+    }
+  };
   return (
-    <section className={props.className}>
+    <section className={props.className} id={props.id}>
       <div>
         <div className='info'>
           {parse(props.profilePic)}
@@ -895,6 +987,12 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
               : props.author}{" "}
             - {ReturnFormattedDate(props.created_at)}
           </span>
+          {props.className === "Incoming" && (
+            <BsArrow90DegLeft className='reply' onClick={onClick} />
+          )}
+          {props.className === "Outgoing" && (
+            <BsArrow90DegRight className='reply' onClick={onClick} />
+          )}
         </div>
         <div
           className='content'
@@ -913,7 +1011,7 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
           >
             {" "}
             <img
-              src={isPlaying ? props.content : props.preview_url}
+              src={decrypt(isPlaying ? props.content : props.preview_url)}
               alt='Image Loading'
               style={{
                 alignSelf: "center",
@@ -935,7 +1033,7 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
             )}
           </div>
 
-          <span className='caption'>{props.caption}</span>
+          <span className='caption'>{decrypt(props.caption)}</span>
         </div>
       </div>
     </section>
@@ -950,4 +1048,45 @@ export const FadedAnimationWrapper: FC = ({ children }) => {
     to: { opacity: 1 },
   });
   return <animated.div style={fadeAnimation}>{children}</animated.div>;
+};
+
+export const MiniatureReplyPreview: FC<{
+  props: Message;
+  isProd: boolean;
+}> = ({ props, isProd }) => {
+  console.log(props);
+  const { type } = props;
+  if (type === "text" || type === "reply") {
+    return (
+      <MiniatureReplyPreviewDiv style={{ flexDirection: "column" }}>
+        <div className='info-reply' style={{ color: "#00baff" }}>
+          {props.className === "Outgoing"
+            ? `${props.author} (You)`
+            : props.author}{" "}
+          - {ReturnFormattedDate(new Date(props.created_at))}
+        </div>
+        <div
+          className='content-reply'
+          style={{
+            background: props.accentColor,
+            width: isProd ? "70%" : "45%",
+          }}
+        >
+          {!isProd
+            ? props.content.length > 60
+              ? clipText(decrypt(props.content), 60)
+              : decrypt(props.content)
+            : props.content.length > 50
+            ? clipText(decrypt(props.content), 50)
+            : decrypt(props.content)}
+        </div>
+      </MiniatureReplyPreviewDiv>
+    );
+  } else if (type === "gif" || type === "image") {
+    return (
+      <MiniatureReplyPreviewDiv>
+        <img src='' alt='' className='img' />
+      </MiniatureReplyPreviewDiv>
+    );
+  }
 };

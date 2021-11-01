@@ -7,6 +7,7 @@ import {
   useRef,
   createContext,
 } from "react";
+import { VscChromeClose } from "react-icons/vsc";
 import {
   AiFillFileImage,
   AiOutlineUser,
@@ -36,7 +37,7 @@ import {
 import { FiShare2 } from "react-icons/fi";
 import { useSpring, useTransition } from "react-spring";
 import { toast } from "react-toastify";
-import { SelfClientContext } from "../App";
+import { ReplyContext, SelfClientContext } from "../Context";
 import {
   ChatUser,
   exitFullScreen,
@@ -45,10 +46,13 @@ import {
   Message,
   getRandomKey,
   MeetInputAttributesConfig,
-  FooterExpanderConfig,
   config,
   encrypt,
   useSharedPanelValue,
+  initContextValue,
+  reply,
+  decrypt,
+  scrollMessageIntoView,
 } from "../Constants";
 import {
   ChatPage,
@@ -59,6 +63,7 @@ import {
   MeetControls,
   EmojiPanel,
   ImagesPanel,
+  Reply,
 } from "../Styled-components/Chat.style";
 
 import {
@@ -70,6 +75,7 @@ import {
   MessageComponent,
   ImagesContent,
   GifContent,
+  MiniatureReplyPreview,
 } from "./Chat.SubComponents";
 //@ts-ignore
 
@@ -80,7 +86,6 @@ const socket = io(constants.serverName);
 
 const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
   ({ isPrivate }) => {
-    const footerAndHeaderExpander = useSpring(FooterExpanderConfig);
     const [isBanned, setIsBanned] = useState<[boolean, string]>([false, ""]);
     const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
     const history = useHistory();
@@ -94,12 +99,19 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
     const [users, setUsers] = useState<ChatUser[]>([]);
     const inputRef = useRef(null);
+
+    const [replyState, setReplyState] = useState<reply>({
+      isOpen: false,
+      id: "",
+      content: null,
+    });
     const [msgs, setMsgs] = useState<Message[]>([
       {
         content: "Messages are encrypted for security",
         type: "indicator",
         Icon: FaLock,
         background: constants.appAccentColor,
+        id: getRandomKey(),
       },
     ]);
     useEffect(() => {
@@ -143,10 +155,11 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         setGifsOpen(false);
       }
     }, [usersOpen]);
+    useEffect(() => {
+      console.info(replyState);
+    }, [replyState]);
     const [isHost, setisHost] = useState<boolean>(false);
-    const [oppositeTheme, setOppositeTheme] = useState<"#fff" | "#232424">(
-      "#232424"
-    );
+    const oppositeTheme = theme === "#232424" ? "#fff" : "#232424";
 
     const socketCode = () => {
       socket.on("room-info", (newUsers: ChatUser[]) => {
@@ -161,6 +174,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
             type: "indicator",
             Icon: FaRegSadTear,
             background: "#fc1302",
+            id: getRandomKey(),
           },
         ]);
       });
@@ -185,6 +199,8 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
               type: "indicator",
               Icon: BiHappy,
               background: "#0cfc1c",
+
+              id: getRandomKey(),
             },
           ];
         });
@@ -200,6 +216,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
             type: "indicator",
             Icon: BiHappy,
             background: "#0cfc1c",
+            id: getRandomKey(),
           },
         ]);
       });
@@ -214,6 +231,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
               type: "indicator",
               Icon: FaRegSadTear,
               background: "#fc1302",
+              id: getRandomKey(),
             },
           ]);
         }
@@ -227,6 +245,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
             type: "indicator",
             Icon: FaRegSadTear,
             background: "#fc1302",
+            id: getRandomKey(),
           },
         ]);
       });
@@ -254,9 +273,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       }, 500);
       console.log(isPrivate);
     }, []);
-    useEffect(() => {
-      setOppositeTheme(theme === "#232424" ? "#fff" : "#232424");
-    }, [theme]);
+
     function handleSubmit(e: FormEvent): void {
       e.preventDefault();
       const el: HTMLInputElement = document.querySelector(
@@ -273,9 +290,11 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
           created_at: new Date(),
           accentColor: constants.appAccentColor,
           content: encrypt(text),
-          type: "text",
+          type: replyState.isOpen ? "reply" : "text",
           className: "Outgoing",
           profilePic: user.avatarSvg,
+          id: getRandomKey(),
+          to: replyState.content,
         };
 
         setMsgs((p) => [...p, newMessage]);
@@ -286,6 +305,11 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         });
         el.value = "";
         inputRef.current.focus();
+        setReplyState({
+          content: null,
+          id: "",
+          isOpen: false,
+        });
       }
     }
     useEffect(() => {
@@ -380,7 +404,17 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
               data-tip='Light Theme'
             />
           )}
-          <FaTrashAlt data-tip='Clear Chat' onClick={() => setMsgs([])} />
+          <FaTrashAlt
+            data-tip='Clear Chat'
+            onClick={() => {
+              setMsgs([]);
+              setReplyState({
+                isOpen: false,
+                id: "",
+                content: null,
+              });
+            }}
+          />
           {isFullScreen ? (
             <FiMinimize
               data-tip='Minimize'
@@ -405,7 +439,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     const backgroundAnimation = useSpring({ backgroundColor: theme });
     const colorSetter = useSpring({
       color: oppositeTheme,
-      borderBottom: `1px solid ${oppositeTheme}`,
     });
 
     const usersTransition = useTransition(usersOpen, config);
@@ -413,19 +446,20 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     const emojiTransition = useTransition(emojiOpen, config);
     const imagesTransition = useTransition(imgsOpen, config);
     const gifsTransition = useTransition(gifsOpen, config);
+    const footerAndHeaderExpander = useSpring({
+      width: "100vw",
+      borderTop: `1px solid ${oppositeTheme}`,
+    });
+    const replySetter = useSpring({
+      height: replyState.isOpen ? "5%" : "0vh",
+    });
     const LeaveRoom = () => {
       history.push("/");
-
       //@ts-ignore
       socket.disconnect(true);
-      setUser({
-        name: "",
-        avatarSvg: "",
-        currentRoomName: "",
-      });
+      setUser(initContextValue);
       KickSound.play();
     };
-
     return (
       <>
         {isBanned[0] ? (
@@ -434,16 +468,22 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
           <>
             <ChatPage style={backgroundAnimation}>
               <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
-              <RemainingChatArea style={colorSetter}>
+              {/* @ts-ignore */}
+              <RemainingChatArea style={colorSetter} about={replyState.isOpen}>
                 <ChatArea theme={oppositeTheme}>
-                  <Scroll className='rstb' followButtonClassName='scrollButton'>
-                    {msgs.length > 0 &&
-                      msgs.map((msg) => (
-                        <MessageComponent {...msg} key={getRandomKey()} />
-                      ))}
+                  <Scroll
+                    className='rstb'
+                    followButtonClassName='scrollButton'
+                    checkInterval={17}
+                  >
+                    <ReplyContext.Provider value={[replyState, setReplyState]}>
+                      {msgs.length > 0 &&
+                        msgs.map((msg) => (
+                          <MessageComponent {...msg} key={getRandomKey()} />
+                        ))}
+                    </ReplyContext.Provider>
                   </Scroll>
                 </ChatArea>
-
                 {usersTransition((style, item) => {
                   return item ? (
                     <>
@@ -490,19 +530,19 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                             author: user.name,
                             created_at: new Date(),
                             accentColor: constants.appAccentColor,
-                            content: gifurl,
+                            content: encrypt(gifurl),
                             type: "gif",
                             className: "Outgoing",
                             profilePic: user.avatarSvg,
-                            caption: caption,
-                            preview_url: preview,
+                            caption: encrypt(caption),
+                            preview_url: encrypt(preview),
+                            id: getRandomKey(),
                           };
 
                           setMsgs((p) => [...p, newMessage]);
                           socket.emit("message", {
                             ...newMessage,
                             className: "Incoming",
-                            profilePic: "",
                           });
                         }}
                       />
@@ -523,7 +563,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                       >
                         Share
                       </SidePanelHeaderComponent>
-                      <SharePanelInfo roomName={user.currentRoomName} />
+                      <SharePanelInfo />
                     </SharePanel>
                   ) : (
                     ""
@@ -566,18 +606,18 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                               author: user.name,
                               created_at: new Date(),
                               accentColor: constants.appAccentColor,
-                              content: imgUrl,
+                              content: encrypt(imgUrl),
                               type: "image",
                               className: "Outgoing",
                               profilePic: user.avatarSvg,
-                              caption: caption,
+                              caption: encrypt(caption),
+                              id: getRandomKey(),
                             };
 
                             setMsgs((p) => [...p, newMessage]);
                             socket.emit("message", {
                               ...newMessage,
                               className: "Incoming",
-                              profilePic: "",
                             });
                           }}
                         />
@@ -588,7 +628,44 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                   );
                 })}
               </RemainingChatArea>
+              {replyState.isOpen && (
+                <Reply
+                  id='reply-cont'
+                  style={{
+                    borderTop: `1px solid ${oppositeTheme}`,
+                    borderLeft: `1px solid ${oppositeTheme}`,
+                  }}
+                >
+                  <div className='icon'>
+                    <VscChromeClose
+                      onClick={() =>
+                        setReplyState({
+                          isOpen: false,
+                          id: "",
+                          content: null,
+                        })
+                      }
+                      style={{
+                        color: oppositeTheme,
+                      }}
+                    />
+                  </div>
 
+                  <div
+                    className='content'
+                    style={{
+                      borderLeft: `1px solid ${oppositeTheme}`,
+                      color: oppositeTheme,
+                    }}
+                    onClick={() => scrollMessageIntoView(replyState.content.id)}
+                  >
+                    <MiniatureReplyPreview
+                      props={replyState.content}
+                      isProd={false}
+                    />
+                  </div>
+                </Reply>
+              )}
               <MeetControls style={footerAndHeaderExpander}>
                 <form className='input' onSubmit={(e) => handleSubmit(e)}>
                   <input ref={inputRef} {...MeetInputAttributesConfig} />

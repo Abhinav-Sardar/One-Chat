@@ -100,6 +100,7 @@ export const ActionButton = styled.button`
 export const ActionsButtonWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  width: 100vw;
+  width: 80vw;
   justify-content: center;
+  margin: auto;
 `;

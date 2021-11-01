@@ -7,6 +7,7 @@ import CreateRoom from "./Components/CreateRoom";
 import {
   accentColorChecker,
   constants,
+  initContextValue,
   ToastContainerConfig,
   user,
 } from "./Constants";
@@ -17,34 +18,18 @@ import JoinRoom from "./Components/JoinRoom";
 import { ToastContainer } from "react-toastify";
 
 import Report from "./Components/Report";
-import Docs from "./docs/Docs";
 import axios from "axios";
 import PublicRooms from "./Components/PublicRooms";
-
-export const SelfClientContext = createContext<[user, any]>([
-  {
-    avatarSvg: "",
-    currentRoomName: "",
-    name: "",
-    hasCreatedPrivateRoom: false,
-  },
-  "",
-]);
+import { SelfClientContextProvider } from "./Context";
 
 const App: FC = () => {
-  const users = useState<user>({
-    avatarSvg: "",
-    currentRoomName: "",
-    name: "",
-    hasCreatedPrivateRoom: false,
-  });
   useEffect(() => {
     accentColorChecker();
   }, []);
 
   return (
     <Fragment>
-      <SelfClientContext.Provider value={users}>
+      <SelfClientContextProvider>
         <Router>
           <Switch>
             <Route path='/' exact>
@@ -65,9 +50,7 @@ const App: FC = () => {
             <Route path='/report'>
               <Report />
             </Route>
-            <Route path='/docs'>
-              <Docs />
-            </Route>
+
             <Route path='/rooms/public'>
               <PublicRooms />
             </Route>
@@ -76,7 +59,8 @@ const App: FC = () => {
             </Route>
           </Switch>
         </Router>
-      </SelfClientContext.Provider>
+      </SelfClientContextProvider>
+      {/* @ts-ignore */}
       <ToastContainer {...ToastContainerConfig} />
     </Fragment>
   );

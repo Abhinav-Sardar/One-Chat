@@ -11,7 +11,7 @@ import {
   Page,
   Toggler,
 } from "../Styled-components/CreateRoom.styled";
-import { SelfClientContext } from "../App";
+import { SelfClientContext } from "../Context";
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
@@ -21,8 +21,14 @@ import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import parse from "html-react-parser";
-import AvatarsComponent from "./Avatars";
-import { constants, IsRoomThere, user, validator, room } from "../Constants";
+import {
+  constants,
+  IsRoomThere,
+  user,
+  validator,
+  room,
+  getRandomKey,
+} from "../Constants";
 
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
@@ -31,7 +37,6 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { Link, useHistory } from "react-router-dom";
 import { animated, useSpring, useSprings } from "react-spring";
 import PleaseWait from "./PleaseWait";
-//@ts-ignore
 const socket = io(constants.serverName);
 
 const CreateRoom: FunctionalComponent = () => {
@@ -53,17 +58,16 @@ const CreateRoom: FunctionalComponent = () => {
       setTimeout(() => window.scroll(0, 0), 1000);
     }
   }, [isModalOpen]);
-  function handleClose() {
+  function handleClose(avatar: string) {
+    setCurrentAvatar(avatar);
     setIsModalOpen(false);
   }
 
   useEffect(() => {
-    sessionStorage.clear();
-
     document.title = "Create A Room";
     const init = () => {
       const initAvatars = [];
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 6 * 15; i++) {
         initAvatars.push(returnRandomAvatar());
       }
       setAvatars(initAvatars);
@@ -165,7 +169,7 @@ const CreateRoom: FunctionalComponent = () => {
             <div className='field'>
               <span>Avatar</span>
               {currentAvatar && parse(currentAvatar)}
-              <br />
+
               <button
                 onClick={() => setIsModalOpen(true)}
                 className='choose__avatar'
@@ -210,7 +214,7 @@ const CreateRoom: FunctionalComponent = () => {
                 color: "white",
               },
             }}
-            onClose={() => handleClose()}
+            onClose={() => setIsModalOpen(false)}
             closeIcon={
               <FaTimes
                 fill='red'
@@ -225,14 +229,26 @@ const CreateRoom: FunctionalComponent = () => {
               <h1>Choose your avatar</h1>
             </AvatarActionBtns>
             <AvatarsWrapper>
-              <AvatarsComponent
-                avatars={avatars}
-                currentAvatar={currentAvatar}
-                onClick={(newAvatar: string) => {
-                  setCurrentAvatar(newAvatar);
-                  setIsModalOpen(false);
-                }}
-              />
+              {avatars.map((avatar) => {
+                if (avatar === currentAvatar) {
+                  return (
+                    <div className='current' key={getRandomKey()}>
+                      {parse(avatar)}
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div
+                      onClick={() => {
+                        handleClose(avatar);
+                      }}
+                      key={getRandomKey()}
+                    >
+                      {parse(avatar)}
+                    </div>
+                  );
+                }
+              })}
             </AvatarsWrapper>
           </Modal>
           <Button

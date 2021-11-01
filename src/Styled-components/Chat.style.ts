@@ -9,7 +9,7 @@ export const MeetInfo = styled(animated.section)`
   height: 10vh;
   align-items: center;
   .roomName {
-    font-size: 2vw;
+    font-size: 30px;
     font-family: "Poppins", arial, sans-serif;
     color: ${constants.appAccentColor};
     margin-left: 2vw;
@@ -51,14 +51,18 @@ export const MeetInfo = styled(animated.section)`
 export const RemainingChatArea = styled(animated.div)`
   display: flex;
   flex-direction: row;
-  height: 78%;
-  justify-content: flex-start; 
+  transition: height 400ms ease-out;
+  // @ts-ignore
+  height: ${(pr) => (pr.about ? `${100 - (12 + 10 + 10)}vh` : "78%")};
+  justify-content: flex-start;
   & > * {
-    scrollbar-width:thin !important ; 
+    scrollbar-width: thin !important ;
   }
 `;
 
 export const MeetControls = styled(animated.footer)`
+  position: absolute;
+  bottom: 0;
   width: 100vw;
   height: 12vh;
   display: flex;
@@ -130,10 +134,8 @@ export const ChatArea = styled.div`
   border-right: 1px solid ${(pr) => pr.theme};
   border-top: 1px solid ${(pr) => pr.theme};
   border-left: 1px solid ${(pr) => pr.theme};
-    scrollbar-width:thin !important; 
-    scroll-behavior: smooth;
-  
-
+  scrollbar-width: thin !important;
+  scroll-behavior: smooth;
 `;
 
 export const UsersSection = styled(animated.aside)`
@@ -208,55 +210,54 @@ export const ChatPage = styled(animated.div)`
   width: 100vw;
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 
 export const SharePanel = styled(animated.aside)`
   > * {
-    text-align:center;
+    text-align: center;
   }
   .header {
-    color:${constants.appAccentColor};
-    font-size:1.6vw ; 
-    font-family:'Poppins' , sans-serif;
+    color: ${constants.appAccentColor};
+    font-size: 1.6vw;
+    font-family: "Poppins", sans-serif;
   }
   .description {
-    font-family:'Quicksand' , sans-serif;
-    font-size:1.4vw
+    font-family: "Quicksand", sans-serif;
+    font-size: 1.4vw;
   }
   .url {
-    width:95% ; 
+    width: 95%;
     font-style: italic;
-    font-size:1.3vw;
-    font-family:'Robotto', sans-serif;
+    font-size: 1.3vw;
+    font-family: "Poppins", sans-serif;
     color: ${constants.appAccentColor};
     margin-top: 1vw;
-  
   }
-    .copy {
-      background-color: ${constants.appAccentColor};
-      color:white ; 
-      transition: 400ms ease;
-      border:1px solid ${constants.appAccentColor};
-      width:50%;
-      display:flex ; 
-      align-items:center;
-      margin: 0 auto;
-      justify-content: space-around;
-      height:3vw;
-      font-size:1.4vw;
-      font-family:'Quicksand', sans-serif;
-      border-radius:10px;
-      svg {
-        font-size:1.5vw;
-      }
+  .copy {
+    background-color: ${constants.appAccentColor};
+    color: white;
+    transition: 400ms ease;
+    border: 1px solid ${constants.appAccentColor};
+    width: 50%;
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    justify-content: space-around;
+    height: 3vw;
+    font-size: 1.4vw;
+    font-family: "Quicksand", sans-serif;
+    border-radius: 10px;
+    svg {
+      font-size: 1.5vw;
+    }
     margin-top: 1vw;
 
-      &:hover {
-        background-color:white ; 
-        color:${constants.appAccentColor};
-      }
+    &:hover {
+      background-color: white;
+      color: ${constants.appAccentColor};
+    }
   }
-  
 `;
 
 export const EmojiPanel = styled(animated.aside)`
@@ -487,9 +488,8 @@ export const ModalContent = styled.div`
       }
       svg {
         font-size: 1.8vw;
-        margin-left:1.5vw;
+        margin-left: 1.5vw;
       }
-
     }
   }
 `;
@@ -504,12 +504,72 @@ export const Indicator = styled.div`
   padding: 0.5vw 0.5vw;
   border-radius: 10px;
   span {
-    font-family: 'Varela Round', sans-serif;
-    font-size: 1.5vw ; 
-  
+    font-family: "Varela Round", sans-serif;
+    font-size: 1.5vw;
   }
   svg {
     font-size: 1.8vw;
     margin-left: 3vw;
+  }
+`;
+
+export const Reply = styled(animated.section)`
+  display: flex;
+
+  transition: height 400ms ease-in-out;
+  height: 10vh;
+  .icon {
+    height: 100%;
+    width: 5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+      font-size: 2vw;
+      cursor: pointer;
+    }
+  }
+  .content {
+    height: 100%;
+    width: 95vw;
+    display: flex;
+    flex-direction: row;
+    display: flex;
+    font-size: 1.8vw;
+    align-items: center;
+
+    > * {
+      height: 100%;
+      width: 100%;
+    }
+    img {
+      width: 10%;
+      height: 100%;
+    }
+  }
+`;
+export const MiniatureReplyPreviewDiv = styled.div`
+  display: flex;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  .info-reply {
+    font-size: 1.3vw;
+    height: 40%;
+    font-family: "Quicksand", sans-serif;
+    color: #2f9ee0;
+    margin-left: 2.5%;
+  }
+  .content-reply {
+    color: white;
+    border-radius: 10px;
+    width: 45%;
+    display: flex;
+    align-items: center;
+    font-family: "Poppins", sans-serif;
+    font-size: 1.15vw;
+    height: 50%;
+    margin-left: 2.5%;
+    padding: 0 1%;
   }
 `;

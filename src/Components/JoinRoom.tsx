@@ -10,7 +10,7 @@ import {
   FormSubmitBtn,
   Page,
 } from "../Styled-components/CreateRoom.styled";
-import { SelfClientContext } from "../App";
+import { SelfClientContext } from "../Context";
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
@@ -30,12 +30,10 @@ import {
 import { AiOutlineReload } from "react-icons/ai";
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
+import { toast } from "react-toastify";
+
 import { useHistory, Link } from "react-router-dom";
 import { useSpring } from "react-spring";
-import Avatars from "./Avatars";
-import ReactTooltip from "react-tooltip";
 import ChatComponent from "./ChatComponent";
 import PleaseWait from "./PleaseWait";
 //@ts-ignore
@@ -69,7 +67,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
     sessionStorage.clear();
     const init = () => {
       const initAvatars = [];
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 6 * 15; i++) {
         initAvatars.push(returnRandomAvatar());
       }
       setAvatars(initAvatars);
@@ -78,7 +76,8 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
     };
     init();
   }, []);
-  function handleClose() {
+  function handleClose(avatar: string) {
+    setCurrentAvatar(avatar);
     setIsModalOpen(false);
   }
 
@@ -216,7 +215,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                 color: "white",
               },
             }}
-            onClose={() => handleClose()}
+            onClose={() => setIsModalOpen(false)}
             closeIcon={
               <FaTimes
                 fill='red'
@@ -231,14 +230,26 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
               <h1>Choose your avatar</h1>
             </AvatarActionBtns>
             <AvatarsWrapper>
-              <Avatars
-                avatars={avatars}
-                currentAvatar={currentAvatar}
-                onClick={(newAvatar: string) => {
-                  setIsModalOpen(false);
-                  setCurrentAvatar(newAvatar);
-                }}
-              />
+              {avatars.map((avatar) => {
+                if (avatar === currentAvatar) {
+                  return (
+                    <div className='current' key={getRandomKey()}>
+                      {parse(avatar)}
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div
+                      onClick={() => {
+                        handleClose(avatar);
+                      }}
+                      key={getRandomKey()}
+                    >
+                      {parse(avatar)}
+                    </div>
+                  );
+                }
+              })}
             </AvatarsWrapper>
             <br />
           </Modal>

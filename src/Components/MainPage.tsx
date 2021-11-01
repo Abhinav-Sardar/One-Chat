@@ -9,6 +9,8 @@ import { FaBrush, FaComments, FaEye, FaGithubSquare } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { MdReport } from "react-icons/md";
 import { GoBook } from "react-icons/go";
+import { RiQuestionnaireFill } from "react-icons/ri";
+import { BsQuestionCircleFill } from "react-icons/bs";
 import {
   ActionButton,
   ActionsButtonWrapper,
@@ -100,13 +102,8 @@ function ThisButtons(): JSX.Element {
       <ActionButton onClick={() => history.push("/report")}>
         Report An Issue <MdReport style={{ fontSize: "2vw" }} />
       </ActionButton>
-      <ActionButton
-        onClick={() => history.push("/docs")}
-        style={{
-          width: "20vw",
-        }}
-      >
-        Read Documentation <GoBook style={{ fontSize: "2vw" }} />
+      <ActionButton>
+        FAQs <BsQuestionCircleFill />
       </ActionButton>
     </ActionsButtonWrapper>
   );

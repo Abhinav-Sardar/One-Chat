@@ -1,17 +1,7 @@
 import React, { FC, ReactElement, useEffect, useState } from "react";
 import { animated, useSpring } from "react-spring";
 import { toast } from "react-toastify";
-const docsContent = {
-  gettingStarted: {
-    why: `One-Chat was built with the intention of acting as a place for
-    One-Time chats. Messages here are not stored anywhere, they won't
-    persist and will get deleted as a particular conversation ends. Thats
-    what we mean by 'One-Time Chats'. Though deleting the messages as soon
-    the conversation ends might seem as a disadvantage, it makes One-Chat a lighteight chat app for short conversations..`,
-    privacy:
-      "In order to ensure privacy for people, we encrypt messages, send themto the server and decrypt them as soon as the message reaches the client Through this process, sensitive information will be protected in cases of data breaches and server failures. In addition, can also create public/private rooms. Public rooms will be displayed for others to join whearas private rooms won't be displayed. However, anyone can join private rooms too.",
-  },
-};
+
 const devUrl = "http://localhost:1919/";
 const prodUrl = "https://one-chat-server.herokuapp.com/";
 
@@ -34,11 +24,10 @@ export const constants = {
   roomDoesntExistError: "A room with that name doesn't exist",
   roomAlreadyExistsError: "A room with same name already exists",
   tenorApiKey: "5BH3UY2UAJ78",
-
-  docsContent,
   nameAlreadyThere:
     "A person with the same name is already present in the room. Please try a different name.",
   ONE_CHAT_LOCAL_STORAGE_KEY: "one-chat-accent-color",
+  replyFadedBg: "#e3e3e3",
 };
 
 export function accentColorChecker(): void {
@@ -73,10 +62,6 @@ export interface UsersInChatProps {
   isHost: boolean;
 }
 
-export interface ShareProps {
-  roomName: string;
-}
-
 export interface PanelHeaderProps {
   children: string | ReactElement;
   onClose: () => void;
@@ -88,9 +73,10 @@ const specialChars: string[] = '!@#$%^&*()_+=-";:,.<>/?'.split("");
 export function getRandomKey(): string {
   let str = "";
   const allFields: string[][] = [alphabets, nums, specialChars];
-  const randomField: string[] =
-    allFields[Math.floor(Math.random()) * allFields.length];
-  for (let i = 0; i < 6; i++) {
+
+  for (let i = 0; i < 15; i++) {
+    const randomField: string[] =
+      allFields[Math.floor(Math.random()) * allFields.length];
     str += randomField[Math.floor(Math.random() * randomField.length)];
   }
   return str;
@@ -181,12 +167,20 @@ export type Message = {
   preview_url?: string;
   Icon?: any;
   background?: string;
+  id: string;
+  to?: Message;
 };
 
 export const ToastContainerConfig = {
+  position: "top-right",
+  autoClose: 5000,
+  hideProgressBar: false,
+  newestOnTop: false,
+  closeOnClick: false,
+  rtl: false,
+  pauseOnFocusLoss: false,
   draggable: false,
   pauseOnHover: false,
-  closeOnClick: false,
 };
 
 export const MeetInputAttributesConfig = {
@@ -197,15 +191,6 @@ export const MeetInputAttributesConfig = {
   spellCheck: false,
   id: "message__input",
   autoComplete: "off",
-};
-
-export const FooterExpanderConfig = {
-  from: {
-    opacity: 0,
-  },
-  to: {
-    opacity: 1,
-  },
 };
 
 export const config = {
@@ -521,4 +506,41 @@ export const useSharedPanelValue: () => {
     images: [imgsOpen, setImgsOpen],
     gifs: [gifsOpen, setGifsOpen],
   };
+};
+export const initContextValue: user = {
+  name: "",
+  avatarSvg: "",
+  currentRoomName: "",
+  hasCreatedPrivateRoom: false,
+};
+export type reply = {
+  isOpen: boolean;
+  id: string;
+  content: Message;
+};
+
+export const clipText: (content: string, end: number) => string = (
+  content: string,
+  end: number
+) => {
+  let valueToBeReturned = "";
+  const splicedText = content.slice(0, end);
+  valueToBeReturned = `${splicedText}...`;
+  return valueToBeReturned;
+};
+
+export const scrollMessageIntoView: (id: string) => void = (id: string) => {
+  const element = document.getElementById(id);
+  if (!element) {
+    toast.error("Message Not Found!");
+  } else {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+    element.querySelector(".content").classList.add("pop");
+    setTimeout(() => {
+      element.querySelector(".content").classList.remove("pop");
+    }, 1000);
+  }
 };
