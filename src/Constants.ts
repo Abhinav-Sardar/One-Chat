@@ -27,7 +27,7 @@ export const constants = {
   nameAlreadyThere:
     "A person with the same name is already present in the room. Please try a different name.",
   ONE_CHAT_LOCAL_STORAGE_KEY: "one-chat-accent-color",
-  replyFadedBg: "#e3e3e3",
+  replyFadedBg: "#D4D3D3",
 };
 
 export function accentColorChecker(): void {
@@ -181,6 +181,7 @@ export const ToastContainerConfig = {
   pauseOnFocusLoss: false,
   draggable: false,
   pauseOnHover: false,
+  duration: 4000,
 };
 
 export const MeetInputAttributesConfig = {
@@ -194,18 +195,25 @@ export const MeetInputAttributesConfig = {
 };
 
 export const config = {
-  from: {
+  initial: {
+    width: 0,
     opacity: 0,
-    width: "0vw",
   },
-  enter: {
-    opacity: 1,
+  animate: {
     width: "25vw",
-    delay: 150,
+    opacity: 1,
+    transition: {
+      type: "tween",
+      duration: 0.9,
+    },
   },
-  leave: {
+  exit: {
     opacity: 0,
-    width: "0vw",
+    width: 0,
+    transition: {
+      type: "tween",
+      duration: 0.7,
+    },
   },
 };
 

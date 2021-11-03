@@ -17,6 +17,7 @@ import {
   BsArrowRepeat,
   BsReverseLayoutSidebarInsetReverse,
 } from "react-icons/bs";
+import { FadedAnimationWrapper } from "./Chat.SubComponents";
 
 const Customize: FC = () => {
   const [color, setColor] = useState<string>(constants.appAccentColor);
@@ -31,69 +32,65 @@ const Customize: FC = () => {
       setSaved(false);
     }, 1000);
   }
-  const bgColorChanger = useSpring({
-    from: {
-      opacity: 0,
-      background: "white",
-    },
-    to: {
-      background: color,
-      opacity: 1,
-    },
-  });
   useEffect(() => {
     document.title = "Customize";
   }, []);
 
   return (
-    <CustomizePage style={bgColorChanger}>
-      <Title>Customize</Title>
-      <hr
-        style={{
-          width: "30vw",
-          color: "white",
-          height: "0.5vw",
-          border: "0",
-          backgroundColor: "white",
+    <FadedAnimationWrapper>
+      <CustomizePage
+        animate={{
+          backgroundColor: color,
         }}
-      />
-      <div className='note'>
-        <FaLightbulb /> A lighter color is recommended.
-      </div>
-      <HexColorPicker
-        color={color}
-        onChange={(newColor) => setColor(newColor)}
-      />
-      <h2>Color:{color}</h2>
-      <ButtonsWrapper>
-        {saved === false ? (
-          <Button
-            onClick={handleSave}
-            style={{
-              cursor: "default",
-            }}
-          >
-            <span>Save</span> <AiOutlineSave />
-          </Button>
-        ) : (
-          <Button
-            style={{
-              cursor: "not-allowed",
-            }}
-          >
-            <span>Saved</span> <FaCheck className='check' />
-          </Button>
-        )}
+      >
+        <Title>Customize</Title>
+        <hr
+          style={{
+            width: "30vw",
+            color: "white",
+            height: "0.5vw",
+            border: "0",
+            backgroundColor: "white",
+          }}
+        />
+        <div className='note'>
+          <FaLightbulb /> A lighter color is recommended.
+        </div>
+        <HexColorPicker
+          color={color}
+          onChange={(newColor) => setColor(newColor)}
+        />
+        <h2>Color:{color}</h2>
+        <ButtonsWrapper>
+          {saved === false ? (
+            <Button
+              onClick={handleSave}
+              style={{
+                cursor: "default",
+              }}
+            >
+              <span>Save</span> <AiOutlineSave />
+            </Button>
+          ) : (
+            <Button
+              style={{
+                cursor: "not-allowed",
+              }}
+            >
+              <span>Saved</span> <FaCheck className='check' />
+            </Button>
+          )}
 
-        <Button onClick={() => window.location.assign("/")}>
-          <span>Back To Home</span> <FaHome />
-        </Button>
-        <Button onClick={() => setColor("#bd14ca")}>
-          <span>Reset Color </span>
-          <BsArrowRepeat id='reset' />
-        </Button>
-      </ButtonsWrapper>
-    </CustomizePage>
+          <Button onClick={() => window.location.assign("/")}>
+            <span>Back To Home</span> <FaHome />
+          </Button>
+          <Button onClick={() => setColor("#bd14ca")}>
+            <span>Reset Color </span>
+            <BsArrowRepeat id='reset' />
+          </Button>
+        </ButtonsWrapper>
+      </CustomizePage>
+    </FadedAnimationWrapper>
   );
 };
 

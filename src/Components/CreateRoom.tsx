@@ -3,11 +3,13 @@ import {
   FC as FunctionalComponent,
   FormEvent,
   useContext,
+  FC,
 } from "react";
 import {
   AvatarActionBtns,
   AvatarsWrapper,
   FormSubmitBtn,
+  LoadingButtonStyled,
   Page,
   Toggler,
 } from "../Styled-components/CreateRoom.styled";
@@ -37,6 +39,9 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { Link, useHistory } from "react-router-dom";
 import { animated, useSpring, useSprings } from "react-spring";
 import PleaseWait from "./PleaseWait";
+import { FadedAnimationWrapper } from "./Chat.SubComponents";
+import { motion } from "framer-motion";
+import { AiOutlineReload } from "react-icons/ai";
 const socket = io(constants.serverName);
 
 const CreateRoom: FunctionalComponent = () => {
@@ -45,7 +50,31 @@ const CreateRoom: FunctionalComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [avatars, setAvatars] = useState<string[]>([]);
   const [user, setUser] = useContext(SelfClientContext);
-
+  const formVariants = {
+    initial: {
+      width: 0,
+    },
+    animated: {
+      width: "45vw",
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        staggerChildren: 0.5,
+      },
+    },
+  };
+  const popFromSideVariants = {
+    initial: {
+      x: -10000,
+    },
+    animated: {
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 35,
+      },
+    },
+  };
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [room, setRoom] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -79,66 +108,64 @@ const CreateRoom: FunctionalComponent = () => {
 
   function handleSubmit(e: FormEvent): void {
     setIsConnecting(true);
-    socket.connect();
     e.preventDefault();
-    const res = validator(name, room);
-    if (res) {
-      socket.emit("rooms");
-      socket.on("rooms-back", (rooms: room[]) => {
-        //@ts-ignore
-        socket.removeAllListeners("rooms-back");
-        if (IsRoomThere(rooms, room)) {
-          setTimeout(() => {
-            setIsConnecting(false);
+    if (isConnecting) {
+      return;
+    } else {
+      setIsConnecting(true);
+      socket.connect();
+      e.preventDefault();
+      const res = validator(name, room);
+      if (res) {
+        socket.emit("rooms");
+        socket.on("rooms-back", (rooms: room[]) => {
+          //@ts-ignore
+          socket.removeAllListeners("rooms-back");
+          if (IsRoomThere(rooms, room)) {
+            setTimeout(() => {
+              setIsConnecting(false);
+              //@ts-ignore
+              socket.disconnect(true);
+
+              toast.error(constants.roomAlreadyExistsError);
+              //@ts-ignore
+              roomRef.current.focus();
+            }, 1000);
+          } else {
+            console.log("You are free to proceeed");
+            const newUser: user = {
+              avatarSvg: currentAvatar,
+              currentRoomName: room,
+              hasCreatedPrivateRoom: isPrivate,
+              name: name,
+            };
+            setUser(newUser);
             //@ts-ignore
             socket.disconnect(true);
-
-            toast.error(constants.roomAlreadyExistsError);
-            //@ts-ignore
-            roomRef.current.focus();
-          }, 1000);
-        } else {
-          console.log("You are free to proceeed");
-          const newUser: user = {
-            avatarSvg: currentAvatar,
-            currentRoomName: room,
-            hasCreatedPrivateRoom: isPrivate,
-            name: name,
-          };
-          setUser(newUser);
-          //@ts-ignore
-          socket.disconnect(true);
-          setTimeout(() => {
-            setIsConnecting(false);
-            history.push(`/room/${room}`);
-          }, 1000);
-        }
-      });
-    } else {
-      setIsConnecting(false);
+            setTimeout(() => {
+              setIsConnecting(false);
+              history.push(`/room/${room}`);
+            }, 1000);
+          }
+        });
+      } else {
+        setIsConnecting(false);
+      }
     }
   }
 
-  const appear = useSpring({
-    from: {
-      transform: "scale(0.4)",
-      opacity: 0,
-    },
-    to: {
-      transform: "scale(1)",
-      opacity: 1,
-    },
-  });
-
   return (
     <>
-      {isConnecting ? (
-        <PleaseWait />
-      ) : (
-        <Page style={appear}>
+      <FadedAnimationWrapper>
+        <Page>
           <h1 className='purpose'>Create</h1>
-          <Form onSubmit={(e) => handleSubmit(e)}>
-            <div className='field'>
+          <Form
+            onSubmit={(e) => handleSubmit(e)}
+            variants={formVariants}
+            initial='initial'
+            animate='animated'
+          >
+            <motion.div variants={popFromSideVariants} className='field'>
               <span>Name</span>
               <br />
               <input
@@ -151,8 +178,8 @@ const CreateRoom: FunctionalComponent = () => {
                 placeholder='Your Name'
                 autoFocus
               />
-            </div>
-            <div className='field'>
+            </motion.div>
+            <motion.div variants={popFromSideVariants} className='field'>
               <span>Room Name</span>
               <br />
               <input
@@ -165,8 +192,8 @@ const CreateRoom: FunctionalComponent = () => {
                 placeholder='Name Your Room'
                 ref={roomRef}
               />
-            </div>
-            <div className='field'>
+            </motion.div>
+            <motion.div variants={popFromSideVariants} className='field'>
               <span>Avatar</span>
               {currentAvatar && parse(currentAvatar)}
 
@@ -177,8 +204,8 @@ const CreateRoom: FunctionalComponent = () => {
               >
                 <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
               </button>
-            </div>
-            <div className='field'>
+            </motion.div>
+            <motion.div variants={popFromSideVariants} className='field'>
               <span>Private Or Public Room</span>
               <div
                 style={{
@@ -193,6 +220,7 @@ const CreateRoom: FunctionalComponent = () => {
                   <input
                     type='checkbox'
                     id='pp-check'
+                    disabled={isConnecting}
                     //@ts-ignore
                     onChange={(e) => {
                       setIsPrivate(e.target.checked);
@@ -201,10 +229,14 @@ const CreateRoom: FunctionalComponent = () => {
                   <div></div>
                 </Toggler>
               </div>
-            </div>
-            <FormSubmitBtn type='submit' className='submit'>
-              Create Room
-            </FormSubmitBtn>
+            </motion.div>
+            {isConnecting ? (
+              <LoadingButton />
+            ) : (
+              <FormSubmitBtn type='submit' className='submit'>
+                Create Room
+              </FormSubmitBtn>
+            )}
           </Form>
           <Modal
             open={isModalOpen}
@@ -261,7 +293,7 @@ const CreateRoom: FunctionalComponent = () => {
             <span>Back To Home</span> <FaHome />
           </Button>{" "}
         </Page>
-      )}
+      </FadedAnimationWrapper>
     </>
   );
 };
@@ -269,3 +301,11 @@ export default CreateRoom;
 function returnRandomAvatar(): string {
   return createAvatar(style);
 }
+
+export const LoadingButton: FC = () => {
+  return (
+    <LoadingButtonStyled>
+      <AiOutlineReload />
+    </LoadingButtonStyled>
+  );
+};

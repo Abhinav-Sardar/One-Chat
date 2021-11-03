@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { animated } from "react-spring";
 import styled from "styled-components";
 import { constants } from "../Constants";
@@ -8,7 +9,7 @@ export const Title = styled.h6`
   font-size: 4vw;
 `;
 
-export const CustomizePage = styled(animated.div)`
+export const CustomizePage = styled(motion.div)`
   .note {
     color: white;
     display: flex;

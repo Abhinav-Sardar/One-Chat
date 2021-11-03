@@ -76,11 +76,13 @@ import {
   ImagesContent,
   GifContent,
   MiniatureReplyPreview,
+  FadedAnimationWrapper,
 } from "./Chat.SubComponents";
 //@ts-ignore
 
 import { Pop, ForeignMessagePop, KickSound } from "../Images/Accumulator";
 import Banned from "./Banned";
+import { AnimatePresence } from "framer-motion";
 
 const socket = io(constants.serverName);
 
@@ -105,6 +107,13 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       id: "",
       content: null,
     });
+    const panelConfig = {
+      variants: config,
+      animate: "animate",
+      initial: "initial",
+      exit: "exit",
+      key: "users",
+    };
     const [msgs, setMsgs] = useState<Message[]>([
       {
         content: "Messages are encrypted for security",
@@ -440,12 +449,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     const colorSetter = useSpring({
       color: oppositeTheme,
     });
-
-    const usersTransition = useTransition(usersOpen, config);
-    const shareTransition = useTransition(shareOpen, config);
-    const emojiTransition = useTransition(emojiOpen, config);
-    const imagesTransition = useTransition(imgsOpen, config);
-    const gifsTransition = useTransition(gifsOpen, config);
     const footerAndHeaderExpander = useSpring({
       width: "100vw",
       borderTop: `1px solid ${oppositeTheme}`,
@@ -460,12 +463,13 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       setUser(initContextValue);
       KickSound.play();
     };
+
     return (
       <>
         {isBanned[0] ? (
           <Banned reason={isBanned[1]} />
         ) : (
-          <>
+          <FadedAnimationWrapper>
             <ChatPage style={backgroundAnimation}>
               <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
               {/* @ts-ignore */}
@@ -484,37 +488,31 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                     </ReplyContext.Provider>
                   </Scroll>
                 </ChatArea>
-                {usersTransition((style, item) => {
-                  return item ? (
-                    <>
-                      <UsersSection style={style}>
-                        <SidePanelHeaderComponent
-                          onClose={() => setUsersOpen(false)}
-                          style={{
-                            borderTop: `1px solid ${oppositeTheme}`,
-                            borderBottom: `1px solid ${oppositeTheme}`,
-                          }}
-                        >
-                          <span> Users In Chat</span>
-                        </SidePanelHeaderComponent>
+                <AnimatePresence>
+                  {usersOpen && (
+                    <UsersSection {...panelConfig} key='users'>
+                      <SidePanelHeaderComponent
+                        onClose={() => setUsersOpen(false)}
+                        style={{
+                          borderTop: `1px solid ${oppositeTheme}`,
+                          borderBottom: `1px solid ${oppositeTheme}`,
+                        }}
+                      >
+                        <span> Users In Chat</span>
+                      </SidePanelHeaderComponent>
 
-                        <UsersPanelInfo
-                          isHost={isHost}
-                          users={users}
-                          theme={oppositeTheme}
-                          onBan={(user, reason) =>
-                            socket.emit("ban-user", user, reason)
-                          }
-                        />
-                      </UsersSection>
-                    </>
-                  ) : (
-                    ""
-                  );
-                })}
-                {gifsTransition((style, item) => {
-                  return item ? (
-                    <ImagesPanel style={style}>
+                      <UsersPanelInfo
+                        isHost={isHost}
+                        users={users}
+                        theme={oppositeTheme}
+                        onBan={(user, reason) =>
+                          socket.emit("ban-user", user, reason)
+                        }
+                      />
+                    </UsersSection>
+                  )}
+                  {gifsOpen && (
+                    <ImagesPanel {...panelConfig} key='gifs'>
                       <SidePanelHeaderComponent
                         onClose={() => setGifsOpen(false)}
                         style={{
@@ -547,13 +545,9 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                         }}
                       />
                     </ImagesPanel>
-                  ) : (
-                    ""
-                  );
-                })}
-                {shareTransition((style, item) => {
-                  return item ? (
-                    <SharePanel style={style}>
+                  )}
+                  {shareOpen && (
+                    <SharePanel {...panelConfig} key='share'>
                       <SidePanelHeaderComponent
                         style={{
                           borderTop: `1px solid ${oppositeTheme}`,
@@ -565,13 +559,9 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                       </SidePanelHeaderComponent>
                       <SharePanelInfo />
                     </SharePanel>
-                  ) : (
-                    ""
-                  );
-                })}
-                {emojiTransition((style, item) => {
-                  return item ? (
-                    <EmojiPanel style={style}>
+                  )}
+                  {emojiOpen && (
+                    <EmojiPanel {...panelConfig} key='emoji'>
                       <SidePanelHeaderComponent
                         onClose={() => setEmojiOpen(false)}
                         style={{
@@ -583,50 +573,42 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                       </SidePanelHeaderComponent>
                       <EmojiPanelInfo />
                     </EmojiPanel>
-                  ) : (
-                    ""
-                  );
-                })}
-                {imagesTransition((style, item) => {
-                  return item ? (
-                    <>
-                      <ImagesPanel style={style}>
-                        <SidePanelHeaderComponent
-                          onClose={() => setImgsOpen(false)}
-                          style={{
-                            borderTop: `1px solid ${oppositeTheme}`,
-                            borderBottom: `1px solid ${oppositeTheme}`,
-                          }}
-                        >
-                          Images
-                        </SidePanelHeaderComponent>
-                        <ImagesContent
-                          onImgSubmit={(imgUrl, caption) => {
-                            const newMessage: Message = {
-                              author: user.name,
-                              created_at: new Date(),
-                              accentColor: constants.appAccentColor,
-                              content: encrypt(imgUrl),
-                              type: "image",
-                              className: "Outgoing",
-                              profilePic: user.avatarSvg,
-                              caption: encrypt(caption),
-                              id: getRandomKey(),
-                            };
+                  )}
+                  {imgsOpen && (
+                    <ImagesPanel {...panelConfig} key='images'>
+                      <SidePanelHeaderComponent
+                        onClose={() => setImgsOpen(false)}
+                        style={{
+                          borderTop: `1px solid ${oppositeTheme}`,
+                          borderBottom: `1px solid ${oppositeTheme}`,
+                        }}
+                      >
+                        Images
+                      </SidePanelHeaderComponent>
+                      <ImagesContent
+                        onImgSubmit={(imgUrl, caption) => {
+                          const newMessage: Message = {
+                            author: user.name,
+                            created_at: new Date(),
+                            accentColor: constants.appAccentColor,
+                            content: encrypt(imgUrl),
+                            type: "image",
+                            className: "Outgoing",
+                            profilePic: user.avatarSvg,
+                            caption: encrypt(caption),
+                            id: getRandomKey(),
+                          };
 
-                            setMsgs((p) => [...p, newMessage]);
-                            socket.emit("message", {
-                              ...newMessage,
-                              className: "Incoming",
-                            });
-                          }}
-                        />
-                      </ImagesPanel>
-                    </>
-                  ) : (
-                    ""
-                  );
-                })}
+                          setMsgs((p) => [...p, newMessage]);
+                          socket.emit("message", {
+                            ...newMessage,
+                            className: "Incoming",
+                          });
+                        }}
+                      />
+                    </ImagesPanel>
+                  )}
+                </AnimatePresence>
               </RemainingChatArea>
               {replyState.isOpen && (
                 <Reply
@@ -678,7 +660,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                 </div>
               </MeetControls>
             </ChatPage>
-          </>
+          </FadedAnimationWrapper>
         )}
       </>
     );

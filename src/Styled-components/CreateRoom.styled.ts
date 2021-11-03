@@ -1,7 +1,9 @@
 import { animated } from "react-spring";
 import styled, { keyframes } from "styled-components";
 import { constants } from "../Constants";
-export const Page = styled(animated.div)`
+
+import { motion } from "framer-motion";
+export const Page = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,7 +25,7 @@ export const Page = styled(animated.div)`
   }
 `;
 
-export const Form = styled.form`
+export const Form = styled(motion.form)`
   overflow-x: hidden;
   overflow-y: hidden;
   background-color: #053fb3;
@@ -206,16 +208,38 @@ export const Toggler = styled.label`
   }
 `;
 export const FormSubmitBtn = styled.button`
-  color: #053fb3;
-  background-color: yellow;
-  padding: 0.5vw 2.5vw;
-  transition: 300ms ease-in-out;
-  font-size: 1.5vw;
-  border-radius: 10px;
-  border: 1px solid yellow;
+  height: 7vh;
+  font-size: 1.4vw;
+  padding: 0 1vw;
   font-family: "Poppins", sans-serif;
+  background-color: yellow;
+  border: 0;
+  border-radius: 10px;
+  color: #053fb3;
+  transition: 250ms ease-in-out;
   &:hover {
-    color: yellow;
-    background-color: #053fb3;
+    background-color: ${constants.appAccentColor};
+    color: white;
+    transform: scale(1.1);
+  }
+  &:active {
+    transform: scale(0.9);
+  }
+`;
+
+export const LoadingButtonStyled = styled.button`
+  height: 7vh;
+  font-size: 1.4vw;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  border: 0;
+  background: grey;
+  svg {
+    color: white;
+    font-size: 2vw;
+    animation: 1s spin linear infinite;
   }
 `;

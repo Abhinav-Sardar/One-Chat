@@ -7,6 +7,7 @@ import {
   useRef,
   FormEvent,
 } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 
 import useSwr from "swr";
@@ -1041,13 +1042,25 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
 });
 
 export const FadedAnimationWrapper: FC = ({ children }) => {
-  const fadeAnimation = useSpring({
-    from: {
-      opacity: 0,
-    },
-    to: { opacity: 1 },
-  });
-  return <animated.div style={fadeAnimation}>{children}</animated.div>;
+  return (
+    <motion.div
+      animate={{
+        opacity: 1,
+      }}
+      transition={{
+        duration: 0.3,
+      }}
+      initial={{
+        opacity: 0,
+        x: 0,
+      }}
+      exit={{
+        x: "-100vw",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
 };
 
 export const MiniatureReplyPreview: FC<{
@@ -1073,19 +1086,55 @@ export const MiniatureReplyPreview: FC<{
           }}
         >
           {!isProd
-            ? props.content.length > 60
-              ? clipText(decrypt(props.content), 60)
+            ? props.content.length > 35
+              ? clipText(decrypt(props.content), 35)
               : decrypt(props.content)
-            : props.content.length > 50
-            ? clipText(decrypt(props.content), 50)
+            : props.content.length > 45
+            ? clipText(decrypt(props.content), 45)
             : decrypt(props.content)}
         </div>
       </MiniatureReplyPreviewDiv>
     );
   } else if (type === "gif" || type === "image") {
     return (
-      <MiniatureReplyPreviewDiv>
-        <img src='' alt='' className='img' />
+      <MiniatureReplyPreviewDiv style={{ flexDirection: "row" }}>
+        <img
+          src={decrypt(props.content)}
+          alt=''
+          className='img'
+          style={{
+            width: isProd ? "20%" : "10%",
+            height: "100%",
+          }}
+        />
+        <div
+          className='text'
+          style={{
+            width: isProd ? "80%" : "90%",
+          }}
+        >
+          <div className='info-reply'>
+            {props.className === "Outgoing"
+              ? `${props.author} (You)`
+              : props.author}{" "}
+            - {ReturnFormattedDate(new Date(props.created_at))}
+          </div>
+          <div
+            className='content-reply'
+            style={{
+              background: props.accentColor,
+              width: isProd ? "90%" : "45%",
+            }}
+          >
+            {isProd
+              ? props.caption.length > 35
+                ? clipText(decrypt(props.caption), 35)
+                : decrypt(props.caption)
+              : props.caption.length > 45
+              ? clipText(decrypt(props.caption), 45)
+              : decrypt(props.caption)}
+          </div>
+        </div>
       </MiniatureReplyPreviewDiv>
     );
   }

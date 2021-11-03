@@ -36,6 +36,9 @@ import { useHistory, Link } from "react-router-dom";
 import { useSpring } from "react-spring";
 import ChatComponent from "./ChatComponent";
 import PleaseWait from "./PleaseWait";
+import { FadedAnimationWrapper } from "./Chat.SubComponents";
+import { motion } from "framer-motion";
+import { LoadingButton } from "./CreateRoom";
 //@ts-ignore
 const socket = io(constants.serverName);
 
@@ -135,134 +138,168 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       setIsConnecting(false);
     }
   }
-
-  const appear = useSpring({
-    from: {
-      width: "0vw",
-      opacity: 0,
+  const formVariants = {
+    initial: {
+      width: 0,
     },
-    to: {
-      width: "100vw",
-      opacity: 1,
+    animated: {
+      width: "45vw",
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        staggerChildren: 0.6,
+      },
     },
-  });
-
+  };
+  const popFromSideVariants = {
+    initial: {
+      x: -10000,
+    },
+    animated: {
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 35,
+        mass: 1.2,
+      },
+    },
+  };
   return (
     <>
-      {isConnecting ? (
-        <PleaseWait />
-      ) : isDone ? (
+      {isDone ? (
         <ChatComponent isPrivate={"Join"} />
       ) : (
-        <Page style={appear}>
-          <h1 className='purpose'>Join</h1>
-          <Form onSubmit={(e) => handleSubmit(e)}>
-            <div className='field'>
-              <span>Name</span>
-              <br />
-              <input
-                type='text'
-                /* @ts-ignore */
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                placeholder='Your Name'
-                autoFocus
-              />
-            </div>
-            {isAuth ? (
-              <div className='field'>
-                <span>Room Name:{roomName}</span>
-              </div>
-            ) : (
-              <div className='field'>
-                <span>Room Name</span>
+        <FadedAnimationWrapper>
+          <Page>
+            <h1 className='purpose'>Join</h1>
+            <Form
+              onSubmit={(e) => handleSubmit(e)}
+              variants={formVariants}
+              initial='initial'
+              animate='animated'
+            >
+              <motion.div className='field' variants={popFromSideVariants}>
+                <span>Name</span>
                 <br />
                 <input
                   type='text'
-                  //@ts-ignore
-                  value={room}
-                  spellCheck
+                  /* @ts-ignore */
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
-                  placeholder='Name Of The Room You Want To Join'
-                  onChange={(e) => setRoom(e.target.value)}
-                  autoFocus={isAuth ? true : false}
-                  ref={roomRef}
+                  placeholder='Your Name'
+                  autoFocus
                 />
-              </div>
-            )}
-            <div className='field'>
-              <span>Avatar</span>
-              {currentAvatar && parse(currentAvatar)}
+              </motion.div>
+              {isAuth ? (
+                <motion.div
+                  className='field'
+                  initial='initial'
+                  animate='animated'
+                  variants={popFromSideVariants}
+                >
+                  <span>Room Name:{roomName}</span>
+                </motion.div>
+              ) : (
+                <motion.div
+                  className='field'
+                  initial='initial'
+                  animate='animated'
+                  variants={popFromSideVariants}
+                >
+                  <span>Room Name</span>
+                  <br />
+                  <input
+                    type='text'
+                    //@ts-ignore
+                    value={room}
+                    spellCheck
+                    required
+                    placeholder='Name Of The Room You Want To Join'
+                    onChange={(e) => setRoom(e.target.value)}
+                    autoFocus={isAuth ? true : false}
+                    ref={roomRef}
+                  />
+                </motion.div>
+              )}
+              <motion.div className='field' variants={popFromSideVariants}>
+                <span>Avatar</span>
+                {currentAvatar && parse(currentAvatar)}
+                <br />
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className='choose__avatar'
+                  type='button'
+                >
+                  <span>Choose Avatar</span>{" "}
+                  <FaUserAlt className='btn-avatar' />
+                </button>
+              </motion.div>
+              {isConnecting ? (
+                <LoadingButton />
+              ) : (
+                <FormSubmitBtn type='submit' className='submit'>
+                  Join Room
+                </FormSubmitBtn>
+              )}
+            </Form>
+            <Modal
+              open={isModalOpen}
+              styles={{
+                modal: {
+                  background: constants.appAccentColor,
+                  color: "white",
+                },
+              }}
+              onClose={() => setIsModalOpen(false)}
+              closeIcon={
+                <FaTimes
+                  fill='red'
+                  fontSize={"2vw"}
+                  style={{
+                    margin: "1vh 0",
+                  }}
+                />
+              }
+            >
+              <AvatarActionBtns>
+                <h1>Choose your avatar</h1>
+              </AvatarActionBtns>
+              <AvatarsWrapper>
+                {avatars.map((avatar) => {
+                  if (avatar === currentAvatar) {
+                    return (
+                      <div className='current' key={getRandomKey()}>
+                        {parse(avatar)}
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div
+                        onClick={() => {
+                          handleClose(avatar);
+                        }}
+                        key={getRandomKey()}
+                      >
+                        {parse(avatar)}
+                      </div>
+                    );
+                  }
+                })}
+              </AvatarsWrapper>
               <br />
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className='choose__avatar'
-                type='button'
-              >
-                <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
-              </button>
-            </div>
-            <FormSubmitBtn type='submit' className='submit'>
-              Join Room
-            </FormSubmitBtn>
-          </Form>
-          <Modal
-            open={isModalOpen}
-            styles={{
-              modal: {
-                background: constants.appAccentColor,
-                color: "white",
-              },
-            }}
-            onClose={() => setIsModalOpen(false)}
-            closeIcon={
-              <FaTimes
-                fill='red'
-                fontSize={"2vw"}
-                style={{
-                  margin: "1vh 0",
-                }}
-              />
-            }
-          >
-            <AvatarActionBtns>
-              <h1>Choose your avatar</h1>
-            </AvatarActionBtns>
-            <AvatarsWrapper>
-              {avatars.map((avatar) => {
-                if (avatar === currentAvatar) {
-                  return (
-                    <div className='current' key={getRandomKey()}>
-                      {parse(avatar)}
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div
-                      onClick={() => {
-                        handleClose(avatar);
-                      }}
-                      key={getRandomKey()}
-                    >
-                      {parse(avatar)}
-                    </div>
-                  );
-                }
-              })}
-            </AvatarsWrapper>
-            <br />
-          </Modal>
-          <Button
-            onClick={() => {
-              //@ts-ignore
-              socket.disconnect(true);
-              history.push("/");
-            }}
-          >
-            <span>Back To Home</span> <FaHome />
-          </Button>{" "}
-        </Page>
+            </Modal>
+            <Button
+              onClick={() => {
+                //@ts-ignore
+                socket.disconnect(true);
+                history.push("/");
+              }}
+            >
+              <span>Back To Home</span> <FaHome />
+            </Button>{" "}
+          </Page>
+        </FadedAnimationWrapper>
       )}
     </>
   );

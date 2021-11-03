@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { animated } from "react-spring";
 import styled from "styled-components";
 import { constants } from "../Constants";
@@ -138,7 +139,7 @@ export const ChatArea = styled.div`
   scroll-behavior: smooth;
 `;
 
-export const UsersSection = styled(animated.aside)`
+export const UsersSection = styled(motion.aside)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -213,7 +214,7 @@ export const ChatPage = styled(animated.div)`
   position: relative;
 `;
 
-export const SharePanel = styled(animated.aside)`
+export const SharePanel = styled(motion.aside)`
   > * {
     text-align: center;
   }
@@ -260,7 +261,7 @@ export const SharePanel = styled(animated.aside)`
   }
 `;
 
-export const EmojiPanel = styled(animated.aside)`
+export const EmojiPanel = styled(motion.aside)`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -300,7 +301,7 @@ export const EmojiPanel = styled(animated.aside)`
   }
 `;
 
-export const ImagesPanel = styled(animated.aside)`
+export const ImagesPanel = styled(motion.aside)`
   display: flex;
   flex-direction: column;
   align-items: center;

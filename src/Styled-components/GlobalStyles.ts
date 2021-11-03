@@ -293,7 +293,7 @@ a {
 * {
      scrollbar-width: auto;
      scrollbar-color: ${constants.appAccentColor} lightgray;
-     
+     scrollbar-behaviour:smooth;
    }
    #reset {
      animation:2s spin linear infinite ; 
