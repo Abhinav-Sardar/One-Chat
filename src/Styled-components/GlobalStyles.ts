@@ -265,9 +265,10 @@ svg:root {
 	display: flex;
 	flex-direction: column;
 	overflow-y:auto ; 
-	overflow-x: hidden;
    > * {
   scrollbar-width: thin !important;
+	overflow-x: hidden !important;
+
    }
 }
 a {
@@ -324,7 +325,7 @@ cursor:pointer ;
   }
 }
 .pop {
-  animation-iteration-count:3;
+  animation-iteration-count:4;
   animation-name:pop;
   animation-duration: .7s;
   animation-timing-duration: ease-in-out;

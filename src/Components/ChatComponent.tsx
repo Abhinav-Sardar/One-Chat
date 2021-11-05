@@ -35,7 +35,6 @@ import {
 } from "react-icons/fa";
 
 import { FiShare2 } from "react-icons/fi";
-import { useSpring, useTransition } from "react-spring";
 import { toast } from "react-toastify";
 import { ReplyContext, SelfClientContext } from "../Context";
 import {
@@ -53,6 +52,7 @@ import {
   reply,
   decrypt,
   scrollMessageIntoView,
+  messageVariants,
 } from "../Constants";
 import {
   ChatPage,
@@ -82,7 +82,7 @@ import {
 
 import { Pop, ForeignMessagePop, KickSound } from "../Images/Accumulator";
 import Banned from "./Banned";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const socket = io(constants.serverName);
 
@@ -444,18 +444,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         </>
       );
     }
-
-    const backgroundAnimation = useSpring({ backgroundColor: theme });
-    const colorSetter = useSpring({
-      color: oppositeTheme,
-    });
-    const footerAndHeaderExpander = useSpring({
-      width: "100vw",
-      borderTop: `1px solid ${oppositeTheme}`,
-    });
-    const replySetter = useSpring({
-      height: replyState.isOpen ? "5%" : "0vh",
-    });
     const LeaveRoom = () => {
       history.push("/");
       //@ts-ignore
@@ -463,17 +451,63 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       setUser(initContextValue);
       KickSound.play();
     };
-
+    const handleDragEnd = (msg: Message, offset: number) => {
+      const { className } = msg;
+      if (className === "Outgoing") {
+        if (offset < 0) {
+          return;
+        } else {
+          setTimeout(() => {
+            setReplyState({
+              isOpen: true,
+              id: msg.id,
+              content: msg,
+            });
+          }, 500);
+        }
+      } else {
+        if (offset < 0) {
+          setTimeout(() => {
+            setReplyState({
+              isOpen: true,
+              id: msg.id,
+              content: msg,
+            });
+          }, 900);
+        } else {
+          return;
+        }
+      }
+    };
     return (
       <>
         {isBanned[0] ? (
           <Banned reason={isBanned[1]} />
         ) : (
           <FadedAnimationWrapper>
-            <ChatPage style={backgroundAnimation}>
+            <ChatPage
+              animate={{
+                backgroundColor: theme,
+                color: oppositeTheme,
+              }}
+              transition={{
+                type: "tween",
+                duration: 0.4,
+              }}
+            >
               <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
               {/* @ts-ignore */}
-              <RemainingChatArea style={colorSetter} about={replyState.isOpen}>
+              <RemainingChatArea
+                animate={{
+                  height: replyState.isOpen
+                    ? `${100 - (12 + 10 + 10)}vh`
+                    : "78%",
+                }}
+                transition={{
+                  type: "tween",
+                  duration: 0.5,
+                }}
+              >
                 <ChatArea theme={oppositeTheme}>
                   <Scroll
                     className='rstb'
@@ -482,13 +516,31 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                   >
                     <ReplyContext.Provider value={[replyState, setReplyState]}>
                       {msgs.length > 0 &&
-                        msgs.map((msg) => (
-                          <MessageComponent {...msg} key={getRandomKey()} />
-                        ))}
+                        msgs.map((msg) => {
+                          if (msg.type !== "indicator") {
+                            return (
+                              <motion.div
+                                key={getRandomKey()}
+                                onDragEnd={(_, { offset }) =>
+                                  handleDragEnd(msg, offset.x)
+                                }
+                                drag='x'
+                                dragElastic={0.3}
+                                dragConstraints={{ left: 0, right: 0 }}
+                              >
+                                <MessageComponent {...msg} />
+                              </motion.div>
+                            );
+                          } else {
+                            return (
+                              <MessageComponent {...msg} key={getRandomKey()} />
+                            );
+                          }
+                        })}
                     </ReplyContext.Provider>
                   </Scroll>
                 </ChatArea>
-                <AnimatePresence>
+                <AnimatePresence exitBeforeEnter>
                   {usersOpen && (
                     <UsersSection {...panelConfig} key='users'>
                       <SidePanelHeaderComponent
@@ -611,44 +663,72 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                 </AnimatePresence>
               </RemainingChatArea>
               {replyState.isOpen && (
-                <Reply
-                  id='reply-cont'
-                  style={{
-                    borderTop: `1px solid ${oppositeTheme}`,
-                    borderLeft: `1px solid ${oppositeTheme}`,
-                  }}
-                >
-                  <div className='icon'>
-                    <VscChromeClose
-                      onClick={() =>
-                        setReplyState({
-                          isOpen: false,
-                          id: "",
-                          content: null,
-                        })
-                      }
+                <AnimatePresence>
+                  <Reply
+                    id='reply-cont'
+                    key={"reply-cont"}
+                    style={{
+                      borderTop: `1px solid ${oppositeTheme}`,
+                      borderLeft: `1px solid ${oppositeTheme}`,
+                    }}
+                    animate={{
+                      height: "10vh",
+                      opacity: 1,
+                    }}
+                    transition={{
+                      type: "tween",
+                      duration: 0.5,
+                    }}
+                    initial={{
+                      opacity: 0,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      height: 0,
+                      transition: {
+                        type: "tween",
+                        duration: 0.5,
+                      },
+                    }}
+                  >
+                    <div className='icon'>
+                      <VscChromeClose
+                        onClick={() =>
+                          setReplyState({
+                            isOpen: false,
+                            id: "",
+                            content: null,
+                          })
+                        }
+                        style={{
+                          color: oppositeTheme,
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      className='content'
                       style={{
+                        borderLeft: `1px solid ${oppositeTheme}`,
                         color: oppositeTheme,
                       }}
-                    />
-                  </div>
-
-                  <div
-                    className='content'
-                    style={{
-                      borderLeft: `1px solid ${oppositeTheme}`,
-                      color: oppositeTheme,
-                    }}
-                    onClick={() => scrollMessageIntoView(replyState.content.id)}
-                  >
-                    <MiniatureReplyPreview
-                      props={replyState.content}
-                      isProd={false}
-                    />
-                  </div>
-                </Reply>
+                      onClick={() =>
+                        scrollMessageIntoView(replyState.content.id)
+                      }
+                    >
+                      <MiniatureReplyPreview
+                        props={replyState.content}
+                        isProd={false}
+                      />
+                    </div>
+                  </Reply>
+                </AnimatePresence>
               )}
-              <MeetControls style={footerAndHeaderExpander}>
+              <MeetControls
+                style={{
+                  borderTop: `1px solid ${oppositeTheme}`,
+                }}
+              >
                 <form className='input' onSubmit={(e) => handleSubmit(e)}>
                   <input ref={inputRef} {...MeetInputAttributesConfig} />
                   <button type='submit'>

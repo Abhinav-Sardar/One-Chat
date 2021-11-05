@@ -3,7 +3,7 @@ import { animated } from "react-spring";
 import styled from "styled-components";
 import { constants } from "../Constants";
 
-export const MeetInfo = styled(animated.section)`
+export const MeetInfo = styled.section`
   width: 100vw;
   display: flex;
   justify-content: space-between;
@@ -49,19 +49,16 @@ export const MeetInfo = styled(animated.section)`
     }
   }
 `;
-export const RemainingChatArea = styled(animated.div)`
+export const RemainingChatArea = styled(motion.div)`
   display: flex;
   flex-direction: row;
-  transition: height 400ms ease-out;
-  // @ts-ignore
-  height: ${(pr) => (pr.about ? `${100 - (12 + 10 + 10)}vh` : "78%")};
   justify-content: flex-start;
   & > * {
     scrollbar-width: thin !important ;
   }
 `;
 
-export const MeetControls = styled(animated.footer)`
+export const MeetControls = styled.footer`
   position: absolute;
   bottom: 0;
   width: 100vw;
@@ -169,7 +166,7 @@ export const User = styled.section`
     border-radius: 50%;
     border: 1px solid ${(pr) => pr.theme};
   }
-  h2 {
+  span {
     font-size: 1.3vw;
     font-family: "Quicksand", sans-serif;
   }
@@ -206,7 +203,7 @@ export const SidePanelHeader = styled.div`
   }
 `;
 
-export const ChatPage = styled(animated.div)`
+export const ChatPage = styled(motion.div)`
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -514,10 +511,8 @@ export const Indicator = styled.div`
   }
 `;
 
-export const Reply = styled(animated.section)`
+export const Reply = styled(motion.section)`
   display: flex;
-
-  transition: height 400ms ease-in-out;
   height: 10vh;
   .icon {
     height: 100%;

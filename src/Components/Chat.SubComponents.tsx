@@ -71,7 +71,6 @@ import {
   AiOutlineGif,
 } from "react-icons/ai";
 
-import { animated, useSpring } from "react-spring";
 import {
   BsArrow90DegLeft,
   BsArrow90DegRight,
@@ -81,8 +80,6 @@ import {
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   //@ts-ignore
   const [time, setTime] = useState<numOrStr>(returnUpdatedDate());
-  //@ts-ignore
-  const [hours, minutes, seconds] = time;
 
   useEffect(() => {
     setInterval(() => {
@@ -95,7 +92,7 @@ export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
       <span className='roomName'>Room - {roomName}</span>
       <span className='roomName'>
         <BiTimeFive />
-        {hours}:{minutes}:{seconds}
+        {time}
       </span>
       <button onClick={onClick}>
         Leave Room <IoMdExit />
@@ -133,7 +130,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
             return (
               <User theme={theme} key={getRandomKey()}>
                 {parse(user.profilePic)}
-                <h2>{user.name}</h2>
+                <span>{user.name}</span>
                 {user.name === name ? (
                   ""
                 ) : (
@@ -153,7 +150,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
             return (
               <User theme={theme} key={getRandomKey()}>
                 {parse(user.profilePic)}
-                <h2>{user.name}</h2>
+                <span>{user.name}</span>
                 {user.host === true ? (
                   <FaCrown
                     className='host__crown'

@@ -222,9 +222,6 @@ export const FormSubmitBtn = styled.button`
     color: white;
     transform: scale(1.1);
   }
-  &:active {
-    transform: scale(0.9);
-  }
 `;
 
 export const LoadingButtonStyled = styled.button`

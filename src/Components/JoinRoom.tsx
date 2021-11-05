@@ -33,7 +33,6 @@ import { Button } from "../Styled-components/Customize.style";
 import { toast } from "react-toastify";
 
 import { useHistory, Link } from "react-router-dom";
-import { useSpring } from "react-spring";
 import ChatComponent from "./ChatComponent";
 import PleaseWait from "./PleaseWait";
 import { FadedAnimationWrapper } from "./Chat.SubComponents";
@@ -51,8 +50,6 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [avatars, setAvatars] = useState<string[]>([]);
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
-  const [room, setRoom] = useState<string>("");
-  const [name, setName] = useState<string>("");
   const [isDone, setIsDone] = useState<boolean>(false);
   const history = useHistory();
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
@@ -88,6 +85,10 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
     socket.connect();
     setIsConnecting(true);
     e.preventDefault();
+    //@ts-ignore
+    const name = document.getElementById("name").value as string;
+    //@ts-ignore
+    const room = document.getElementById("room")?.value as string;
     const newRoom = isAuth ? roomName : room;
     const res = validator(name, newRoom);
     if (res) {
@@ -183,9 +184,8 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                 <br />
                 <input
                   type='text'
-                  /* @ts-ignore */
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  id='name'
+                  spellCheck
                   required
                   placeholder='Your Name'
                   autoFocus
@@ -211,12 +211,10 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                   <br />
                   <input
                     type='text'
-                    //@ts-ignore
-                    value={room}
+                    id='room'
                     spellCheck
                     required
                     placeholder='Name Of The Room You Want To Join'
-                    onChange={(e) => setRoom(e.target.value)}
                     autoFocus={isAuth ? true : false}
                     ref={roomRef}
                   />

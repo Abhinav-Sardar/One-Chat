@@ -42,8 +42,6 @@ export const MainContent = styled.main`
     color: ${constants.appAccentColor};
     font-size: 14vw;
     position: relative;
-    animation: jump 2s infinite linear;
-    transition: 400ms ease-in-out;
   }
 
   > * {

@@ -37,7 +37,6 @@ import { Button } from "../Styled-components/Customize.style";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { Link, useHistory } from "react-router-dom";
-import { animated, useSpring, useSprings } from "react-spring";
 import PleaseWait from "./PleaseWait";
 import { FadedAnimationWrapper } from "./Chat.SubComponents";
 import { motion } from "framer-motion";
@@ -76,8 +75,6 @@ const CreateRoom: FunctionalComponent = () => {
     },
   };
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
-  const [room, setRoom] = useState<string>("");
-  const [name, setName] = useState<string>("");
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const roomRef = useRef();
@@ -109,6 +106,10 @@ const CreateRoom: FunctionalComponent = () => {
   function handleSubmit(e: FormEvent): void {
     setIsConnecting(true);
     e.preventDefault();
+    // @ts-ignore
+    const room = document.querySelector("input#room").value;
+    // @ts-ignore
+    const name = document.querySelector("input#name").value;
     if (isConnecting) {
       return;
     } else {
@@ -171,8 +172,7 @@ const CreateRoom: FunctionalComponent = () => {
               <input
                 type='text'
                 /* @ts-ignore */
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                id='name'
                 spellCheck
                 required
                 placeholder='Your Name'
@@ -185,8 +185,7 @@ const CreateRoom: FunctionalComponent = () => {
               <input
                 type='text'
                 //@ts-ignore
-                value={room}
-                onChange={(e) => setRoom(e.target.value)}
+                id='room'
                 spellCheck
                 required
                 placeholder='Name Your Room'
