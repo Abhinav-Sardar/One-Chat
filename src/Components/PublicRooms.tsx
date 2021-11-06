@@ -1,8 +1,8 @@
 import { FC, memo, useEffect, useState } from "react";
 import { FadedAnimationWrapper } from "./Chat.SubComponents";
-import useSWR from "swr";
+
 import { constants, getRandomKey, room } from "../Constants";
-import axios from "axios";
+
 import {
   PrimaryTitle,
   PubPage,
@@ -12,17 +12,16 @@ import { FaEye, FaHome, FaSearch, FaTimes } from "react-icons/fa";
 import { Button } from "../Styled-components/Customize.style";
 import { useHistory } from "react-router";
 import { IoChatboxSharp } from "react-icons/io5";
+import { useQuery } from "react-query";
 
 const PublicRooms: FC = () => {
   const history = useHistory();
   const [text, setText] = useState<string>("");
-  const fetcher: () => any = async () => {
-    const response = await axios.get(`${constants.serverName}rooms`);
-    return response.data;
-  };
-  const { data } = useSWR<room[]>(`${constants.serverName}rooms`, fetcher, {
-    refreshInterval: 1000,
-  });
+  const { data } = useQuery(
+    "public-rooms",
+    () => constants.fetcher(`${constants.serverName}rooms`, false),
+    { ...constants.queryConfig, refetchInterval: 1000 }
+  );
   document.body.style.background = "white";
 
   //@ts-ignore

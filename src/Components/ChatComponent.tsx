@@ -663,7 +663,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                 </AnimatePresence>
               </RemainingChatArea>
               {replyState.isOpen && (
-                <AnimatePresence>
+                <AnimatePresence exitBeforeEnter>
                   <Reply
                     id='reply-cont'
                     key={"reply-cont"}

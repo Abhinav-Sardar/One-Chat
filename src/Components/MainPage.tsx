@@ -102,7 +102,7 @@ function ThisButtons(): JSX.Element {
       <ActionButton onClick={() => history.push("/report")}>
         Report An Issue <MdReport style={{ fontSize: "2vw" }} />
       </ActionButton>
-      <ActionButton>
+      <ActionButton onClick={() => history.push("/faqs")}>
         FAQs <BsQuestionCircleFill />
       </ActionButton>
     </ActionsButtonWrapper>

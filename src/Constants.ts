@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { FC, ReactElement, useEffect, useState } from "react";
 import { animated, useSpring } from "react-spring";
 import { toast } from "react-toastify";
@@ -5,34 +6,18 @@ import { toast } from "react-toastify";
 const devUrl = "http://localhost:1919/";
 const prodUrl = "https://one-chat-server.herokuapp.com/";
 
-export const constants = {
-  appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
-  serverName: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
-  pleaseWaitPageStyles: {
-    height: "100vh",
-    width: "100vw",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    flexDirection: "column",
-  },
-  copySuccess: "Copied ✅. Share this Url with anyone you trust",
-  PEXELS_API_KEY: "563492ad6f91700001000001e2f383c41efa4b889123dc24cdf343a3",
-  imageInputErrorMsg:
-    "The provided input was invalid or too long! The limit is 30",
-  roomDoesntExistError: "A room with that name doesn't exist",
-  roomAlreadyExistsError: "A room with same name already exists",
-  tenorApiKey: "5BH3UY2UAJ78",
-  nameAlreadyThere:
-    "A person with the same name is already present in the room. Please try a different name.",
-  ONE_CHAT_LOCAL_STORAGE_KEY: "one-chat-accent-color",
-  replyFadedBg: "#D4D3D3",
-};
-
 export function accentColorChecker(): void {
   if (!localStorage.getItem(constants.ONE_CHAT_LOCAL_STORAGE_KEY)) {
     localStorage.setItem(constants.ONE_CHAT_LOCAL_STORAGE_KEY, "#bd14ca");
+  } else if (
+    localStorage.getItem(constants.ONE_CHAT_LOCAL_STORAGE_KEY) !==
+    constants.appAccentColor
+  ) {
+    constants.appAccentColor = localStorage.getItem(
+      constants.ONE_CHAT_LOCAL_STORAGE_KEY
+    );
+  } else {
+    return;
   }
 }
 
@@ -71,15 +56,19 @@ const alphabets: string[] = "abcdefghijklmnopqrstuvwxyz".split("");
 const nums: string[] = "1234567890".split("");
 const specialChars: string[] = '!@#$%^&*()_+=-";:,.<>/?'.split("");
 export function getRandomKey(): string {
-  let str = "";
-  const allFields: string[][] = [alphabets, nums, specialChars];
-
-  for (let i = 0; i < 15; i++) {
-    const randomField: string[] =
-      allFields[Math.floor(Math.random()) * allFields.length];
-    str += randomField[Math.floor(Math.random() * randomField.length)];
+  let randomKey = "";
+  for (let i = 0; i < 10; i++) {
+    const randomArray = Math.floor(Math.random() * 3);
+    const randomCharacter = Math.floor(Math.random() * 3);
+    if (randomArray === 0) {
+      randomKey += alphabets[randomCharacter];
+    } else if (randomArray === 1) {
+      randomKey += nums[randomCharacter];
+    } else {
+      randomKey += specialChars[randomCharacter];
+    }
   }
-  return str;
+  return `${Date.now()}${randomKey}`;
 }
 
 export const goFullScreen: () => void = () => {
@@ -115,46 +104,19 @@ export const exitFullScreen: () => void = () => {
   }
   //@ts-ignore
   else if (document.msExitFullscreen) {
-    /* IE11 */
     //@ts-ignore
-
     document.msExitFullscreen();
   }
 };
 
-export const ReturnFormattedDate: (date: Date) => string = (date: Date) => {
-  if (date.getHours() === 0) {
-    if (String(date.getMinutes()).length === 1) {
-      return `0${date.getHours()}:0${date.getMinutes()} AM`;
-    } else {
-      return `${date.getHours()}:${date.getMinutes()} AM`;
-    }
-  } else {
-    if (date.getHours() <= 11) {
-      if (String(date.getHours()).length === 1) {
-        if (date.getMinutes() <= 9) {
-          return `0${date.getHours()}:0${date.getMinutes()} AM`;
-        } else {
-          return `0${date.getHours()}:${date.getMinutes()} AM`;
-        }
-      } else {
-        if (date.getMinutes() <= 9) {
-          return `${date.getHours()}:0${date.getMinutes()} AM`;
-        } else {
-          return `${date.getHours()}:${date.getMinutes()} AM`;
-        }
-      }
-    } else {
-      //12 , 13 , 14 ,
-      if (String(date.getMinutes()).length === 1) {
-        return `${date.getHours()}:0${date.getMinutes()} PM`;
-      } else {
-        return `${date.getHours()}:${date.getMinutes()} PM`;
-      }
-    }
-  }
-};
-
+export function ReturnFormattedDate(date: Date): string {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "pm" : "am";
+  const hoursFormatted = hours % 12;
+  const minutesFormatted = minutes < 10 ? "0" + minutes : minutes;
+  return hoursFormatted + ":" + minutesFormatted + " " + ampm;
+}
 export type Message = {
   profilePic?: string;
   accentColor?: string;
@@ -212,7 +174,7 @@ export const config = {
     width: 0,
     transition: {
       type: "tween",
-      duration: 0.7,
+      duration: 0.6,
     },
   },
 };
@@ -276,30 +238,16 @@ export const validateModal: (text: string) => boolean = (text: string) => {
   return valueToBeReturned;
 };
 export type numOrStr = number | string;
-export const returnUpdatedDate: () => [numOrStr, numOrStr, numOrStr] = () => {
-  let valueToBeReturned: [numOrStr, numOrStr, numOrStr] = [1, 1, 1];
-  const now = new Date();
-  const seconds = now.getSeconds();
-  const minutes = now.getMinutes();
-  const hours = now.getHours();
-  if (String(seconds).length === 1) {
-    valueToBeReturned[2] = `0${seconds}`;
-  } else {
-    valueToBeReturned[2] = seconds;
-  }
-  if (String(minutes).length === 1) {
-    valueToBeReturned[1] = `0${minutes}`;
-  } else {
-    valueToBeReturned[1] = minutes;
-  }
-  if (String(hours).length === 1) {
-    valueToBeReturned[0] = `0${hours}`;
-  } else {
-    valueToBeReturned[0] = hours;
-  }
-  return valueToBeReturned;
+export const returnUpdatedDate = (): string => {
+  const date = new Date();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const seconds = date.getSeconds();
+  const hoursFormatted = String(hours).length === 1 ? `0${hours}` : hours;
+  const minutesFormatted = minutes < 10 ? "0" + minutes : minutes;
+  const secondsFormatted = seconds < 10 ? "0" + seconds : seconds;
+  return hoursFormatted + ":" + minutesFormatted + ":" + secondsFormatted;
 };
-
 const encryptScheme: any = {
   "`": "~",
   "~": "`",
@@ -527,21 +475,17 @@ export type reply = {
   content: Message;
 };
 
-export const clipText: (content: string, end: number) => string = (
-  content: string,
-  end: number
-) => {
-  let valueToBeReturned = "";
-  const splicedText = content.slice(0, end);
-  valueToBeReturned = `${splicedText}...`;
-  return valueToBeReturned;
+export const clipText = (string: string, number: number) => {
+  if (string.length > number) {
+    return string.slice(0, number) + "...";
+  } else {
+    return string;
+  }
 };
 
-export const scrollMessageIntoView: (id: string) => void = (id: string) => {
+export const scrollMessageIntoView = (id: string) => {
   const element = document.getElementById(id);
-  if (!element) {
-    toast.error("Message Not Found!");
-  } else {
+  if (element) {
     element.scrollIntoView({
       behavior: "smooth",
       block: "center",
@@ -549,6 +493,118 @@ export const scrollMessageIntoView: (id: string) => void = (id: string) => {
     element.querySelector(".content").classList.add("pop");
     setTimeout(() => {
       element.querySelector(".content").classList.remove("pop");
-    }, 1000);
+    }, 2000);
+  } else {
+    toast.error("Message not found");
   }
 };
+
+export const messageVariants = {
+  Incoming: {
+    initial: {
+      opacity: 0,
+      x: "-100vw",
+    },
+    animate: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+      },
+    },
+  },
+  Outgoing: {
+    initial: {
+      opacity: 0,
+      x: "100vw",
+    },
+
+    animate: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+      },
+    },
+  },
+};
+
+const FaqsData: { title: string; content: string; isOpen: boolean }[] = [
+  {
+    title: "Does One-Chat store my chats somewhere ?",
+    content:
+      "No, chats are not stored anywhere. They get deleted automatically when all the people in a particular room leave.That is what we mean by One-Time chats.",
+    isOpen: false,
+  },
+  {
+    title: "How to join rooms ?",
+    content:
+      "There are two main ways of joining rooms. 1. By clicking on the Join Room button on the homepage and filling necessary information. 2. By pasting a share url of the room which can be obtained by anyone who is in the room. An example url: https://one-chat-v2.netlify.app/room/name-of-the-room",
+    isOpen: false,
+  },
+  {
+    title: "Is One-Chat safe ?",
+    content:
+      "Yes, One-Chat is safe. Safety and privacy was given immense importance during the developmment of the app. Messages are encrypted for safety and you can also create private rooms that won't be publicly displayed to other users.",
+    isOpen: false,
+  },
+];
+
+export const constants = {
+  appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
+  serverName: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
+  pleaseWaitPageStyles: {
+    height: "100vh",
+    width: "100vw",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    flexDirection: "column",
+  },
+  copySuccess: "Copied ✅. Share this Url with anyone you trust",
+  PEXELS_API_KEY: "563492ad6f91700001000001e2f383c41efa4b889123dc24cdf343a3",
+  imageInputErrorMsg:
+    "The provided input was invalid or too long! The limit is 30",
+  roomDoesntExistError: "A room with that name doesn't exist",
+  roomAlreadyExistsError: "A room with same name already exists",
+  tenorApiKey: "5BH3UY2UAJ78",
+  nameAlreadyThere:
+    "A person with the same name is already present in the room. Please try a different name.",
+  ONE_CHAT_LOCAL_STORAGE_KEY: "one-chat-accent-color",
+  replyFadedBg: "#D4D3D3",
+  faqs: FaqsData,
+  queryConfig: {
+    retry: 3,
+    retryOnMount: false,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    cacheTime: Infinity,
+  },
+  fetcher: async (url: string, isImgs: boolean) => {
+    if (isImgs) {
+      return (
+        await axios.get(url, {
+          headers: {
+            Authorization: constants.PEXELS_API_KEY,
+          },
+        })
+      ).data;
+    } else {
+      return (await axios.get(url)).data;
+    }
+  },
+};
+
+export const ImagesFadeConfig = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.5 } },
+};
+
+export interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}

@@ -9,8 +9,6 @@ import {
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
-
-import useSwr from "swr";
 import {
   constants,
   getRandomKey,
@@ -28,6 +26,8 @@ import {
   goFullScreen,
   clipText,
   scrollMessageIntoView,
+  ImagesFadeConfig,
+  ModalProps,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy, MdGif } from "react-icons/md";
@@ -76,6 +76,8 @@ import {
   BsArrow90DegRight,
   BsArrowReturnRight,
 } from "react-icons/bs";
+import { useQuery } from "react-query";
+import { FiTrendingUp } from "react-icons/fi";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   //@ts-ignore
@@ -185,7 +187,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
           }}
         >
           <ModalContent>
-            <div className='header'>Reason For Your Ban</div>
+            <div className='header'>Reason for your kick ?</div>
 
             <div
               style={{
@@ -193,7 +195,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
                 fontSize: "2vw",
               }}
             >
-              Tell Us Why You Want To Ban User '{userToBeBannned}'
+              Tell Us Why You Want To kick user '{userToBeBannned}'
             </div>
             <div className='form'>
               <input
@@ -201,9 +203,6 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
                 value={banText}
                 onChange={(e) => setBanText(e.target.value)}
               />
-              <button className='submit__ban' onClick={ban}>
-                <BiSend />
-              </button>
             </div>
             <div className='actionsWrapper'>
               <button
@@ -216,7 +215,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
                 <span>Cancel</span> <FaTimes />
               </button>
               <button className='action' onClick={ban}>
-                <span>Ban</span> <HiOutlineBan />
+                <span>Kick</span> <HiOutlineBan />
               </button>
             </div>
           </ModalContent>
@@ -601,41 +600,40 @@ export const ImagesContent: FC<{
   onImgSubmit: (imgUrl: string, caption: string) => void;
 }> = memo(({ onImgSubmit }) => {
   const inputRef = useRef();
-
-  const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
-    false
-  );
-  const [url, setUrl] = useState<string>("https://api.pexels.com/v1/curated");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { data } = useSwr(url, fetchData);
   const [currentImgUrl, setCurrentImgUrl] = useState<string>("");
-  const paginate: (isPrev: boolean) => void = (isPrev: boolean) => {
-    setIsFetching(true);
-    //@ts-ignore
-    setUrl(isPrev ? data?.prev_page : data?.next_page);
-  };
+  const [queryData, setQueryData] = useState<{ url: string; queryKey: any[] }>({
+    url: "https://api.pexels.com/v1/curated?per_page=20",
+    queryKey: ["images", "trending", 0],
+  });
+  const { data, status } = useQuery(
+    queryData.queryKey,
+    () => constants.fetcher(queryData.url, true),
+    constants.queryConfig
+  );
   useEffect(() => {
     //@ts-ignore
     inputRef.current.focus();
   }, []);
-
-  async function fetchData() {
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: constants.PEXELS_API_KEY,
-      },
-    });
-    let returned = null;
-    const result = await response.data;
-    console.log(result);
-    if (result.photos.length === 0) {
-      setIsFetching("Failed");
+  const paginate = (type: "previous" | "next") => {
+    if (type === "next") {
+      const queryKeys = [...queryData.queryKey];
+      queryKeys[2] = queryKeys[2] + 1;
+      const newData = {
+        url: data.next_page,
+        queryKey: queryKeys,
+      };
+      setQueryData(newData);
     } else {
-      setIsFetching("Got");
-      returned = result;
+      const queryKeys = [...queryData.queryKey];
+      queryKeys[2] = queryKeys[2] - 1;
+      const newData = {
+        url: data.prev_page,
+        queryKey: queryKeys,
+      };
+      setQueryData(newData);
     }
-    return returned;
-  }
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -643,19 +641,22 @@ export const ImagesContent: FC<{
     const text = el.value;
     if (!validateModal(text)) {
       toast.error(constants.imageInputErrorMsg);
-      setIsFetching(false);
-      setUrl("https://api.pexels.com/v1/curated");
     } else {
-      setIsFetching(true);
-      setUrl(
-        `https://api.pexels.com/v1/search?query=${text}&orientation=landscape&per_page=40`
-      );
+      setQueryData({
+        url: `https://api.pexels.com/v1/search?query=${text}&per_page=20`,
+        queryKey: ["images", text, 0],
+      });
     }
   };
 
   const Images: FC = memo(() => {
     return (
-      <div className='images__wrapper'>
+      <motion.div
+        className='images__wrapper'
+        variants={ImagesFadeConfig}
+        initial='initial'
+        animate='animate'
+      >
         {/* @ts-ignore */}
         {data?.photos.map((img) => (
           <img
@@ -674,7 +675,7 @@ export const ImagesContent: FC<{
         <div className='btns'>
           {/* @ts-ignore */}
           {data?.prev_page ? (
-            <Button onClick={() => paginate(true)}>
+            <Button onClick={() => paginate("previous")}>
               <AiOutlineArrowLeft />
             </Button>
           ) : (
@@ -682,14 +683,14 @@ export const ImagesContent: FC<{
           )}
           {/* @ts-ignore */}
           {data?.next_page ? (
-            <Button onClick={() => paginate(false)}>
+            <Button onClick={() => paginate("next")}>
               <AiOutlineArrowRight />{" "}
             </Button>
           ) : (
             ""
           )}
         </div>
-      </div>
+      </motion.div>
     );
   });
   return (
@@ -759,15 +760,28 @@ export const ImagesContent: FC<{
           Pexels
         </a>
       </div>
+      {queryData.url.includes("curated") || (
+        <Button
+          style={{ height: "5vw" }}
+          onClick={() => {
+            setQueryData({
+              url: "https://api.pexels.com/v1/curated?per_page=20",
+              queryKey: ["images", "trending", 0],
+            });
+          }}
+        >
+          <span>Show Trending Images</span> <FiTrendingUp />
+        </Button>
+      )}
 
-      {isFetching === true ? (
+      {status === "loading" ? (
         <IsFetching />
-      ) : isFetching === false ? (
-        <Images />
-      ) : isFetching === "Failed" ? (
+      ) : status === "error" || data.photos.length === 0 ? (
         <FailedFetch />
-      ) : (
+      ) : status === "success" ? (
         <Images />
+      ) : (
+        ""
       )}
     </>
   );
@@ -799,14 +813,13 @@ export const GifContent: FC<{
   onGifSubmit: (gifUrl: string, caption: string, preview: string) => void;
 }> = memo(({ onGifSubmit }) => {
   const inputRef = useRef();
-  const [url, setUrl] = useState<string>(
-    `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}`
-  );
-
-  const { data, error } = useSwr(url, fetchData);
-  const [isFetching, setIsFetching] = useState<boolean | "Failed" | "Got">(
-    false
-  );
+  const [queryData, setQueryData] = useState<{
+    url: string;
+    queryKey: string | any[];
+  }>({
+    url: `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}`,
+    queryKey: ["gifs", "trending"],
+  });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentGifUrl, setCurrentGifUrl] = useState<string>("");
   const [preview, setPreview] = useState<string>("");
@@ -814,44 +827,51 @@ export const GifContent: FC<{
     //@ts-ignore
     inputRef.current.focus();
   }, []);
-  useEffect(() => {
-    if (error === true) {
-      setIsFetching("Failed");
-    }
-  }, [error]);
 
-  async function fetchData() {
-    const result = (await axios.get(url)).data;
-    let valueToBeReturned = null;
-    if (result.results.length === 0 || Number(result.next) === 0) {
-      setIsFetching("Failed");
-    } else {
-      valueToBeReturned = result.results;
-      setIsFetching("Got");
-    }
-
-    return valueToBeReturned;
-  }
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setIsFetching(true);
     const el: HTMLInputElement = document.querySelector("#search__box");
     const text = el.value;
     if (!validateModal(text)) {
       toast.error(constants.imageInputErrorMsg);
-      setIsFetching(false);
     } else {
-      console.log("Reached Here!");
-      setUrl(
-        `https://g.tenor.com/v1/search?key=${constants.tenorApiKey}&q=${text}&contentfilter=medium&limit=50`
-      );
+      setQueryData({
+        url: `https://api.tenor.com/v1/search?q=${text}&key=${constants.tenorApiKey}&limit=40`,
+        queryKey: ["gifs", text],
+      });
     }
   }
+
+  const { data, status } = useQuery(
+    queryData.queryKey,
+    () => constants.fetcher(queryData.url, false),
+    constants.queryConfig
+  );
+
   const Images: FC = memo(() => {
     return (
       <>
-        <div className='images__wrapper'>
-          {data?.map((gif: any) => (
+        {queryData.url !==
+          `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}` && (
+          <Button
+            onClick={() =>
+              setQueryData({
+                url: `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}`,
+                queryKey: ["gifs", "trending"],
+              })
+            }
+          >
+            <span>Show Trending Gifs</span>
+            <FiTrendingUp />
+          </Button>
+        )}
+        <motion.div
+          className='images__wrapper'
+          variants={ImagesFadeConfig}
+          initial='initial'
+          animate='animate'
+        >
+          {data?.results.map((gif: any) => (
             <img
               className='gif'
               src={gif.media[0].tinygif.url}
@@ -864,7 +884,7 @@ export const GifContent: FC<{
               }}
             />
           ))}
-        </div>
+        </motion.div>
       </>
     );
   });
@@ -936,25 +956,18 @@ export const GifContent: FC<{
           Tenor
         </a>
       </div>
-
-      {isFetching === true ? (
+      {status === "loading" ? (
         <IsFetching />
-      ) : isFetching === "Failed" ? (
+      ) : status === "error" || data?.results.length === 0 ? (
         <FailedFetch />
-      ) : (
+      ) : status === "success" ? (
         <Images />
+      ) : (
+        ""
       )}
     </>
   );
 });
-
-/**
- *
- * d3pno32ne32
- * r32
- * rr32
- * Dhand dhand dhan dha da  phusssshhh
- */
 
 const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -1135,4 +1148,15 @@ export const MiniatureReplyPreview: FC<{
       </MiniatureReplyPreviewDiv>
     );
   }
+};
+
+export const CustomModal: FC<ModalProps> = ({ children, isOpen, onClose }) => {
+  return (
+    <>
+      <div className='modal-backdrop' />
+      <div className='modal' style={{ display: "none" }}>
+        <h1>{children}</h1>
+      </div>
+    </>
+  );
 };
