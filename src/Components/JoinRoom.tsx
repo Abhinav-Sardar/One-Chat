@@ -32,13 +32,11 @@ import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
 import { toast } from "react-toastify";
 
-import { useHistory, Link } from "react-router-dom";
 import ChatComponent from "./ChatComponent";
-import PleaseWait from "./PleaseWait";
-import { FadedAnimationWrapper } from "./Chat.SubComponents";
+import { CustomModal, FadedAnimationWrapper } from "./Chat.SubComponents";
 import { motion } from "framer-motion";
 import { LoadingButton } from "./CreateRoom";
-//@ts-ignore
+import { useNavigate } from "react-router-dom";
 const socket = io(constants.serverName);
 
 const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
@@ -51,7 +49,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   const [avatars, setAvatars] = useState<string[]>([]);
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [isDone, setIsDone] = useState<boolean>(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const roomRef = useRef();
 
@@ -112,7 +110,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
           if (!isAuth) {
             setTimeout(() => {
               setIsConnecting(false);
-              history.push("/room/" + newRoom);
+              navigate("/room/" + newRoom);
             }, 1000);
           } else {
             setTimeout(() => {
@@ -241,24 +239,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                 </FormSubmitBtn>
               )}
             </Form>
-            <Modal
-              open={isModalOpen}
-              styles={{
-                modal: {
-                  background: constants.appAccentColor,
-                  color: "white",
-                },
-              }}
+            <CustomModal
+              isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
-              closeIcon={
-                <FaTimes
-                  fill='red'
-                  fontSize={"2vw"}
-                  style={{
-                    margin: "1vh 0",
-                  }}
-                />
-              }
             >
               <AvatarActionBtns>
                 <h1>Choose your avatar</h1>
@@ -286,12 +269,12 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                 })}
               </AvatarsWrapper>
               <br />
-            </Modal>
+            </CustomModal>
             <Button
               onClick={() => {
                 //@ts-ignore
                 socket.disconnect(true);
-                history.push("/");
+                navigate("/");
               }}
             >
               <span>Back To Home</span> <FaHome />

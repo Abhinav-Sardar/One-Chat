@@ -1,5 +1,5 @@
 import { createGlobalStyle } from "styled-components";
-import { constants } from "../Constants";
+import { constants, darkenColor } from "../Constants";
 export const GlobalStyles = createGlobalStyle`
     @keyframes spin {
       to {
@@ -73,7 +73,6 @@ svg:root {
 .tagline::selection {
   color:white ; 
   background-color:${constants.appAccentColor}
-  
 }
 
 
@@ -87,12 +86,11 @@ svg:root {
 
 }
 
-::-webkit-scrollbar-thumb {
-  background:${constants.appAccentColor} ; 
-  
-  border-radius:30px ; 
-}
 
+::-webkit-scrollbar-thumb {
+  background:${darkenColor(constants.appAccentColor, 20)} ;
+  border-radius: 10px ; 
+}
 ::-webkit-scrollbar-thumb:hover {
   background: gray ; 
 }  ; 
@@ -268,6 +266,7 @@ svg:root {
    > * {
   scrollbar-width: thin !important;
 	overflow-x: hidden !important;
+  scrollbar-behaviour: auto !important;
 
    }
 }
@@ -294,7 +293,6 @@ a {
 * {
      scrollbar-width: auto;
      scrollbar-color: ${constants.appAccentColor} lightgray;
-     scrollbar-behaviour:smooth;
    }
    #reset {
      animation:2s spin linear infinite ; 
@@ -330,5 +328,55 @@ cursor:pointer ;
   animation-duration: .7s;
   animation-timing-duration: ease-in-out;
   
+}
+.modal-backdrop {
+  height:100vh ; 
+  width:100vw ;
+  position:fixed ;
+  top:0 ;
+  left:0 ;
+  z-index:50 ; 
+  background-color:rgba(0,0,0,0.7) ;
+} ; 
+.modal {
+  ::webkit-scrollba-thumb {
+    background-color:white;
+  }
+  position:relative ; 
+  .content {
+    width:100% ; 
+    display:flex ; 
+    justify-content:center ; 
+    flex-direction:column;
+    color:white;
+  }
+  
+  display:flex ; 
+  flex-direction:column ; 
+  align-items:center ;
+  position:fixed ; 
+  top:0 ; 
+  left:0 ; 
+  margin:auto ; 
+  bottom:0 ; 
+  right:0 ; 
+  height:95vh ; 
+  width:50vw ; 
+  background-color:white ;
+  z-index:511 ; 
+  overflow:auto;
+  background:${constants.appAccentColor} ;
+  border-radius:10px ;
+  .close {
+    width:98% ; 
+    display:flex ; 
+    justify-content:flex-end ;
+    align-items:center ;
+    svg {
+      font-size:3vw ; 
+      color:white ; 
+      cursor:pointer ;
+    };
+  }
 }
 `;

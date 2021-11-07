@@ -3,13 +3,13 @@ import { ReportPage } from "../Styled-components/Report.styled";
 import { VscReport } from "react-icons/vsc";
 import { Button } from "../Styled-components/Customize.style";
 import { FaHome } from "react-icons/fa";
-import { useHistory } from "react-router";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import { constants } from "../Constants";
 import { FadedAnimationWrapper } from "./Chat.SubComponents";
 const Report = () => {
   const linkRef = useRef();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState<string>("");
   const [link, setLink] = useState<string>("");
@@ -92,7 +92,7 @@ const Report = () => {
             <span>Submit</span>
           </Button>
         </form>
-        <Button onClick={() => history.push("/")}>
+        <Button onClick={() => navigate("/")}>
           <span>Go Back To Home </span>
           <FaHome />
         </Button>

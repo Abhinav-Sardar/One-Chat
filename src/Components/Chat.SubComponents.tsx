@@ -1,4 +1,4 @@
-import {
+import React, {
   FC,
   memo,
   useEffect,
@@ -6,9 +6,12 @@ import {
   useContext,
   useRef,
   FormEvent,
+  ReactFragment,
+  ReactPortal,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import axios from "axios";
+import ReactDom from "react-dom";
+import { Scrollbars } from "react-custom-scrollbars";
 import {
   constants,
   getRandomKey,
@@ -26,7 +29,6 @@ import {
   goFullScreen,
   clipText,
   scrollMessageIntoView,
-  ImagesFadeConfig,
   ModalProps,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
@@ -45,19 +47,7 @@ import {
 } from "../Styled-components/Chat.style";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
-import {
-  FaTimes,
-  FaSearch,
-  FaSpinner,
-  FaCrown,
-  FaMoon,
-  FaRegSmile,
-  FaShareAlt,
-  FaSmile,
-  FaSun,
-  FaTrashAlt,
-  FaUser,
-} from "react-icons/fa";
+import { FaTimes, FaSearch, FaSpinner, FaCrown } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
 import Emojis, { Pop } from "../Images/Accumulator";
 
@@ -77,7 +67,7 @@ import {
   BsArrowReturnRight,
 } from "react-icons/bs";
 import { useQuery } from "react-query";
-import { FiTrendingUp } from "react-icons/fi";
+import { FiTrendingUp, FiX } from "react-icons/fi";
 
 export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
   //@ts-ignore
@@ -651,12 +641,7 @@ export const ImagesContent: FC<{
 
   const Images: FC = memo(() => {
     return (
-      <motion.div
-        className='images__wrapper'
-        variants={ImagesFadeConfig}
-        initial='initial'
-        animate='animate'
-      >
+      <div className='images__wrapper'>
         {/* @ts-ignore */}
         {data?.photos.map((img) => (
           <img
@@ -690,21 +675,12 @@ export const ImagesContent: FC<{
             ""
           )}
         </div>
-      </motion.div>
+      </div>
     );
   });
   return (
     <>
-      <Modal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        closeIcon={<FaTimes style={{ color: "white", fontSize: "2vw" }} />}
-        styles={{
-          modal: {
-            backgroundColor: constants.appAccentColor,
-          },
-        }}
-      >
+      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalContent>
           <div className='header'>Add A Caption</div>
           <img src={currentImgUrl} alt='Image Loading' />
@@ -741,7 +717,7 @@ export const ImagesContent: FC<{
             </button>
           </div>
         </ModalContent>
-      </Modal>
+      </CustomModal>
       <form onSubmit={(e) => handleSubmit(e)}>
         <input
           type='text'
@@ -817,7 +793,7 @@ export const GifContent: FC<{
     url: string;
     queryKey: string | any[];
   }>({
-    url: `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}`,
+    url: `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}&limit=35`,
     queryKey: ["gifs", "trending"],
   });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -836,7 +812,7 @@ export const GifContent: FC<{
       toast.error(constants.imageInputErrorMsg);
     } else {
       setQueryData({
-        url: `https://api.tenor.com/v1/search?q=${text}&key=${constants.tenorApiKey}&limit=40`,
+        url: `https://api.tenor.com/v1/search?q=${text}&key=${constants.tenorApiKey}&limit=35`,
         queryKey: ["gifs", text],
       });
     }
@@ -852,11 +828,11 @@ export const GifContent: FC<{
     return (
       <>
         {queryData.url !==
-          `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}` && (
+          `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}&limit=35` && (
           <Button
             onClick={() =>
               setQueryData({
-                url: `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}`,
+                url: `https://g.tenor.com/v1/trending?key=${constants.tenorApiKey}&limit=35`,
                 queryKey: ["gifs", "trending"],
               })
             }
@@ -865,12 +841,7 @@ export const GifContent: FC<{
             <FiTrendingUp />
           </Button>
         )}
-        <motion.div
-          className='images__wrapper'
-          variants={ImagesFadeConfig}
-          initial='initial'
-          animate='animate'
-        >
+        <div className='images__wrapper'>
           {data?.results.map((gif: any) => (
             <img
               className='gif'
@@ -884,22 +855,13 @@ export const GifContent: FC<{
               }}
             />
           ))}
-        </motion.div>
+        </div>
       </>
     );
   });
   return (
     <>
-      <Modal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        closeIcon={<FaTimes style={{ color: "white", fontSize: "2vw" }} />}
-        styles={{
-          modal: {
-            backgroundColor: constants.appAccentColor,
-          },
-        }}
-      >
+      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalContent>
           <div className='header'>Add A Caption</div>
           <img src={currentGifUrl} alt='Image Loading' />
@@ -938,7 +900,7 @@ export const GifContent: FC<{
             </button>
           </div>
         </ModalContent>
-      </Modal>
+      </CustomModal>
       <form onSubmit={(e) => handleSubmit(e)}>
         <input
           placeholder='Search for GIFs'
@@ -1062,10 +1024,6 @@ export const FadedAnimationWrapper: FC = ({ children }) => {
       }}
       initial={{
         opacity: 0,
-        x: 0,
-      }}
-      exit={{
-        x: "-100vw",
       }}
     >
       {children}
@@ -1150,13 +1108,48 @@ export const MiniatureReplyPreview: FC<{
   }
 };
 
-export const CustomModal: FC<ModalProps> = ({ children, isOpen, onClose }) => {
-  return (
-    <>
-      <div className='modal-backdrop' />
-      <div className='modal' style={{ display: "none" }}>
-        <h1>{children}</h1>
-      </div>
-    </>
+export const CustomModal: (props: ModalProps) => any = ({
+  children,
+  isOpen,
+  onClose,
+}) => {
+  const modalVariants = {
+    initial: {
+      opacity: 0,
+    },
+    animate: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+  return ReactDom.createPortal(
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <div className='modal-backdrop' onClick={onClose} />
+          <motion.div
+            className='modal'
+            variants={modalVariants}
+            initial='initial'
+            animate='animate'
+            exit='exit'
+          >
+            <div className='close' onClick={onClose}>
+              <FiX />
+            </div>
+            <div className='content'>{children}</div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>,
+    document.getElementById("modal")
   );
 };

@@ -6,7 +6,6 @@ import { MainContent } from "../Styled-components/Mainpage.styled";
 
 import { TiPlus } from "react-icons/ti";
 import { FaBrush, FaComments, FaEye, FaGithubSquare } from "react-icons/fa";
-import { Link, useHistory } from "react-router-dom";
 import { MdReport } from "react-icons/md";
 import { GoBook } from "react-icons/go";
 import { RiQuestionnaireFill } from "react-icons/ri";
@@ -16,7 +15,7 @@ import {
   ActionsButtonWrapper,
 } from "../Styled-components/Mainpage.styled";
 import { FadedAnimationWrapper } from "./Chat.SubComponents";
-
+import { useNavigate } from "react-router-dom";
 const MainPage: FC = () => {
   useEffect(() => {
     document.title = "One-Chat";
@@ -63,16 +62,16 @@ function ThisMain(): JSX.Element {
 }
 
 function ThisButtons(): JSX.Element {
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <ActionsButtonWrapper>
-      <ActionButton onClick={() => history.push("/create")}>
+      <ActionButton onClick={() => navigate("/create")}>
         Create a room <TiPlus className='plus' />
       </ActionButton>
-      <ActionButton onClick={() => history.push("/join")}>
+      <ActionButton onClick={() => navigate("/join")}>
         Join a room <IoChatboxSharp />
       </ActionButton>
-      <ActionButton onClick={() => history.push("/customize")}>
+      <ActionButton onClick={() => navigate("/customize")}>
         Customize <FaBrush />
       </ActionButton>
       <a href='https://github.com/Abhinav-Sardar/One-Chat' target='_blank'>
@@ -94,17 +93,22 @@ function ThisButtons(): JSX.Element {
           padding: "0 1vw",
           width: "16vw",
         }}
-        onClick={() => history.push("/rooms/public")}
+        onClick={() => navigate("/rooms/public")}
       >
         View Public Rooms
         <FaEye style={{ fontSize: "2vw" }} />
       </ActionButton>
-      <ActionButton onClick={() => history.push("/report")}>
+      <ActionButton onClick={() => navigate("/report")}>
         Report An Issue <MdReport style={{ fontSize: "2vw" }} />
       </ActionButton>
-      <ActionButton onClick={() => history.push("/faqs")}>
+      <ActionButton onClick={() => navigate("/faqs")}>
         FAQs <BsQuestionCircleFill />
       </ActionButton>
+      <a href='https://one-chat-v1.netlify.app' target='_blank'>
+        <ActionButton>
+          Old One-Chat <FaComments />
+        </ActionButton>
+      </a>
     </ActionsButtonWrapper>
   );
 }

@@ -4,11 +4,12 @@ import { IoBan } from "react-icons/io5";
 import { constants } from "../Constants";
 import { Button } from "../Styled-components/Customize.style";
 import { GiHighKick } from "react-icons/gi";
-import { useHistory } from "react-router";
+
 import { KickSound } from "../Images/Accumulator";
+import { useNavigate } from "react-router-dom";
 const Banned: FC<{ reason: string }> = ({ reason }) => {
   document.title = "You have been kicked";
-  const history = useHistory();
+  const navigate = useNavigate();
   KickSound.play();
   return (
     <>
@@ -49,7 +50,7 @@ const Banned: FC<{ reason: string }> = ({ reason }) => {
         >
           Reason :- {reason}
         </span>
-        <Button onClick={() => history.push("/")}>
+        <Button onClick={() => navigate("/")}>
           <span>Go back to home</span>
           <FaHome />
         </Button>

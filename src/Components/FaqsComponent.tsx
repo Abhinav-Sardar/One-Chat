@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FC, useEffect, useState } from "react";
 import { BsQuestionCircleFill } from "react-icons/bs";
 import { FaHome, FaTimes, FaWind } from "react-icons/fa";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { constants, getRandomKey } from "../Constants";
 import { Button } from "../Styled-components/Customize.style";
 import { Page, FaqTitle } from "../Styled-components/Faqs.styled";
@@ -48,7 +48,7 @@ const Faqs: FC = () => {
         "Hosts are usually the ones who create the room. However, when a host leaves a room, the first person who joined the room after the room is made the new host.",
     },
   ]);
-  const history = useHistory();
+  const navigate = useNavigate();
   useEffect(() => {
     document.body.style.background = "#fff";
     document.getElementById("root").style.background = "#fff";
@@ -75,7 +75,7 @@ const Faqs: FC = () => {
             height: "6vh !important",
           }}
           onClick={() => {
-            history.push("/");
+            navigate("/");
           }}
         >
           <span>Back To Home</span>

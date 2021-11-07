@@ -1,9 +1,10 @@
 import { FC, Fragment, useEffect, useState, createContext } from "react";
 import MainPage from "./Components/MainPage";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NotFoundPage from "./Components/NotFound";
-
 import CreateRoom from "./Components/CreateRoom";
+import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.min.css";
+
 import {
   accentColorChecker,
   constants,
@@ -21,48 +22,41 @@ import Report from "./Components/Report";
 import axios from "axios";
 import PublicRooms from "./Components/PublicRooms";
 import { SelfClientContextProvider } from "./Context";
-
+import Faqs from "./Components/FaqsComponent";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { CustomModal } from "./Components/Chat.SubComponents";
+const queryClient = new QueryClient();
 const App: FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   useEffect(() => {
     accentColorChecker();
   }, []);
-
   return (
-    <Fragment>
+    <QueryClientProvider client={queryClient}>
       <SelfClientContextProvider>
         <Router>
-          <Switch>
-            <Route path='/' exact>
-              <MainPage />
-            </Route>
-            <Route path='/create'>
-              <CreateRoom />
-            </Route>
-            <Route path='/join'>
-              <JoinRoom isAuth={false} />
-            </Route>
-            <Route path='/customize'>
-              <Customize />
-            </Route>
-            <Route path='/room/:roomId'>
-              <Chat />
-            </Route>
-            <Route path='/report'>
-              <Report />
-            </Route>
+          <Routes>
+            <Route path='/' element={<MainPage />} />
+            <Route path='/create' element={<CreateRoom />} />
 
-            <Route path='/rooms/public'>
-              <PublicRooms />
-            </Route>
-            <Route path='*'>
-              <NotFoundPage />
-            </Route>
-          </Switch>
+            <Route path='/join' element={<JoinRoom isAuth={false} />} />
+
+            <Route path='/customize' element={<Customize />} />
+            <Route path='/room/:roomId' element={<Chat />} />
+            <Route path='/report' element={<Report />} />
+
+            <Route path='/rooms/public' element={<PublicRooms />} />
+
+            <Route path='/faqs' element={<Faqs />} />
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
         </Router>
       </SelfClientContextProvider>
       {/* @ts-ignore */}
       <ToastContainer {...ToastContainerConfig} />
-    </Fragment>
+      <ReactQueryDevtools position='top-left' />
+    </QueryClientProvider>
   );
 };
 export default App;

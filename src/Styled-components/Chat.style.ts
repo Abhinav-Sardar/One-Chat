@@ -268,6 +268,7 @@ export const EmojiPanel = styled(motion.aside)`
     display: flex;
     justify-content: space-around;
     align-items: center;
+
     img {
       height: 2.5vw;
       width: 2.5vw;
@@ -282,6 +283,8 @@ export const EmojiPanel = styled(motion.aside)`
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    scrollbar-width: thin;
+
     span {
       font-size: 2vw;
       margin: 1vw;
@@ -409,19 +412,20 @@ export const ImagesPanel = styled(motion.aside)`
 
 export const ModalContent = styled.div`
   > * {
-    margin: 1.7vw 0;
+    margin: 1vw 0;
   }
   img {
     width: 45vw;
     height: 23vw;
     border-radius: 10px;
   }
-  margin-top: 2vw;
+
   text-align: center;
   .header {
     font-family: "Quicksand", sans-serif;
     font-size: 3vw;
     color: white;
+    margin: 0;
   }
   .form {
     width: 100%;

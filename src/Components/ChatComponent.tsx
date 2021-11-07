@@ -15,12 +15,11 @@ import {
 } from "react-icons/ai";
 import { FiMaximize, FiMinimize } from "react-icons/fi";
 import { BiSend, BiHappy } from "react-icons/bi";
-import { useHistory } from "react-router";
 import io from "socket.io-client";
 //@ts-ignore
 import Scroll from "react-scroll-to-bottom";
 import { RiFileGifLine, RiFileGifFill } from "react-icons/ri";
-
+import { useNavigate } from "react-router-dom";
 import {
   FaRegSmile,
   FaSmile,
@@ -90,7 +89,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
   ({ isPrivate }) => {
     const [isBanned, setIsBanned] = useState<[boolean, string]>([false, ""]);
     const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [usersOpen, setUsersOpen] = useSharedPanelValue().users;
     const [shareOpen, setShareOpen] = useSharedPanelValue().share;
@@ -445,7 +444,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       );
     }
     const LeaveRoom = () => {
-      history.push("/");
+      navigate("/");
       //@ts-ignore
       socket.disconnect(true);
       setUser(initContextValue);
@@ -513,6 +512,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                     className='rstb'
                     followButtonClassName='scrollButton'
                     checkInterval={17}
+                    initialScrollBehavior={"auto"}
                   >
                     <ReplyContext.Provider value={[replyState, setReplyState]}>
                       {msgs.length > 0 &&
@@ -662,8 +662,8 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                   )}
                 </AnimatePresence>
               </RemainingChatArea>
-              {replyState.isOpen && (
-                <AnimatePresence exitBeforeEnter>
+              <AnimatePresence>
+                {replyState.isOpen && (
                   <Reply
                     id='reply-cont'
                     key={"reply-cont"}
@@ -722,8 +722,8 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                       />
                     </div>
                   </Reply>
-                </AnimatePresence>
-              )}
+                )}
+              </AnimatePresence>
               <MeetControls
                 style={{
                   borderTop: `1px solid ${oppositeTheme}`,

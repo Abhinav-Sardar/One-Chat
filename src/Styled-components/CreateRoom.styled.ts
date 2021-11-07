@@ -115,6 +115,7 @@ export const AvatarsWrapper = styled.div`
   .current {
     border: 2px solid yellow;
   }
+  margin: 0 auto;
   div {
     border: 1.6px solid white;
     cursor: pointer;

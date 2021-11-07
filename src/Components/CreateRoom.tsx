@@ -35,16 +35,14 @@ import {
 import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
-import { Link, useHistory } from "react-router-dom";
-import PleaseWait from "./PleaseWait";
-import { FadedAnimationWrapper } from "./Chat.SubComponents";
+import { CustomModal, FadedAnimationWrapper } from "./Chat.SubComponents";
 import { motion } from "framer-motion";
 import { AiOutlineReload } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 const socket = io(constants.serverName);
 
 const CreateRoom: FunctionalComponent = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [avatars, setAvatars] = useState<string[]>([]);
@@ -145,7 +143,7 @@ const CreateRoom: FunctionalComponent = () => {
             socket.disconnect(true);
             setTimeout(() => {
               setIsConnecting(false);
-              history.push(`/room/${room}`);
+              navigate(`/room/${room}`);
             }, 1000);
           }
         });
@@ -237,24 +235,9 @@ const CreateRoom: FunctionalComponent = () => {
               </FormSubmitBtn>
             )}
           </Form>
-          <Modal
-            open={isModalOpen}
-            styles={{
-              modal: {
-                background: constants.appAccentColor,
-                color: "white",
-              },
-            }}
+          <CustomModal
+            isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            closeIcon={
-              <FaTimes
-                fill='red'
-                fontSize={"2vw"}
-                style={{
-                  margin: "1vh 0",
-                }}
-              />
-            }
           >
             <AvatarActionBtns>
               <h1>Choose your avatar</h1>
@@ -281,10 +264,10 @@ const CreateRoom: FunctionalComponent = () => {
                 }
               })}
             </AvatarsWrapper>
-          </Modal>
+          </CustomModal>
           <Button
             onClick={() => {
-              history.push("/");
+              navigate("/");
               //@ts-ignore
               socket.disconnect(true);
             }}

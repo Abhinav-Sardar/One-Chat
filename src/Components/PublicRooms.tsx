@@ -10,12 +10,11 @@ import {
 } from "../Styled-components/PublicRooms.styled";
 import { FaEye, FaHome, FaSearch, FaTimes } from "react-icons/fa";
 import { Button } from "../Styled-components/Customize.style";
-import { useHistory } from "react-router";
 import { IoChatboxSharp } from "react-icons/io5";
 import { useQuery } from "react-query";
-
+import { useNavigate } from "react-router-dom";
 const PublicRooms: FC = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [text, setText] = useState<string>("");
   const { data } = useQuery(
     "public-rooms",
@@ -35,7 +34,7 @@ const PublicRooms: FC = () => {
           <FaEye />
         </PrimaryTitle>
 
-        <Button onClick={() => history.push("/")}>
+        <Button onClick={() => navigate("/")}>
           <span>Back To Home</span>
           <FaHome />
         </Button>
@@ -80,7 +79,7 @@ const Rooms: FC<{ rooms: room[]; text: string }> = memo(({ rooms, text }) => {
   const filteredRooms = rooms?.filter((r) =>
     r.name.toLowerCase().trim().includes(text.trim().toLowerCase())
   );
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <>
       {filteredRooms?.length === 0 ? (
@@ -122,7 +121,7 @@ const Rooms: FC<{ rooms: room[]; text: string }> = memo(({ rooms, text }) => {
                 borderBottomRightRadius: 10,
               }}
             >
-              <Button onClick={() => history.push(`/room/${r.name}`)}>
+              <Button onClick={() => navigate(`/room/${r.name}`)}>
                 <span>Join {r.name}</span>
                 <IoChatboxSharp />
               </Button>
