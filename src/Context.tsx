@@ -2,21 +2,11 @@ import { useContext, createContext, FC, useState } from "react";
 import { initContextValue, reply, user } from "./Constants";
 
 export const SelfClientContext = createContext<[user, any]>([
-  {
-    name: "",
-    avatarSvg: "",
-    currentRoomName: "",
-    hasCreatedPrivateRoom: false,
-  },
+  initContextValue,
   "",
 ]);
 export const SelfClientContextProvider: FC = ({ children }) => {
-  const userState = useState<user>({
-    name: "",
-    avatarSvg: "",
-    currentRoomName: "",
-    hasCreatedPrivateRoom: false,
-  });
+  const userState = useState<user>(initContextValue);
   return (
     <SelfClientContext.Provider value={userState}>
       {children}

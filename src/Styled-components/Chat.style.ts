@@ -10,7 +10,7 @@ export const MeetInfo = styled.section`
   height: 10vh;
   align-items: center;
   .roomName {
-    font-size: 30px;
+    font-size: 2vw;
     font-family: "Poppins", arial, sans-serif;
     color: ${constants.appAccentColor};
     margin-left: 2vw;
@@ -24,28 +24,33 @@ export const MeetInfo = styled.section`
       margin-right: 0.5vw;
     }
   }
-  button {
-    border-radius: 10px;
-    color: white;
-    height: 80%;
+  .btn-wrapper {
     display: flex;
+    height: 100%;
     align-items: center;
-    justify-content: space-around;
-    width: 13%;
-    background-color: red;
-    font-size: 1.5vw;
-    margin-right: 2vw;
-    border: 0;
-    outline: 0;
-    font-family: "Quicksand", sans-serif;
-    border: 1px solid red;
-    transition: 500ms ease-out;
-    svg {
-      font-size: 1.7vw;
-    }
-    &:hover {
-      color: red;
-      background-color: white;
+    button {
+      border-radius: 10px;
+      color: white;
+      height: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      width: 13vw;
+      background-color: red;
+      font-size: 1.5vw;
+      margin-right: 2vw;
+      border: 0;
+      outline: 0;
+      font-family: "Quicksand", sans-serif;
+      border: 1px solid red;
+      transition: 500ms ease-out;
+      svg {
+        font-size: 1.7vw;
+      }
+      &:hover {
+        color: red;
+        background-color: white;
+      }
     }
   }
 `;
@@ -412,7 +417,7 @@ export const ImagesPanel = styled(motion.aside)`
 
 export const ModalContent = styled.div`
   > * {
-    margin: 1vw 0;
+    margin: 1.7vw 0;
   }
   img {
     width: 45vw;

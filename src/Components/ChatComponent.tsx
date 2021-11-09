@@ -166,7 +166,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     useEffect(() => {
       console.info(replyState);
     }, [replyState]);
-    const [isHost, setisHost] = useState<boolean>(false);
+
     const oppositeTheme = theme === "#232424" ? "#fff" : "#232424";
 
     const socketCode = () => {
@@ -215,7 +215,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       });
 
       socket.on("host", () => {
-        setisHost(true);
+        setUser({ ...user, isHost: true });
         console.log("i am host");
         setMsgs((p) => [
           ...p,
@@ -227,6 +227,12 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
             id: getRandomKey(),
           },
         ]);
+      });
+      socket.on("room-ended", () => {
+        setUser(initContextValue);
+        //@ts-ignore
+        socket.disconnect(true);
+        navigate("/");
       });
       socket.on(
         "new-host",
@@ -281,7 +287,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       }, 500);
       console.log(isPrivate);
     }, []);
-
+    console.log(msgs);
     function handleSubmit(e: FormEvent): void {
       e.preventDefault();
       const el: HTMLInputElement = document.querySelector(
@@ -297,7 +303,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
           author: user.name,
           created_at: new Date(),
           accentColor: constants.appAccentColor,
-          content: encrypt(text),
+          content: encrypt(text.trim()),
           type: replyState.isOpen ? "reply" : "text",
           className: "Outgoing",
           profilePic: user.avatarSvg,
@@ -306,11 +312,12 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         };
 
         setMsgs((p) => [...p, newMessage]);
-        ForeignMessagePop.play();
         socket.emit("message", {
           ...newMessage,
           className: "Incoming",
         });
+        ForeignMessagePop.play();
+
         el.value = "";
         inputRef.current.focus();
         setReplyState({
@@ -456,23 +463,19 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         if (offset < 0) {
           return;
         } else {
-          setTimeout(() => {
-            setReplyState({
-              isOpen: true,
-              id: msg.id,
-              content: msg,
-            });
-          }, 500);
+          setReplyState({
+            isOpen: true,
+            id: msg.id,
+            content: msg,
+          });
         }
       } else {
         if (offset < 0) {
-          setTimeout(() => {
-            setReplyState({
-              isOpen: true,
-              id: msg.id,
-              content: msg,
-            });
-          }, 900);
+          setReplyState({
+            isOpen: true,
+            id: msg.id,
+            content: msg,
+          });
         } else {
           return;
         }
@@ -494,7 +497,13 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                 duration: 0.4,
               }}
             >
-              <ChatHeader roomName={user.currentRoomName} onClick={LeaveRoom} />
+              <ChatHeader
+                roomName={user.currentRoomName}
+                onClick={LeaveRoom}
+                onEnd={() => {
+                  socket.emit("end-room");
+                }}
+              />
               {/* @ts-ignore */}
               <RemainingChatArea
                 animate={{
@@ -554,7 +563,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                       </SidePanelHeaderComponent>
 
                       <UsersPanelInfo
-                        isHost={isHost}
                         users={users}
                         theme={oppositeTheme}
                         onBan={(user, reason) =>
@@ -581,10 +589,10 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                             created_at: new Date(),
                             accentColor: constants.appAccentColor,
                             content: encrypt(gifurl),
-                            type: "gif",
+                            type: replyState.isOpen ? "reply" : "gif",
                             className: "Outgoing",
                             profilePic: user.avatarSvg,
-                            caption: encrypt(caption),
+                            caption: encrypt(caption.trim()),
                             preview_url: encrypt(preview),
                             id: getRandomKey(),
                           };
@@ -644,10 +652,10 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                             created_at: new Date(),
                             accentColor: constants.appAccentColor,
                             content: encrypt(imgUrl),
-                            type: "image",
+                            type: replyState.isOpen ? "reply" : "image",
                             className: "Outgoing",
                             profilePic: user.avatarSvg,
-                            caption: encrypt(caption),
+                            caption: encrypt(caption.trim()),
                             id: getRandomKey(),
                           };
 

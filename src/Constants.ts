@@ -26,6 +26,7 @@ export type user = {
   currentRoomName: string;
   avatarSvg: string;
   hasCreatedPrivateRoom: boolean | "Join";
+  isHost: boolean;
 };
 
 export type ChatUser = {
@@ -38,13 +39,13 @@ export type ChatUser = {
 export interface HeaderProps {
   roomName: string;
   onClick: () => void;
+  onEnd: () => void;
 }
 
 export interface UsersInChatProps {
   theme: string;
   users: ChatUser[];
   onBan: (user: string, reason: string) => void;
-  isHost: boolean;
 }
 
 export interface PanelHeaderProps {
@@ -468,6 +469,7 @@ export const initContextValue: user = {
   avatarSvg: "",
   currentRoomName: "",
   hasCreatedPrivateRoom: false,
+  isHost: false,
 };
 export type reply = {
   isOpen: boolean;
@@ -555,15 +557,7 @@ const FaqsData: { title: string; content: string; isOpen: boolean }[] = [
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
   serverName: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
-  pleaseWaitPageStyles: {
-    height: "100vh",
-    width: "100vw",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    flexDirection: "column",
-  },
+
   copySuccess: "Copied ✅. Share this Url with anyone you trust",
   PEXELS_API_KEY: "563492ad6f91700001000001e2f383c41efa4b889123dc24cdf343a3",
   imageInputErrorMsg:

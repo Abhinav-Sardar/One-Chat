@@ -12,6 +12,12 @@ import { FadedAnimationWrapper } from "./Chat.SubComponents";
 const Faqs: FC = () => {
   const [faqData, setFaqData] = useState([
     {
+      isOpen: false,
+      title: "How does One-Chat compare to apps such as Whatsapp ?",
+      content:
+        "Apps such as Whatsapp are full blown apps with tons of features such as calling , payments , etc. One-Chat is a lightweight chat app created for the purpose of One-Time chats with anyone.",
+    },
+    {
       title: "Does One-Chat store my chats somewhere ?",
       content:
         "No, chats are not stored anywhere. They get deleted automatically when all the people in a particular room leave.That is what we mean by One-Time chats.",
@@ -46,6 +52,12 @@ const Faqs: FC = () => {
       title: "How to be a host ?",
       content:
         "Hosts are usually the ones who create the room. However, when a host leaves a room, the first person who joined the room after the room is made the new host.",
+    },
+    {
+      isOpen: false,
+      title: "How to report an issue ?",
+      content:
+        "1. Click on the 'Report An Issue' button on the homepage.2. Provide a title and some description regarding the issue and click on submit. Mail it to the app's owner through the window that appears.",
     },
   ]);
   const navigate = useNavigate();

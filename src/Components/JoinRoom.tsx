@@ -14,7 +14,6 @@ import { SelfClientContext } from "../Context";
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
-import Modal from "react-responsive-modal";
 import { FaHome, FaTimes, FaUserAlt } from "react-icons/fa";
 import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
@@ -80,61 +79,66 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
   }
 
   function handleSubmit(e: FormEvent): void {
-    socket.connect();
-    setIsConnecting(true);
-    e.preventDefault();
-    //@ts-ignore
-    const name = document.getElementById("name").value as string;
-    //@ts-ignore
-    const room = document.getElementById("room")?.value as string;
-    const newRoom = isAuth ? roomName : room;
-    const res = validator(name, newRoom);
-    if (res) {
-      socket.emit("rooms");
-      socket.on("rooms-back", (rooms: any[]) => {
-        //@ts-ignore
-        socket.removeAllListeners("rooms-back");
-        const doesRoomExist = IsRoomThere(rooms, newRoom);
-        if (doesRoomExist) {
-          console.log("reached");
-          const newUser: user = {
-            name: name,
-            currentRoomName: newRoom,
-            avatarSvg: currentAvatar,
-            hasCreatedPrivateRoom: "Join",
-          };
-          setUser(newUser);
+    if (isConnecting) {
+      return;
+    } else {
+      socket.connect();
+      setIsConnecting(true);
+      e.preventDefault();
+      //@ts-ignore
+      const name = document.getElementById("name").value as string;
+      //@ts-ignore
+      const room = document.getElementById("room")?.value as string;
+      const newRoom = isAuth ? roomName : room;
+      const res = validator(name, newRoom);
+      if (res) {
+        socket.emit("rooms");
+        socket.on("rooms-back", (rooms: any[]) => {
           //@ts-ignore
-          socket.disconnect(true);
+          socket.removeAllListeners("rooms-back");
+          const doesRoomExist = IsRoomThere(rooms, newRoom);
+          if (doesRoomExist) {
+            console.log("reached");
+            const newUser: user = {
+              name: name,
+              currentRoomName: newRoom,
+              avatarSvg: currentAvatar,
+              hasCreatedPrivateRoom: "Join",
+              isHost: false,
+            };
+            setUser(newUser);
+            //@ts-ignore
+            socket.disconnect(true);
 
-          if (!isAuth) {
-            setTimeout(() => {
-              setIsConnecting(false);
-              navigate("/room/" + newRoom);
-            }, 1000);
+            if (!isAuth) {
+              setTimeout(() => {
+                setIsConnecting(false);
+                navigate("/room/" + newRoom);
+              }, 1000);
+            } else {
+              setTimeout(() => {
+                setIsConnecting(false);
+                setIsDone(true);
+              }, 1000);
+            }
           } else {
             setTimeout(() => {
               setIsConnecting(false);
-              setIsDone(true);
+              //@ts-ignore
+              socket.disconnect(true);
+              toast.error(constants.roomDoesntExistError);
+              if (!isAuth) {
+                //@ts-ignore
+                roomRef.current.focus();
+              } else {
+                return;
+              }
             }, 1000);
           }
-        } else {
-          setTimeout(() => {
-            setIsConnecting(false);
-            //@ts-ignore
-            socket.disconnect(true);
-            toast.error(constants.roomDoesntExistError);
-            if (!isAuth) {
-              //@ts-ignore
-              roomRef.current.focus();
-            } else {
-              return;
-            }
-          }, 1000);
-        }
-      });
-    } else {
-      setIsConnecting(false);
+        });
+      } else {
+        setIsConnecting(false);
+      }
     }
   }
   const formVariants = {

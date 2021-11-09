@@ -17,7 +17,6 @@ import { SelfClientContext } from "../Context";
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
-import Modal from "react-responsive-modal";
 import { FaHome, FaTimes, FaUserAlt } from "react-icons/fa";
 import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
@@ -137,6 +136,7 @@ const CreateRoom: FunctionalComponent = () => {
               currentRoomName: room,
               hasCreatedPrivateRoom: isPrivate,
               name: name,
+              isHost: true,
             };
             setUser(newUser);
             //@ts-ignore

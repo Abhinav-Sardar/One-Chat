@@ -13,7 +13,7 @@ import {
   user,
 } from "./Constants";
 import Customize from "./Components/Customize";
-import "react-responsive-modal/styles.css";
+
 import Chat from "./Components/Chat";
 import JoinRoom from "./Components/JoinRoom";
 import { ToastContainer } from "react-toastify";
@@ -24,7 +24,6 @@ import PublicRooms from "./Components/PublicRooms";
 import { SelfClientContextProvider } from "./Context";
 import Faqs from "./Components/FaqsComponent";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
 import { CustomModal } from "./Components/Chat.SubComponents";
 const queryClient = new QueryClient();
 const App: FC = () => {
@@ -55,7 +54,6 @@ const App: FC = () => {
       </SelfClientContextProvider>
       {/* @ts-ignore */}
       <ToastContainer {...ToastContainerConfig} />
-      <ReactQueryDevtools position='top-left' />
     </QueryClientProvider>
   );
 };

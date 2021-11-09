@@ -33,7 +33,6 @@ import {
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy, MdGif } from "react-icons/md";
-import Modal from "react-responsive-modal";
 
 import {
   ModalContent,
@@ -69,37 +68,45 @@ import {
 import { useQuery } from "react-query";
 import { FiTrendingUp, FiX } from "react-icons/fi";
 
-export const ChatHeader: FC<HeaderProps> = memo(({ roomName, onClick }) => {
-  //@ts-ignore
-  const [time, setTime] = useState<numOrStr>(returnUpdatedDate());
-
-  useEffect(() => {
-    setInterval(() => {
-      //@ts-ignore
-      setTime(returnUpdatedDate());
-    }, 1000);
-  }, []);
-  return (
-    <MeetInfo style={{ color: constants.appAccentColor }}>
-      <span className='roomName'>Room - {roomName}</span>
-      <span className='roomName'>
-        <BiTimeFive />
-        {time}
-      </span>
-      <button onClick={onClick}>
-        Leave Room <IoMdExit />
-      </button>
-    </MeetInfo>
-  );
-});
+export const ChatHeader: FC<HeaderProps> = memo(
+  ({ roomName, onClick, onEnd }) => {
+    //@ts-ignore
+    const [time, setTime] = useState<numOrStr>(returnUpdatedDate());
+    const [user, setUser] = useContext(SelfClientContext);
+    useEffect(() => {
+      setInterval(() => {
+        //@ts-ignore
+        setTime(returnUpdatedDate());
+      }, 1000);
+    }, []);
+    return (
+      <MeetInfo>
+        <span className='roomName'>Room - {roomName}</span>
+        <span className='roomName'>
+          <BiTimeFive />
+          {time}
+        </span>
+        <div className='btn-wrapper'>
+          {user.isHost && (
+            <button onClick={onEnd}>
+              End Room <FiX />
+            </button>
+          )}
+          <button onClick={onClick}>
+            Leave Room <IoMdExit />
+          </button>
+        </div>
+      </MeetInfo>
+    );
+  }
+);
 
 export const UsersPanelInfo: FC<UsersInChatProps> = memo(
   ({ theme, users, onBan }) => {
-    const { name } = useContext(SelfClientContext)[0];
+    const { isHost, name } = useContext(SelfClientContext)[0];
     const [userToBeBannned, setUserToBeBanned] = useState<string>("");
     const [modalOpen, setIsModalOpen] = useState<boolean>(false);
     const [banText, setBanText] = useState<string>("");
-    const isHost = users.find((user) => user.name === name).host;
     const ban = () => {
       if (banText && banText.trim()) {
         if (banText.length >= 51) {
@@ -114,6 +121,12 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
         toast.error("Invalid Reason");
       }
     };
+    useEffect(() => {
+      if (modalOpen) {
+        //@ts-ignore
+        document.querySelector(".modal").style.height = "50vh";
+      }
+    }, [modalOpen]);
     return (
       <>
         <div className='length'>Number Of Users :{users.length}</div>
@@ -155,25 +168,11 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
             );
           }
         })}
-        <Modal
-          closeOnEsc={true}
-          open={modalOpen}
+        <CustomModal
+          isOpen={modalOpen}
           onClose={() => {
             setIsModalOpen(false);
             setUserToBeBanned("");
-          }}
-          closeIcon={<FaTimes style={{ color: "white ", fontSize: "2vw" }} />}
-          styles={{
-            modal: {
-              backgroundColor: constants.appAccentColor,
-              color: "white",
-              width: "50vw",
-              padding: "2vw 0",
-            },
-            closeIcon: {
-              outline: "none",
-              border: "none",
-            },
           }}
         >
           <ModalContent>
@@ -209,7 +208,7 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
               </button>
             </div>
           </ModalContent>
-        </Modal>
+        </CustomModal>
       </>
     );
   }
@@ -1054,12 +1053,8 @@ export const MiniatureReplyPreview: FC<{
           }}
         >
           {!isProd
-            ? props.content.length > 35
-              ? clipText(decrypt(props.content), 35)
-              : decrypt(props.content)
-            : props.content.length > 45
-            ? clipText(decrypt(props.content), 45)
-            : decrypt(props.content)}
+            ? clipText(decrypt(props.content), 50)
+            : clipText(decrypt(props.content), 35)}
         </div>
       </MiniatureReplyPreviewDiv>
     );
@@ -1094,13 +1089,9 @@ export const MiniatureReplyPreview: FC<{
               width: isProd ? "90%" : "45%",
             }}
           >
-            {isProd
-              ? props.caption.length > 35
-                ? clipText(decrypt(props.caption), 35)
-                : decrypt(props.caption)
-              : props.caption.length > 45
-              ? clipText(decrypt(props.caption), 45)
-              : decrypt(props.caption)}
+            {!isProd
+              ? clipText(decrypt(props.content), 50)
+              : clipText(decrypt(props.content), 35)}
           </div>
         </div>
       </MiniatureReplyPreviewDiv>
@@ -1130,6 +1121,19 @@ export const CustomModal: (props: ModalProps) => any = ({
       },
     },
   };
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+      return () =>
+        document.removeEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            onClose();
+          }
+        });
+    });
+  });
   return ReactDom.createPortal(
     <AnimatePresence>
       {isOpen && (
