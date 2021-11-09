@@ -109,6 +109,7 @@ const Rooms: FC<{ rooms: room[]; text: string }> = memo(({ rooms, text }) => {
               style={{
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 10,
+                border: 0,
               }}
             >
               Room Name : {r.name}
@@ -119,6 +120,7 @@ const Rooms: FC<{ rooms: room[]; text: string }> = memo(({ rooms, text }) => {
               style={{
                 borderBottomLeftRadius: 10,
                 borderBottomRightRadius: 10,
+                border: 0,
               }}
             >
               <Button onClick={() => navigate(`/room/${r.name}`)}>

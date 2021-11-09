@@ -325,7 +325,7 @@ cursor:pointer ;
 .pop {
   animation-iteration-count:4;
   animation-name:pop;
-  animation-duration: .7s;
+  animation-duration: .5s;
   animation-timing-duration: ease-in-out;
   
 }

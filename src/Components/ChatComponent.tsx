@@ -13,7 +13,7 @@ import {
   AiOutlineUser,
   AiOutlineFileImage,
 } from "react-icons/ai";
-import { FiMaximize, FiMinimize } from "react-icons/fi";
+import { FiMaximize, FiMinimize, FiX } from "react-icons/fi";
 import { BiSend, BiHappy } from "react-icons/bi";
 import io from "socket.io-client";
 //@ts-ignore
@@ -31,6 +31,7 @@ import {
   FaTimes,
   FaLock,
   FaRegSadTear,
+  FaRegSadCry,
 } from "react-icons/fa";
 
 import { FiShare2 } from "react-icons/fi";
@@ -52,6 +53,7 @@ import {
   decrypt,
   scrollMessageIntoView,
   messageVariants,
+  PostChatProps,
 } from "../Constants";
 import {
   ChatPage,
@@ -76,18 +78,18 @@ import {
   GifContent,
   MiniatureReplyPreview,
   FadedAnimationWrapper,
+  PostChatComponent,
 } from "./Chat.SubComponents";
 //@ts-ignore
 
 import { Pop, ForeignMessagePop, KickSound } from "../Images/Accumulator";
-import Banned from "./Banned";
 import { AnimatePresence, motion } from "framer-motion";
 
 const socket = io(constants.serverName);
 
 const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
   ({ isPrivate }) => {
-    const [isBanned, setIsBanned] = useState<[boolean, string]>([false, ""]);
+    const [isMeetEnded, setIsMeetEnded] = useState<PostChatProps>(null);
     const [theme, setTheme] = useState<"#fff" | "#232424">("#fff");
     const navigate = useNavigate();
 
@@ -122,6 +124,9 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         id: getRandomKey(),
       },
     ]);
+    useEffect(() => {
+      console.info(replyState);
+    }, [replyState]);
     useEffect(() => {
       if (emojiOpen === true) {
         setShareOpen(false);
@@ -163,9 +168,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         setGifsOpen(false);
       }
     }, [usersOpen]);
-    useEffect(() => {
-      console.info(replyState);
-    }, [replyState]);
 
     const oppositeTheme = theme === "#232424" ? "#fff" : "#232424";
 
@@ -229,10 +231,23 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         ]);
       });
       socket.on("room-ended", () => {
-        setUser(initContextValue);
-        //@ts-ignore
-        socket.disconnect(true);
-        navigate("/");
+        if (!user.isHost) {
+          setUser(initContextValue);
+          //@ts-ignore
+          socket.disconnect(true);
+          setIsMeetEnded({
+            content: [
+              "The Room was ended",
+              "The Room has been ended by the host.",
+            ],
+            Icon: FiX,
+          });
+          KickSound.play();
+          document.title = "The Room was ended";
+        } else {
+          navigate("/");
+          KickSound.play();
+        }
       });
       socket.on(
         "new-host",
@@ -266,7 +281,15 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       socket.on("ban", (reason) => {
         //@ts-ignore
         socket.disconnect(true);
-        setIsBanned([true, reason]);
+        setIsMeetEnded({
+          Icon: FaRegSadCry,
+          content: [
+            "You have been kicked from the room by the host.",
+            `Reason :- ${reason}`,
+          ],
+        });
+        KickSound.play();
+        document.title = "You have been kicked from the room.";
       });
     };
 
@@ -483,8 +506,8 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
     };
     return (
       <>
-        {isBanned[0] ? (
-          <Banned reason={isBanned[1]} />
+        {isMeetEnded !== null ? (
+          <PostChatComponent data={isMeetEnded} />
         ) : (
           <FadedAnimationWrapper>
             <ChatPage

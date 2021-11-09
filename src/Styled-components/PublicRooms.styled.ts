@@ -58,8 +58,8 @@ export const Room = styled.section`
   margin: 2vw auto;
 
   border: 1px solid black;
-  border-left: 2px solid black;
-  border-right: 2px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
   border-radius: 10px;
   width: 50vw;
   display: flex;

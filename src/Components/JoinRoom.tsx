@@ -111,29 +111,23 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             socket.disconnect(true);
 
             if (!isAuth) {
-              setTimeout(() => {
-                setIsConnecting(false);
-                navigate("/room/" + newRoom);
-              }, 1000);
+              setIsConnecting(false);
+              navigate("/room/" + newRoom);
             } else {
-              setTimeout(() => {
-                setIsConnecting(false);
-                setIsDone(true);
-              }, 1000);
+              setIsConnecting(false);
+              setIsDone(true);
             }
           } else {
-            setTimeout(() => {
-              setIsConnecting(false);
+            setIsConnecting(false);
+            //@ts-ignore
+            socket.disconnect(true);
+            toast.error(constants.roomDoesntExistError);
+            if (!isAuth) {
               //@ts-ignore
-              socket.disconnect(true);
-              toast.error(constants.roomDoesntExistError);
-              if (!isAuth) {
-                //@ts-ignore
-                roomRef.current.focus();
-              } else {
-                return;
-              }
-            }, 1000);
+              roomRef.current.focus();
+            } else {
+              return;
+            }
           }
         });
       } else {
@@ -154,19 +148,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       },
     },
   };
-  const popFromSideVariants = {
-    initial: {
-      x: -10000,
-    },
-    animated: {
-      x: 0,
-      transition: {
-        type: "spring",
-        stiffness: 35,
-        mass: 1.2,
-      },
-    },
-  };
+
   return (
     <>
       {isDone ? (
@@ -181,7 +163,7 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
               initial='initial'
               animate='animated'
             >
-              <motion.div className='field' variants={popFromSideVariants}>
+              <div className='field'>
                 <span>Name</span>
                 <br />
                 <input
@@ -192,23 +174,13 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                   placeholder='Your Name'
                   autoFocus
                 />
-              </motion.div>
+              </div>
               {isAuth ? (
-                <motion.div
-                  className='field'
-                  initial='initial'
-                  animate='animated'
-                  variants={popFromSideVariants}
-                >
+                <div className='field'>
                   <span>Room Name:{roomName}</span>
-                </motion.div>
+                </div>
               ) : (
-                <motion.div
-                  className='field'
-                  initial='initial'
-                  animate='animated'
-                  variants={popFromSideVariants}
-                >
+                <div className='field'>
                   <span>Room Name</span>
                   <br />
                   <input
@@ -220,9 +192,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
                     autoFocus={isAuth ? true : false}
                     ref={roomRef}
                   />
-                </motion.div>
+                </div>
               )}
-              <motion.div className='field' variants={popFromSideVariants}>
+              <motion.div className='field'>
                 <span>Avatar</span>
                 {currentAvatar && parse(currentAvatar)}
                 <br />

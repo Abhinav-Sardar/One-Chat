@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { FC, ReactElement, useEffect, useState } from "react";
+import { IconType } from "react-icons";
 import { animated, useSpring } from "react-spring";
 import { toast } from "react-toastify";
 
@@ -568,7 +569,7 @@ export const constants = {
   nameAlreadyThere:
     "A person with the same name is already present in the room. Please try a different name.",
   ONE_CHAT_LOCAL_STORAGE_KEY: "one-chat-accent-color",
-  replyFadedBg: "#D4D3D3",
+  replyFadedBg: "#E9E9E9",
   faqs: FaqsData,
   queryConfig: {
     retry: 3,
@@ -616,3 +617,7 @@ export const darkenColor = (color: string, percent: number) => {
       .slice(1)
   );
 };
+export interface PostChatProps {
+  Icon: IconType;
+  content: [string, string];
+}

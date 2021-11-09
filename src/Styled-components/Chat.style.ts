@@ -578,3 +578,25 @@ export const MiniatureReplyPreviewDiv = styled.div`
     padding: 0 1%;
   }
 `;
+
+export const StyledPostPage = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  font-family: "Poppins", sans-serif;
+  color: ${constants.appAccentColor};
+  .icon {
+    font-size: 11vw;
+  }
+  .title {
+    font-size: 3.5vw;
+    font-family: "Poppins", sans-serif;
+  }
+  .description {
+    font-size: 2vw;
+  }
+`;

@@ -59,18 +59,6 @@ const CreateRoom: FunctionalComponent = () => {
       },
     },
   };
-  const popFromSideVariants = {
-    initial: {
-      x: -10000,
-    },
-    animated: {
-      x: 0,
-      transition: {
-        type: "spring",
-        stiffness: 35,
-      },
-    },
-  };
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -120,15 +108,13 @@ const CreateRoom: FunctionalComponent = () => {
           //@ts-ignore
           socket.removeAllListeners("rooms-back");
           if (IsRoomThere(rooms, room)) {
-            setTimeout(() => {
-              setIsConnecting(false);
-              //@ts-ignore
-              socket.disconnect(true);
+            setIsConnecting(false);
+            //@ts-ignore
+            socket.disconnect(true);
 
-              toast.error(constants.roomAlreadyExistsError);
-              //@ts-ignore
-              roomRef.current.focus();
-            }, 1000);
+            toast.error(constants.roomAlreadyExistsError);
+            //@ts-ignore
+            roomRef.current.focus();
           } else {
             console.log("You are free to proceeed");
             const newUser: user = {
@@ -141,10 +127,8 @@ const CreateRoom: FunctionalComponent = () => {
             setUser(newUser);
             //@ts-ignore
             socket.disconnect(true);
-            setTimeout(() => {
-              setIsConnecting(false);
-              navigate(`/room/${room}`);
-            }, 1000);
+            setIsConnecting(false);
+            navigate(`/room/${room}`);
           }
         });
       } else {
@@ -164,7 +148,7 @@ const CreateRoom: FunctionalComponent = () => {
             initial='initial'
             animate='animated'
           >
-            <motion.div variants={popFromSideVariants} className='field'>
+            <div className='field'>
               <span>Name</span>
               <br />
               <input
@@ -176,8 +160,8 @@ const CreateRoom: FunctionalComponent = () => {
                 placeholder='Your Name'
                 autoFocus
               />
-            </motion.div>
-            <motion.div variants={popFromSideVariants} className='field'>
+            </div>
+            <div className='field'>
               <span>Room Name</span>
               <br />
               <input
@@ -189,8 +173,8 @@ const CreateRoom: FunctionalComponent = () => {
                 placeholder='Name Your Room'
                 ref={roomRef}
               />
-            </motion.div>
-            <motion.div variants={popFromSideVariants} className='field'>
+            </div>
+            <div className='field'>
               <span>Avatar</span>
               {currentAvatar && parse(currentAvatar)}
 
@@ -201,8 +185,8 @@ const CreateRoom: FunctionalComponent = () => {
               >
                 <span>Choose Avatar</span> <FaUserAlt className='btn-avatar' />
               </button>
-            </motion.div>
-            <motion.div variants={popFromSideVariants} className='field'>
+            </div>
+            <div className='field'>
               <span>Private Or Public Room</span>
               <div
                 style={{
@@ -226,7 +210,7 @@ const CreateRoom: FunctionalComponent = () => {
                   <div></div>
                 </Toggler>
               </div>
-            </motion.div>
+            </div>
             {isConnecting ? (
               <LoadingButton />
             ) : (

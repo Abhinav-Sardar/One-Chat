@@ -221,7 +221,6 @@ export const FormSubmitBtn = styled.button`
   &:hover {
     background-color: ${constants.appAccentColor};
     color: white;
-    transform: scale(1.1);
   }
 `;
 

@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactDom from "react-dom";
-import { Scrollbars } from "react-custom-scrollbars";
+
 import {
   constants,
   getRandomKey,
@@ -30,6 +30,7 @@ import {
   clipText,
   scrollMessageIntoView,
   ModalProps,
+  PostChatProps,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
 import { MdContentCopy, MdGif } from "react-icons/md";
@@ -43,17 +44,18 @@ import {
   User,
   Indicator,
   MiniatureReplyPreviewDiv,
+  StyledPostPage,
 } from "../Styled-components/Chat.style";
 import parse from "html-react-parser";
 import { toast } from "react-toastify";
-import { FaTimes, FaSearch, FaSpinner, FaCrown } from "react-icons/fa";
+import { FaTimes, FaSearch, FaSpinner, FaCrown, FaHome } from "react-icons/fa";
 import { Animals, Food, HumanRelatedEmojis, Objects, Symbols } from "../Emojis";
 import Emojis, { Pop } from "../Images/Accumulator";
 
 import { BiSad, BiSend, BiTimeFive } from "react-icons/bi";
 import { HiOutlineBan } from "react-icons/hi";
 import { ReplyContext, SelfClientContext } from "../Context";
-import { Button } from "../Styled-components/Customize.style";
+import { Button, ButtonsWrapper } from "../Styled-components/Customize.style";
 import {
   AiOutlineArrowLeft,
   AiOutlineArrowRight,
@@ -67,6 +69,7 @@ import {
 } from "react-icons/bs";
 import { useQuery } from "react-query";
 import { FiTrendingUp, FiX } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export const ChatHeader: FC<HeaderProps> = memo(
   ({ roomName, onClick, onEnd }) => {
@@ -1090,8 +1093,8 @@ export const MiniatureReplyPreview: FC<{
             }}
           >
             {!isProd
-              ? clipText(decrypt(props.content), 50)
-              : clipText(decrypt(props.content), 35)}
+              ? clipText(decrypt(props.caption), 50)
+              : clipText(decrypt(props.caption), 35)}
           </div>
         </div>
       </MiniatureReplyPreviewDiv>
@@ -1138,7 +1141,14 @@ export const CustomModal: (props: ModalProps) => any = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          <div className='modal-backdrop' onClick={onClose} />
+          <motion.div
+            className='modal-backdrop'
+            onClick={onClose}
+            initial='initial'
+            animate='animate'
+            exit='exit'
+            variants={modalVariants}
+          />
           <motion.div
             className='modal'
             variants={modalVariants}
@@ -1155,5 +1165,26 @@ export const CustomModal: (props: ModalProps) => any = ({
       )}
     </AnimatePresence>,
     document.getElementById("modal")
+  );
+};
+
+export const PostChatComponent: FC<{ data: PostChatProps }> = ({
+  data: { Icon, content },
+}) => {
+  const navigate = useNavigate();
+  return (
+    <FadedAnimationWrapper>
+      <StyledPostPage>
+        <div className='icon'>
+          <Icon className='icon' />
+        </div>
+        <span className='title'>{content[0]}</span>
+        <span className='description'>{content[1]}</span>
+        <Button onClick={() => navigate("/")}>
+          <span>Back To Home</span>
+          <FaHome />
+        </Button>
+      </StyledPostPage>
+    </FadedAnimationWrapper>
   );
 };
