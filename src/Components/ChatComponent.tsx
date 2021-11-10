@@ -299,7 +299,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         setIsMeetEnded({
           Icon: FiWifiOff,
           content: [
-            "The room was ended.",
+            "You have been disconnected from the room.",
             "This could be due to lack of activity or server connection failure. Please try joining again.",
           ],
         });
