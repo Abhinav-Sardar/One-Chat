@@ -91,7 +91,9 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
             const chosenRoom = rooms.find((room) => room.name === newRoom);
             const isMe = chosenRoom.members.find((m) => m.name === name);
             if (isMe) {
-              toast.error("A person with the same name already exists.");
+              toast.error(
+                "A person with the same name is already present in the room."
+              );
               setIsConnecting(false);
               return;
             } else {

@@ -300,9 +300,10 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
           Icon: FiWifiOff,
           content: [
             "The room was ended.",
-            "This could be due to lack of activity or server connection failure",
+            "This could be due to lack of activity or server connection failure. Please try joining again.",
           ],
         });
+        socket.disconnect();
       } else {
         const el: HTMLInputElement = document.querySelector(
           "input#message__input"
