@@ -1,4 +1,4 @@
-import { FC, Fragment, memo, useEffect } from "react";
+import { FC, memo, useEffect } from "react";
 import {
   Button,
   ButtonsWrapper,
@@ -12,10 +12,7 @@ import { constants } from "../Constants";
 
 import { AiOutlineSave } from "react-icons/ai";
 import { FaCheck, FaLightbulb } from "react-icons/fa";
-import {
-  BsArrowRepeat,
-  BsReverseLayoutSidebarInsetReverse,
-} from "react-icons/bs";
+import { BsArrowRepeat } from "react-icons/bs";
 import { FadedAnimationWrapper } from "./Chat.SubComponents";
 
 const Customize: FC = () => {

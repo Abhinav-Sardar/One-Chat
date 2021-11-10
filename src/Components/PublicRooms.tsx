@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo, useState } from "react";
 import { FadedAnimationWrapper } from "./Chat.SubComponents";
 
 import { constants, getRandomKey, room } from "../Constants";

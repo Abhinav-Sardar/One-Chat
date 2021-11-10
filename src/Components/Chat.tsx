@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, FormEvent } from "react";
+import { useEffect, useState, useContext } from "react";
 import { FC } from "react";
 import { useParams } from "react-router-dom";
 
@@ -14,7 +14,6 @@ const Chat: FC = () => {
   //@ts-ignore
   const { roomId } = useParams();
   useEffect(() => {
-    console.log(user);
     if (
       user.avatarSvg !== "" &&
       user.name !== "" &&

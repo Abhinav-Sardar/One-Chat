@@ -1,10 +1,9 @@
-import { execSync } from "child_process";
 import { AnimatePresence, motion } from "framer-motion";
 import { FC, useEffect, useState } from "react";
 import { BsQuestionCircleFill } from "react-icons/bs";
-import { FaHome, FaTimes, FaWind } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { constants, getRandomKey } from "../Constants";
+import { getRandomKey } from "../Constants";
 import { Button } from "../Styled-components/Customize.style";
 import { Page, FaqTitle } from "../Styled-components/Faqs.styled";
 import { PrimaryTitle } from "../Styled-components/PublicRooms.styled";

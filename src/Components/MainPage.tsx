@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, memo } from "react";
+import { FC, useEffect, memo } from "react";
 import { StyledStickyHeader } from "../Styled-components/Mainpage.styled";
 import { IoChatboxSharp } from "react-icons/io5";
 import { accentColorChecker, constants } from "../Constants";
@@ -7,8 +7,6 @@ import { MainContent } from "../Styled-components/Mainpage.styled";
 import { TiPlus } from "react-icons/ti";
 import { FaBrush, FaComments, FaEye, FaGithubSquare } from "react-icons/fa";
 import { MdReport } from "react-icons/md";
-import { GoBook } from "react-icons/go";
-import { RiQuestionnaireFill } from "react-icons/ri";
 import { BsQuestionCircleFill } from "react-icons/bs";
 import {
   ActionButton,

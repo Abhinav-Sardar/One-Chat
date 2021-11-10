@@ -1,7 +1,6 @@
 import axios from "axios";
-import React, { FC, ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { IconType } from "react-icons";
-import { animated, useSpring } from "react-spring";
 import { toast } from "react-toastify";
 
 const devUrl = "http://localhost:1919/";
@@ -38,7 +37,6 @@ export type ChatUser = {
 };
 
 export interface HeaderProps {
-  roomName: string;
   onClick: () => void;
   onEnd: () => void;
 }
@@ -47,6 +45,7 @@ export interface UsersInChatProps {
   theme: string;
   users: ChatUser[];
   onBan: (user: string, reason: string) => void;
+  userId: string;
 }
 
 export interface PanelHeaderProps {
@@ -168,7 +167,7 @@ export const config = {
     opacity: 1,
     transition: {
       type: "tween",
-      duration: 0.9,
+      duration: 1.3,
     },
   },
   exit: {
@@ -176,7 +175,7 @@ export const config = {
     width: 0,
     transition: {
       type: "tween",
-      duration: 0.6,
+      duration: 1,
     },
   },
 };
@@ -560,16 +559,16 @@ export const constants = {
   serverName: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
 
   copySuccess: "Copied ✅. Share this Url with anyone you trust",
-  PEXELS_API_KEY: "563492ad6f91700001000001e2f383c41efa4b889123dc24cdf343a3",
+  PEXELS_API_KEY: process.env.REACT_APP_PEXELS_API_KEY,
   imageInputErrorMsg:
     "The provided input was invalid or too long! The limit is 30",
   roomDoesntExistError: "A room with that name doesn't exist",
   roomAlreadyExistsError: "A room with same name already exists",
-  tenorApiKey: "5BH3UY2UAJ78",
+  tenorApiKey: process.env.REACT_APP_TENOR_API_KEY,
   nameAlreadyThere:
     "A person with the same name is already present in the room. Please try a different name.",
   ONE_CHAT_LOCAL_STORAGE_KEY: "one-chat-accent-color",
-  replyFadedBg: "#E9E9E9",
+  replyFadedBg: "#d9d9d9",
   faqs: FaqsData,
   queryConfig: {
     retry: 3,

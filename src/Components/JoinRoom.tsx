@@ -14,7 +14,7 @@ import { SelfClientContext } from "../Context";
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
-import { FaHome, FaTimes, FaUserAlt } from "react-icons/fa";
+import { FaHome, FaUserAlt } from "react-icons/fa";
 import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
@@ -23,11 +23,10 @@ import {
   constants,
   getRandomKey,
   IsRoomThere,
+  room,
   user,
   validator,
 } from "../Constants";
-import { AiOutlineReload } from "react-icons/ai";
-import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
 import { toast } from "react-toastify";
 
@@ -44,20 +43,12 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
 }) => {
   const [user, setUser] = useContext(SelfClientContext);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [avatars, setAvatars] = useState<string[]>([]);
   const [currentAvatar, setCurrentAvatar] = useState<string>("");
   const [isDone, setIsDone] = useState<boolean>(false);
   const navigate = useNavigate();
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const roomRef = useRef();
-
-  useEffect(() => {
-    if (isModalOpen === true) {
-      //@ts-ignore
-      setTimeout(() => window.scroll(0, 0), 1000);
-    }
-  }, [isModalOpen]);
 
   useEffect(() => {
     document.title = "Join A Room";
@@ -69,7 +60,6 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       }
       setAvatars(initAvatars);
       setCurrentAvatar(initAvatars[0]);
-      console.log(currentAvatar);
     };
     init();
   }, []);
@@ -93,29 +83,36 @@ const JoinRoom: FunctionalComponent<{ isAuth: boolean; roomName?: string }> = ({
       const res = validator(name, newRoom);
       if (res) {
         socket.emit("rooms");
-        socket.on("rooms-back", (rooms: any[]) => {
+        socket.on("rooms-back", (rooms: room[]) => {
           //@ts-ignore
           socket.removeAllListeners("rooms-back");
           const doesRoomExist = IsRoomThere(rooms, newRoom);
           if (doesRoomExist) {
-            console.log("reached");
-            const newUser: user = {
-              name: name,
-              currentRoomName: newRoom,
-              avatarSvg: currentAvatar,
-              hasCreatedPrivateRoom: "Join",
-              isHost: false,
-            };
-            setUser(newUser);
-            //@ts-ignore
-            socket.disconnect(true);
-
-            if (!isAuth) {
+            const chosenRoom = rooms.find((room) => room.name === newRoom);
+            const isMe = chosenRoom.members.find((m) => m.name === name);
+            if (isMe) {
+              toast.error("A person with the same name already exists.");
               setIsConnecting(false);
-              navigate("/room/" + newRoom);
+              return;
             } else {
-              setIsConnecting(false);
-              setIsDone(true);
+              const newUser: user = {
+                name: name,
+                currentRoomName: newRoom,
+                avatarSvg: currentAvatar,
+                hasCreatedPrivateRoom: "Join",
+                isHost: false,
+              };
+              setUser(newUser);
+              //@ts-ignore
+              socket.disconnect(true);
+
+              if (!isAuth) {
+                setIsConnecting(false);
+                navigate("/room/" + newRoom);
+              } else {
+                setIsConnecting(false);
+                setIsDone(true);
+              }
             }
           } else {
             setIsConnecting(false);

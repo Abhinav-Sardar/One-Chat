@@ -1,4 +1,4 @@
-import { useContext, createContext, FC, useState } from "react";
+import { createContext, FC, useState } from "react";
 import { initContextValue, reply, user } from "./Constants";
 
 export const SelfClientContext = createContext<[user, any]>([

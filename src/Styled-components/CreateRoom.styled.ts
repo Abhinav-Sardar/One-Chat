@@ -1,7 +1,5 @@
-import { animated } from "react-spring";
-import styled, { keyframes } from "styled-components";
 import { constants } from "../Constants";
-
+import styled from "styled-components";
 import { motion } from "framer-motion";
 export const Page = styled.div`
   display: flex;

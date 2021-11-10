@@ -1,4 +1,4 @@
-import React, {
+import {
   FC,
   memo,
   useEffect,
@@ -6,8 +6,6 @@ import React, {
   useContext,
   useRef,
   FormEvent,
-  ReactFragment,
-  ReactPortal,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ReactDom from "react-dom";
@@ -24,21 +22,17 @@ import {
   numOrStr,
   returnUpdatedDate,
   decrypt,
-  useSharedPanelValue,
-  exitFullScreen,
-  goFullScreen,
   clipText,
   scrollMessageIntoView,
   ModalProps,
   PostChatProps,
 } from "../Constants";
 import { IoMdExit } from "react-icons/io";
-import { MdContentCopy, MdGif } from "react-icons/md";
+import { MdContentCopy } from "react-icons/md";
 
 import {
   ModalContent,
   EmojiPanel,
-  ImagesPanel,
   MeetInfo,
   SidePanelHeader,
   User,
@@ -55,7 +49,7 @@ import Emojis, { Pop } from "../Images/Accumulator";
 import { BiSad, BiSend, BiTimeFive } from "react-icons/bi";
 import { HiOutlineBan } from "react-icons/hi";
 import { ReplyContext, SelfClientContext } from "../Context";
-import { Button, ButtonsWrapper } from "../Styled-components/Customize.style";
+import { Button } from "../Styled-components/Customize.style";
 import {
   AiOutlineArrowLeft,
   AiOutlineArrowRight,
@@ -71,41 +65,39 @@ import { useQuery } from "react-query";
 import { FiTrendingUp, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-export const ChatHeader: FC<HeaderProps> = memo(
-  ({ roomName, onClick, onEnd }) => {
-    //@ts-ignore
-    const [time, setTime] = useState<numOrStr>(returnUpdatedDate());
-    const [user, setUser] = useContext(SelfClientContext);
-    useEffect(() => {
-      setInterval(() => {
-        //@ts-ignore
-        setTime(returnUpdatedDate());
-      }, 1000);
-    }, []);
-    return (
-      <MeetInfo>
-        <span className='roomName'>Room - {roomName}</span>
-        <span className='roomName'>
-          <BiTimeFive />
-          {time}
-        </span>
-        <div className='btn-wrapper'>
-          {user.isHost && (
-            <button onClick={onEnd}>
-              End Room <FiX />
-            </button>
-          )}
-          <button onClick={onClick}>
-            Leave Room <IoMdExit />
+export const ChatHeader: FC<HeaderProps> = memo(({ onClick, onEnd }) => {
+  //@ts-ignore
+  const [time, setTime] = useState<numOrStr>(returnUpdatedDate());
+  const [user, setUser] = useContext(SelfClientContext);
+  useEffect(() => {
+    setInterval(() => {
+      //@ts-ignore
+      setTime(returnUpdatedDate());
+    }, 1000);
+  }, []);
+  return (
+    <MeetInfo>
+      <span className='roomName'>Room - {user.currentRoomName}</span>
+      <span className='roomName'>
+        <BiTimeFive />
+        {time}
+      </span>
+      <div className='btn-wrapper'>
+        {user.isHost && (
+          <button onClick={onEnd}>
+            End Room <FiX />
           </button>
-        </div>
-      </MeetInfo>
-    );
-  }
-);
+        )}
+        <button onClick={onClick}>
+          Leave Room <IoMdExit />
+        </button>
+      </div>
+    </MeetInfo>
+  );
+});
 
 export const UsersPanelInfo: FC<UsersInChatProps> = memo(
-  ({ theme, users, onBan }) => {
+  ({ theme, users, onBan, userId }) => {
     const { isHost, name } = useContext(SelfClientContext)[0];
     const [userToBeBannned, setUserToBeBanned] = useState<string>("");
     const [modalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -138,8 +130,11 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
             return (
               <User theme={theme} key={getRandomKey()}>
                 {parse(user.profilePic)}
-                <span>{user.name}</span>
-                {user.name === name ? (
+                <span>
+                  {user.name}
+                  {user.name === name && user.id === userId && " (You)"}
+                </span>
+                {user.name === name && user.id === userId ? (
                   ""
                 ) : (
                   <HiOutlineBan
@@ -158,7 +153,10 @@ export const UsersPanelInfo: FC<UsersInChatProps> = memo(
             return (
               <User theme={theme} key={getRandomKey()}>
                 {parse(user.profilePic)}
-                <span>{user.name}</span>
+                <span>
+                  {user.name}
+                  {user.name === name && user.id === userId && " (You)"}
+                </span>
                 {user.host === true ? (
                   <FaCrown
                     className='host__crown'
@@ -263,7 +261,7 @@ export const SidePanelHeaderComponent: FC<PanelHeaderProps> = memo(
         <SidePanelHeader style={style ? style : {}}>
           <span>{children}</span>
 
-          <FaTimes onClick={onClose} style={{ cursor: "pointer" }} />
+          <FiX onClick={onClose} style={{ cursor: "pointer" }} />
         </SidePanelHeader>
       </>
     );
@@ -1037,7 +1035,6 @@ export const MiniatureReplyPreview: FC<{
   props: Message;
   isProd: boolean;
 }> = ({ props, isProd }) => {
-  console.log(props);
   const { type } = props;
   if (type === "text" || type === "reply") {
     return (

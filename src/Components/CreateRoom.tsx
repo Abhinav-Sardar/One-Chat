@@ -17,7 +17,7 @@ import { SelfClientContext } from "../Context";
 import io from "socket.io-client";
 import { Form } from "../Styled-components/CreateRoom.styled";
 import { useEffect } from "react";
-import { FaHome, FaTimes, FaUserAlt } from "react-icons/fa";
+import { FaHome, FaUserAlt } from "react-icons/fa";
 import { useState } from "react";
 import { createAvatar } from "@dicebear/avatars";
 import * as style from "@dicebear/avatars-avataaars-sprites";
@@ -31,11 +31,9 @@ import {
   getRandomKey,
 } from "../Constants";
 
-import { HiOutlineArrowDown } from "react-icons/hi";
 import { Button } from "../Styled-components/Customize.style";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { CustomModal, FadedAnimationWrapper } from "./Chat.SubComponents";
-import { motion } from "framer-motion";
 import { AiOutlineReload } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 const socket = io(constants.serverName);
@@ -83,7 +81,6 @@ const CreateRoom: FunctionalComponent = () => {
       }
       setAvatars(initAvatars);
       setCurrentAvatar(initAvatars[0]);
-      console.log(currentAvatar);
     };
     init();
   }, []);
@@ -116,7 +113,6 @@ const CreateRoom: FunctionalComponent = () => {
             //@ts-ignore
             roomRef.current.focus();
           } else {
-            console.log("You are free to proceeed");
             const newUser: user = {
               avatarSvg: currentAvatar,
               currentRoomName: room,

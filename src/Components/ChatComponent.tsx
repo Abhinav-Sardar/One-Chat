@@ -1,19 +1,12 @@
 import { memo, useContext } from "react";
-import {
-  FC,
-  useState,
-  useEffect,
-  FormEvent,
-  useRef,
-  createContext,
-} from "react";
+import { FC, useState, useEffect, FormEvent, useRef } from "react";
 import { VscChromeClose } from "react-icons/vsc";
 import {
   AiFillFileImage,
   AiOutlineUser,
   AiOutlineFileImage,
 } from "react-icons/ai";
-import { FiMaximize, FiMinimize, FiX } from "react-icons/fi";
+import { FiMaximize, FiMinimize, FiX, FiWifiOff } from "react-icons/fi";
 import { BiSend, BiHappy } from "react-icons/bi";
 import io from "socket.io-client";
 //@ts-ignore
@@ -28,7 +21,6 @@ import {
   FaSun,
   FaMoon,
   FaTrashAlt,
-  FaTimes,
   FaLock,
   FaRegSadTear,
   FaRegSadCry,
@@ -50,9 +42,7 @@ import {
   useSharedPanelValue,
   initContextValue,
   reply,
-  decrypt,
   scrollMessageIntoView,
-  messageVariants,
   PostChatProps,
 } from "../Constants";
 import {
@@ -80,8 +70,6 @@ import {
   FadedAnimationWrapper,
   PostChatComponent,
 } from "./Chat.SubComponents";
-//@ts-ignore
-
 import { Pop, ForeignMessagePop, KickSound } from "../Images/Accumulator";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -124,9 +112,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         id: getRandomKey(),
       },
     ]);
-    useEffect(() => {
-      console.info(replyState);
-    }, [replyState]);
     useEffect(() => {
       if (emojiOpen === true) {
         setShareOpen(false);
@@ -218,7 +203,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
 
       socket.on("host", () => {
         setUser({ ...user, isHost: true });
-        console.log("i am host");
         setMsgs((p) => [
           ...p,
           {
@@ -308,46 +292,54 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
       setInterval(() => {
         setIsFullScreen(document.fullscreenElement ? true : false);
       }, 500);
-      console.log(isPrivate);
     }, []);
-    console.log(msgs);
     function handleSubmit(e: FormEvent): void {
       e.preventDefault();
-      const el: HTMLInputElement = document.querySelector(
-        "input#message__input"
-      )!;
-      let text: string = el.value;
-      if (text === "" || !text.trim()) {
-        toast.error("Invalid message!");
-      } else if (text.length >= 500) {
-        toast.error("Message Length Too Long !");
+      if (socket.disconnected) {
+        setIsMeetEnded({
+          Icon: FiWifiOff,
+          content: [
+            "The room was ended.",
+            "This could be due to lack of activity or server connection failure",
+          ],
+        });
       } else {
-        let newMessage: Message = {
-          author: user.name,
-          created_at: new Date(),
-          accentColor: constants.appAccentColor,
-          content: encrypt(text.trim()),
-          type: replyState.isOpen ? "reply" : "text",
-          className: "Outgoing",
-          profilePic: user.avatarSvg,
-          id: getRandomKey(),
-          to: replyState.content,
-        };
+        const el: HTMLInputElement = document.querySelector(
+          "input#message__input"
+        )!;
+        let text: string = el.value;
+        if (text === "" || !text.trim()) {
+          toast.error("Invalid message!");
+        } else if (text.length >= 500) {
+          toast.error("Message Length Too Long !");
+        } else {
+          let newMessage: Message = {
+            author: user.name,
+            created_at: new Date(),
+            accentColor: constants.appAccentColor,
+            content: encrypt(text.trim()),
+            type: replyState.isOpen ? "reply" : "text",
+            className: "Outgoing",
+            profilePic: user.avatarSvg,
+            id: getRandomKey(),
+            to: replyState.content,
+          };
 
-        setMsgs((p) => [...p, newMessage]);
-        socket.emit("message", {
-          ...newMessage,
-          className: "Incoming",
-        });
-        ForeignMessagePop.play();
+          setMsgs((p) => [...p, newMessage]);
+          socket.emit("message", {
+            ...newMessage,
+            className: "Incoming",
+          });
+          ForeignMessagePop.play();
 
-        el.value = "";
-        inputRef.current.focus();
-        setReplyState({
-          content: null,
-          id: "",
-          isOpen: false,
-        });
+          el.value = "";
+          inputRef.current.focus();
+          setReplyState({
+            content: null,
+            id: "",
+            isOpen: false,
+          });
+        }
       }
     }
     useEffect(() => {
@@ -521,7 +513,6 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
               }}
             >
               <ChatHeader
-                roomName={user.currentRoomName}
                 onClick={LeaveRoom}
                 onEnd={() => {
                   socket.emit("end-room");
@@ -591,6 +582,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                         onBan={(user, reason) =>
                           socket.emit("ban-user", user, reason)
                         }
+                        userId={socket.id}
                       />
                     </UsersSection>
                   )}

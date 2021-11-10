@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { animated } from "react-spring";
 import styled from "styled-components";
 import { constants } from "../Constants";
 
