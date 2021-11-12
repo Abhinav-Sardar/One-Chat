@@ -241,6 +241,10 @@ svg:root {
       width:30vw ; 
       border-radius:5px
     } ; 
+    .caption {
+      align-self:center;
+      margin-top:1vw ; 
+      }
     color:white ; 
     border-radius:10px ; 
     background:whitesmoke; 
