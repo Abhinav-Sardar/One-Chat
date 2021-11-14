@@ -120,6 +120,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
         setGifsOpen(false);
       }
     }, [emojiOpen]);
+    console.log(msgs);
     useEffect(() => {
       if (gifsOpen === true) {
         setShareOpen(false);
@@ -319,7 +320,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
             created_at: new Date(),
             accentColor: constants.appAccentColor,
             content: encrypt(text.trim()),
-            type: replyState.isOpen ? "reply" : "text",
+            type: replyState.isOpen ? "reply-text" : "text",
             className: "Outgoing",
             profilePic: user.avatarSvg,
             id: getRandomKey(),
@@ -605,15 +606,22 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                             created_at: new Date(),
                             accentColor: constants.appAccentColor,
                             content: encrypt(gifurl),
-                            type: replyState.isOpen ? "reply" : "gif",
+                            type: replyState.isOpen ? "reply-gif" : "gif",
                             className: "Outgoing",
                             profilePic: user.avatarSvg,
                             caption: encrypt(caption.trim()),
                             preview_url: encrypt(preview),
                             id: getRandomKey(),
+                            to: replyState.content,
                           };
 
                           setMsgs((p) => [...p, newMessage]);
+                          setReplyState({
+                            isOpen: false,
+                            content: null,
+                            id: "",
+                          });
+
                           socket.emit("message", {
                             ...newMessage,
                             className: "Incoming",
@@ -668,14 +676,21 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                             created_at: new Date(),
                             accentColor: constants.appAccentColor,
                             content: encrypt(imgUrl),
-                            type: replyState.isOpen ? "reply" : "image",
+                            type: replyState.isOpen ? "reply-image" : "image",
                             className: "Outgoing",
                             profilePic: user.avatarSvg,
                             caption: encrypt(caption.trim()),
                             id: getRandomKey(),
+                            to: replyState.content,
                           };
 
                           setMsgs((p) => [...p, newMessage]);
+                          setReplyState({
+                            isOpen: false,
+                            content: null,
+                            id: "",
+                          });
+
                           socket.emit("message", {
                             ...newMessage,
                             className: "Incoming",

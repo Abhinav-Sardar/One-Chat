@@ -122,7 +122,14 @@ export type Message = {
   profilePic?: string;
   accentColor?: string;
   content: string;
-  type: "text" | "image" | "indicator" | "reply" | "gif";
+  type:
+    | "text"
+    | "image"
+    | "indicator"
+    | "gif"
+    | "reply-text"
+    | "reply-gif"
+    | "reply-image";
   created_at?: Date;
   author?: string;
   className?: "Incoming" | "Outgoing";
@@ -556,7 +563,7 @@ const FaqsData: { title: string; content: string; isOpen: boolean }[] = [
 
 export const constants = {
   appAccentColor: localStorage.getItem("one-chat-accent-color") || "#bd14ca",
-  serverName: process.env.NODE_ENV === "production" ? prodUrl : devUrl,
+  serverName: prodUrl,
 
   copySuccess: "Copied ✅. Share this Url with anyone you trust",
   PEXELS_API_KEY: process.env.REACT_APP_PEXELS_API_KEY,

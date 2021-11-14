@@ -149,6 +149,8 @@ svg:root {
     }
   }
   .content {
+    display: flex;
+    flex-direction: column;
     img {
    height:15vw ; 
    width:70% ;
@@ -236,6 +238,8 @@ svg:root {
     }
   };
   .content {
+    display: flex;
+    flex-direction: column;
     img {
       height:15vw ; 
       width:30vw ; 

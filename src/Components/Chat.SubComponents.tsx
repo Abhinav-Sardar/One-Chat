@@ -459,7 +459,7 @@ export const MessageComponent: FC<Message> = memo((props) => {
       });
     }
   };
-  if (props.type === "text") {
+  if (props.type === "text" || props.type === "reply-text") {
     return (
       <section className={props.className} id={props.id}>
         <div>
@@ -480,18 +480,40 @@ export const MessageComponent: FC<Message> = memo((props) => {
           </div>
           <div
             className='content'
-            style={{
-              backgroundColor: props.accentColor,
-            }}
+            style={
+              props.type === "reply-text"
+                ? {
+                    backgroundColor: props.accentColor,
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
+                  }
+                : {
+                    backgroundColor: props.accentColor,
+                  }
+            }
           >
             <span>{decrypt(props.content)}</span>
           </div>
+          {props.type === "reply-text" && (
+            <>
+              <div className='reply-chip'>
+                <BsArrowReturnRight />
+                <span>Replying To...</span>
+              </div>
+              <div
+                className='reply-cont'
+                onClick={() => scrollMessageIntoView(props.to.id)}
+              >
+                <MiniatureReplyPreview props={props.to} isProd={true} />
+              </div>
+            </>
+          )}
         </div>
       </section>
     );
-  } else if (props.type === "gif") {
+  } else if (props.type === "gif" || props.type === "reply-gif") {
     return <GifMessage props={props} key={getRandomKey()} />;
-  } else if (props.type === "image") {
+  } else if (props.type === "image" || props.type === "reply-image") {
     return (
       <section className={props.className} id={props.id}>
         <div>
@@ -512,11 +534,17 @@ export const MessageComponent: FC<Message> = memo((props) => {
           </div>
           <div
             className='content'
-            style={{
-              backgroundColor: props.accentColor,
-              display: "flex",
-              flexDirection: "column",
-            }}
+            style={
+              props.type === "reply-image"
+                ? {
+                    backgroundColor: props.accentColor,
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
+                  }
+                : {
+                    backgroundColor: props.accentColor,
+                  }
+            }
           >
             <img
               src={decrypt(props.content)}
@@ -528,6 +556,20 @@ export const MessageComponent: FC<Message> = memo((props) => {
             <br />
             <span className='caption'>{decrypt(props.caption)}</span>
           </div>
+          {props.type === "reply-image" && (
+            <>
+              <div className='reply-chip'>
+                <BsArrowReturnRight />
+                <span>Replying To...</span>
+              </div>
+              <div
+                className='reply-cont'
+                onClick={() => scrollMessageIntoView(props.to.id)}
+              >
+                <MiniatureReplyPreview props={props.to} isProd={true} />
+              </div>
+            </>
+          )}
         </div>
       </section>
     );
@@ -540,48 +582,6 @@ export const MessageComponent: FC<Message> = memo((props) => {
         <span>{props.content}</span>
         <props.Icon />
       </Indicator>
-    );
-  } else {
-    return (
-      <section className={props.className} id={props.id}>
-        <div>
-          <div className='info'>
-            {parse(props.profilePic)}
-            <span>
-              {props.className === "Outgoing"
-                ? `${props.author} (You)`
-                : props.author}{" "}
-              - {ReturnFormattedDate(props.created_at)}
-            </span>
-            {props.className === "Incoming" && (
-              <BsArrow90DegLeft className='reply' onClick={onClick} />
-            )}
-            {props.className === "Outgoing" && (
-              <BsArrow90DegRight className='reply' onClick={onClick} />
-            )}
-          </div>
-          <div
-            className='content'
-            style={{
-              backgroundColor: props.accentColor,
-              borderBottomLeftRadius: 0,
-              borderBottomRightRadius: 0,
-            }}
-          >
-            <span>{decrypt(props.content)}</span>
-          </div>
-          <div className='reply-chip'>
-            <BsArrowReturnRight />
-            <span>Replying To...</span>
-          </div>
-          <div
-            className='reply-cont'
-            onClick={() => scrollMessageIntoView(props.to.id)}
-          >
-            <MiniatureReplyPreview props={props.to} isProd={true} />
-          </div>
-        </div>
-      </section>
     );
   }
 });
@@ -969,11 +969,17 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
         </div>
         <div
           className='content'
-          style={{
-            backgroundColor: props.accentColor,
-            display: "flex",
-            flexDirection: "column",
-          }}
+          style={
+            props.type === "reply-gif"
+              ? {
+                  backgroundColor: props.accentColor,
+                  borderBottomLeftRadius: 0,
+                  borderBottomRightRadius: 0,
+                }
+              : {
+                  backgroundColor: props.accentColor,
+                }
+          }
         >
           <div
             style={{
@@ -1008,6 +1014,20 @@ const GifMessage: FC<{ props: Message }> = memo(({ props }) => {
 
           <span className='caption'>{decrypt(props.caption)}</span>
         </div>
+        {props.type === "reply-gif" && (
+          <>
+            <div className='reply-chip'>
+              <BsArrowReturnRight />
+              <span>Replying To...</span>
+            </div>
+            <div
+              className='reply-cont'
+              onClick={() => scrollMessageIntoView(props.to.id)}
+            >
+              <MiniatureReplyPreview props={props.to} isProd={true} />
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
@@ -1035,8 +1055,9 @@ export const MiniatureReplyPreview: FC<{
   props: Message;
   isProd: boolean;
 }> = ({ props, isProd }) => {
+  console.log(props);
   const { type } = props;
-  if (type === "text" || type === "reply") {
+  if (type === "text" || type === "reply-text") {
     return (
       <MiniatureReplyPreviewDiv style={{ flexDirection: "column" }}>
         <div className='info-reply' style={{ color: "#00baff" }}>
@@ -1058,7 +1079,12 @@ export const MiniatureReplyPreview: FC<{
         </div>
       </MiniatureReplyPreviewDiv>
     );
-  } else if (type === "gif" || type === "image") {
+  } else if (
+    type === "gif" ||
+    type === "image" ||
+    type === "reply-image" ||
+    type === "reply-gif"
+  ) {
     return (
       <MiniatureReplyPreviewDiv style={{ flexDirection: "row" }}>
         <img
