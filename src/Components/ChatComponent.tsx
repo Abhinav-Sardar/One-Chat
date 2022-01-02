@@ -545,7 +545,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                           if (msg.type !== "indicator") {
                             return (
                               <motion.div
-                                key={getRandomKey()}
+                                key={msg.id}
                                 onDragEnd={(_, { offset }) =>
                                   handleDragEnd(msg, offset.x)
                                 }
@@ -558,7 +558,7 @@ const ChatComponent: FC<{ isPrivate: boolean | "Join" }> = memo(
                             );
                           } else {
                             return (
-                              <MessageComponent {...msg} key={getRandomKey()} />
+                              <MessageComponent {...msg} key={msg.id} />
                             );
                           }
                         })}
