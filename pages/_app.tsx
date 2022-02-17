@@ -1,8 +1,13 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import "../globals.css";
+import type { AppProps } from "next/app";
+import { PageWrapper } from "../constants/Components";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+function MyApp({ Component, pageProps, router }: AppProps) {
+  return (
+    <PageWrapper key={router.route}>
+      <Component {...pageProps} />
+    </PageWrapper>
+  );
 }
 
-export default MyApp
+export default MyApp;
