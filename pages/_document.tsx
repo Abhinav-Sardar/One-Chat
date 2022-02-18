@@ -7,10 +7,11 @@ class MyDocument extends Document {
         <Head>
           <link rel='icon' href='/favicon.ico' />
           <meta charSet='utf-8' />
-          <meta name='description' content='The best place for One-Time chats with anyone in the world.' />
+          <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         </Head>
         <body>
           <Main />
+          <div id='modal'></div>
           <NextScript />
         </body>
       </Html>

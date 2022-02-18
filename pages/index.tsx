@@ -29,7 +29,7 @@ const paths: PathsItemArray = [
 ];
 
 const HomePage: NextPage = () => {
-  const [accentColor, appName] = getConstants(["accentColor", "appName"]) as string[];
+  const [accentColor, appName] = getConstants("accentColor", "appName") as string[];
   return (
     <>
       <Head>
@@ -59,7 +59,6 @@ const HomePage: NextPage = () => {
                 <div>
                   <Button
                     style={{
-                      minWidth: "17rem",
                       minHeight: "5rem",
                       fontSize: "1.4rem",
                     }}

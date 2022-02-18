@@ -4,12 +4,8 @@ const config = {
   localStoragePrefix: "ONE-CHAT-",
   accentColor: "#bd14ca",
   appName: "One-Chat",
+  avatarCategories: ["Classic", "Adventurer", , "Robots", "Comic"],
 };
-
-export const getConstants = (param: configKeys | configKeysArray) => {
-  if (typeof param === "string") {
-    return config[param];
-  } else {
-    return param.map(p => config[p]);
-  }
+export const getConstants = (...args: configKeysArray) => {
+  return args.map(arg => config[arg]);
 };
