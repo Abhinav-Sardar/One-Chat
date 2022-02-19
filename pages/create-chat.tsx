@@ -1,22 +1,64 @@
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
-import { FormEvent, FormEventHandler, useEffect, useState } from "react";
+import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
 import { AccentText, Button, Modal } from "../constants/Components";
 import { ClientAvatar, getAvatars, getConstants } from "../constants/constants";
 import styles from "../styles/CreateChat.module.scss";
-import { BiUser } from "react-icons/bi";
-import { motion } from "framer-motion";
+import { BiCurrentLocation, BiUser } from "react-icons/bi";
+import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
+import { AvatarsProps } from "../constants/Types";
 const title = "Create A Chat Room";
 const { accentColor, avatarCategories } = getConstants();
+const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose, currentAvatarCategory }) => {
+  const currentAvatars = avatars.find(category => category[0].kind === currentAvatarCategory)!;
+  const variants = {
+    initial: {
+      opacity: 0,
+      scale: 0.8,
+    },
+    animate: {
+      opacity: 1,
+      scale: 1,
+
+      transition: {
+        duration: 0.6,
+      },
+    },
+    exit: {
+      scale: 0.8,
+      opacity: 0,
+      transition: {
+        duration: 0.6,
+      },
+    },
+  };
+  return (
+    <div className={styles.avatars}>
+      <AnimatePresence exitBeforeEnter>
+        <motion.main variants={variants} initial='initial' animate='animate' exit='exit' key={currentAvatarCategory}>
+          {currentAvatars.map((avatar, i) => (
+            <div
+              key={avatar.id}
+              dangerouslySetInnerHTML={{ __html: avatar.avatar }}
+              onClick={() => onClose(avatar)}
+              style={{ border: `3px solid ${currentAvatar.avatar === avatar.avatar ? "yellow" : "white"}` }}
+            />
+          ))}
+        </motion.main>
+      </AnimatePresence>
+    </div>
+  );
+};
 // @ts-ignore
 const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentCategory, setCurrentCategory] = useState<typeof avatarCategories[number]>("Classic");
+  const [currentAvatar, setCurrentAvatar] = useState<ClientAvatar>({ avatar: "", kind: "Adventurer", id: "" });
   const handleSubmit: FormEventHandler = (e: FormEvent) => {
     e.preventDefault();
   };
   useEffect(() => {
-    console.log(avatars[0][1].avatar);
+    console.log(avatars);
   }, []);
   return (
     <>
@@ -41,7 +83,8 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => 
             <AccentText inverted={false}>Room Name</AccentText>
             <input type='text' name='Room Name' required autoComplete='off' />
           </div>
-          <div className={styles.avatars}>
+          <div className={styles["avatars-wrapper"]}>
+            {currentAvatar.avatar && <div dangerouslySetInnerHTML={{ __html: currentAvatar.avatar }} />}
             <Button
               style={{ border: `1px solid ${accentColor}`, width: "15rem" }}
               type='button'
@@ -63,10 +106,11 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => 
                 <motion.li
                   onClick={() => setCurrentCategory(category)}
                   animate={{
-                    scale: currentCategory === category ? 1.3 : 1,
+                    scale: currentCategory === category ? 1.2 : 1,
+
+                    fontWeight: currentCategory === category ? 600 : 400,
                     transition: {
-                      type: "spring",
-                      damping: 6,
+                      duration: 0.3,
                     },
                   }}
                   key={category}
@@ -75,6 +119,15 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => 
                 </motion.li>
               ))}
             </ul>
+            <Avatars
+              avatars={avatars}
+              currentAvatar={currentAvatar}
+              currentAvatarCategory={currentCategory}
+              onClose={newAvatar => {
+                setCurrentAvatar(newAvatar);
+                setIsModalOpen(false);
+              }}
+            />
           </div>
         </>
       </Modal>

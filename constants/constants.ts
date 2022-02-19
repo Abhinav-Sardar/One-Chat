@@ -1,11 +1,10 @@
 import * as classicStyle from "@dicebear/avatars-avataaars-sprites";
 import * as adventurerStyle from "@dicebear/adventurer";
-import * as robotsStyle from "@dicebear/avatars-bottts-sprites";
 import * as comicStyle from "@dicebear/micah";
 import { createAvatar, Style } from "@dicebear/avatars";
 import { ClientRequest } from "http";
-const avatarCategories = ["Classic", "Adventurer", "Robots", "Comic"] as const;
-export type ClientAvatar = { avatar: string; kind: typeof avatarCategories[number] };
+const avatarCategories = ["Classic", "Adventurer", "Comic"] as const;
+export type ClientAvatar = { avatar: string; kind: typeof avatarCategories[number]; id: string };
 
 const config = {
   localStoragePrefix: "ONE-CHAT-",
@@ -35,21 +34,19 @@ export const getAvatars: () => ClientAvatar[][] = () => {
   let adventurers: ClientAvatar[] = [];
   let classics: ClientAvatar[] = [];
   let comics: ClientAvatar[] = [];
-  let robots: ClientAvatar[] = [];
-  const fields = [adventurers, classics, comics, robots];
+  const fields = [adventurers, classics, comics];
   const fieldsInfo: [ClientAvatar["kind"], Style<{}>][] = [
     ["Adventurer", adventurerStyle],
     ["Classic", classicStyle],
     ["Comic", comicStyle],
-    ["Robots", robotsStyle],
   ];
-  for (let i1 = 0; i1 < 4; i1++) {
+  for (let i1 = 0; i1 < 3; i1++) {
     const currentField = fields[i1];
     for (let i2 = 0; i2 < 48; i2++) {
       currentField.push({
-        avatar: createAvatar(fieldsInfo[i1][1], { radius: 50 }),
-
+        avatar: createAvatar(fieldsInfo[i1][1], { radius: 50, height: 50, width: 50 }),
         kind: fieldsInfo[i1][0],
+        id: getRandomKey(),
       });
     }
   }

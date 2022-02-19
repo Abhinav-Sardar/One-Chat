@@ -24,8 +24,8 @@ body,
   z-index: 1;
 }
 
-/* @media screen and (max-width: 900px) {
+@media screen and (max-width: 900px) {
   html {
     font-size: 80%;
   }
-} */
+}

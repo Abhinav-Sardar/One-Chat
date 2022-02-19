@@ -33,11 +33,31 @@
   }
 }
 
-.avatars {
+.avatars-wrapper {
+  width: 100%;
   margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  div {
+    height: 5rem;
+    width: 5rem;
+    margin: 1rem 0;
+    border-radius: 50%;
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+    }
+  }
 }
 .content {
-  height: 100%;
+  height: 80%;
   display: flex;
   flex-direction: column;
 }
@@ -48,7 +68,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  margin-top: 1rem;
+  margin: 1.5rem 0;
   li {
     font-size: 1.5rem;
     font-family: "Raleway", sans-serif;
@@ -58,5 +78,37 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+}
+.avatars {
+  height: 75%;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+
+  main {
+    height: 100%;
+    overflow: auto;
+    text-align: center;
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem 2rem;
+
+    div {
+      height: 5rem;
+      width: 5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      cursor: pointer;
+      svg {
+        height: 100%;
+        width: 100%;
+        border-radius: 50%;
+      }
+    }
   }
 }

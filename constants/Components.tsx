@@ -42,6 +42,7 @@ export const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <>
+      {/* @ts-ignore */}
       <motion.button
         onClick={onClick}
         className={styles.button}
@@ -109,34 +110,7 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
       },
     },
   };
-  const modalVariants: Variants = {
-    initial: {
-      opacity: 0,
-      borderRadius: "10px",
-      height: 0,
-      width: 0,
-    },
 
-    animate: {
-      height: "40rem",
-      width: "50rem",
-      opacity: 1,
-
-      transition: {
-        duration: 1,
-        ease: "easeInOut",
-      },
-    },
-    exit: {
-      opacity: 0,
-      height: 0,
-      width: 0,
-      transition: {
-        duration: 1,
-        ease: "easeInOut",
-      },
-    },
-  };
   useEffect(() => {
     setMounted(true);
     return () => {
@@ -158,7 +132,7 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
           <motion.div
             // @ts-ignore
 
-            variants={modalVariants}
+            variants={overlayVariants}
             className={styles.modal}
             exit='exit'
             initial='initial'
