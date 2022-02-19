@@ -1,0 +1,36 @@
+.button {
+  font-size: 20px;
+  min-height: 3rem;
+  min-width: 10rem;
+  border: 0;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0 1em;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  background: #bd14ca;
+  flex-direction: column;
+  padding: 0.1rem;
+  header {
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      position: absolute;
+      right: 1rem;
+    }
+  }
+}

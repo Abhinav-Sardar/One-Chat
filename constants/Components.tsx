@@ -6,7 +6,8 @@ import { getConstants } from "./constants";
 import { ButtonProps, SafeLinkProps, ModalProps } from "./Types";
 import ReactDOM from "react-dom";
 import { VscChromeClose } from "react-icons/vsc";
-const [accentColor] = getConstants("accentColor") as [string];
+import styles from "../styles/Components.module.scss";
+const { accentColor } = getConstants();
 export const PageWrapper: FC = ({ children }) => {
   return (
     <motion.div
@@ -39,25 +40,13 @@ export const Button: FC<ButtonProps> = ({
   children,
   ...rest
 }) => {
-  const defaultButtonStyles = {
-    fontSize: "20px",
-    minHeight: "3rem",
-    minWidth: "10rem",
-    border: 0,
-    fontFamily: '"Poppins", sans-serif',
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: "5px",
-    cursor: "pointer",
-    padding: "0 1em",
-  };
   return (
     <>
       <motion.button
         onClick={onClick}
-        // @ts-ignore
-        initial={{ ...defaultButtonStyles, ...rest.style, color, backgroundColor }}
+        className={styles.button}
+        style={{ ...rest.style }}
+        initial={{ color, backgroundColor }}
         {...rest}
         whileHover={{
           backgroundColor: color,
@@ -76,41 +65,31 @@ export const Button: FC<ButtonProps> = ({
   );
 };
 
-export const AccentText: FC<{ style?: CSSProperties }> = ({ children, style }) => {
+export const AccentText: FC<{ style?: CSSProperties; inverted: boolean }> = ({ children, style, inverted }) => {
   return (
     <>
       <style jsx>
         {`
-          span {
-            color: ${accentColor};
+          .accentText {
+            color: ${inverted ? "#fff" : accentColor};
             font-family: "Raleway", sans-serif;
             font-size: 1.9rem;
           }
-          span::selection {
-            background: ${accentColor};
-            color: white;
+          .accentText::selection {
+            background: ${inverted ? "#fff" : accentColor};
+            color: ${inverted ? accentColor : "#fff"};
           }
         `}
       </style>
-
-      <span style={style}>{children}</span>
+      <span className='accentText' style={style}>
+        {children}
+      </span>
     </>
   );
 };
 
 export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
   const [mounted, setMounted] = useState<boolean>(false);
-  const initialStyles = {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50% , -50%)",
-    zIndex: 2,
-    display: "flex",
-    background: accentColor,
-
-    flexDirection: "column",
-  };
   const overlayVariants: Variants = {
     initial: {
       opacity: 0,
@@ -168,19 +147,6 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          <style jsx>
-            {`
-              .header-title {
-                color: white;
-                font-family: "Raleway", sans-serif;
-                font-size: 1.9rem;
-              }
-              .header-title::selection {
-                background: white;
-                color: ${accentColor};
-              }
-            `}
-          </style>
           <motion.div
             className='modal-overlay'
             variants={overlayVariants}
@@ -190,24 +156,19 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
             exit='exit'
           />
           <motion.div
-            style={initialStyles}
+            // @ts-ignore
+
             variants={modalVariants}
-            className='modal'
+            className={styles.modal}
             exit='exit'
             initial='initial'
             animate='animate'
           >
-            <div className='header'>
-              <div />
-              <span className='header-title'>{title}</span>
+            <header className='header'>
+              <AccentText inverted={true}>{title}</AccentText>
 
-              <VscChromeClose
-                fill='white'
-                fontSize='2rem'
-                style={{ marginRight: ".5rem", cursor: "pointer" }}
-                onClick={onClose}
-              />
-            </div>
+              <VscChromeClose fill='white' fontSize='2rem' style={{ cursor: "pointer" }} onClick={onClose} />
+            </header>
             <div className='content' style={{ flex: 1 }}>
               {children}
             </div>

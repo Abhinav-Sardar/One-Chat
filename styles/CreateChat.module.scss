@@ -1,0 +1,62 @@
+.page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.form {
+  width: 47%;
+  padding: 2rem 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.field {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 1rem 0;
+  input {
+    height: 2.5rem;
+    font-size: 1.2rem;
+    outline: 0;
+    font-family: "Nunito", sans-serif;
+    padding: 0 2px;
+    border: 1.5px solid black;
+    border-radius: 5px;
+    &:focus {
+      border: 2px solid #bd14ca;
+    }
+  }
+}
+
+.avatars {
+  margin: 2rem 0;
+}
+.content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.tabs {
+  list-style: none;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-top: 1rem;
+  li {
+    font-size: 1.5rem;
+    font-family: "Raleway", sans-serif;
+    cursor: pointer;
+    display: block;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

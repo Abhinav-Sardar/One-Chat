@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { AccentText, Button, Logo, SafeLink } from "../constants/Components";
 import { getConstants } from "../constants/constants";
-import styles from "../styles/Homepage.module.css";
+import styles from "../styles/Homepage.module.scss";
 import Head from "next/head";
 import { AnimateSharedLayout, motion } from "framer-motion";
 import { URLPaths } from "../constants/Types";
@@ -29,7 +29,7 @@ const paths: PathsItemArray = [
 ];
 
 const HomePage: NextPage = () => {
-  const [accentColor, appName] = getConstants("accentColor", "appName") as string[];
+  const { accentColor, appName } = getConstants();
   return (
     <>
       <Head>
@@ -38,7 +38,7 @@ const HomePage: NextPage = () => {
       <div className={styles.page} style={{ background: `linear-gradient(60deg ,${accentColor} , white)` }}>
         <header className={styles.header} style={{ color: accentColor }}>
           <Logo size={0.3} />
-          <AccentText>One-Chat</AccentText>
+          <AccentText inverted={false}>One-Chat</AccentText>
         </header>
         <main className={styles["main-content"]}>
           <motion.div
@@ -49,9 +49,11 @@ const HomePage: NextPage = () => {
             <Logo size={1.3} />
           </motion.div>
           <div className='text' style={{ display: "flex", flexDirection: "column", textAlign: "center", width: "80%" }}>
-            <AccentText style={{ fontSize: "5rem" }}>One-Chat</AccentText>
+            <AccentText style={{ fontSize: "5rem" }} inverted={false}>
+              One-Chat
+            </AccentText>
             <br />
-            <AccentText>The best place for One-Time chats with anyone in the world.</AccentText>
+            <AccentText inverted={false}>The best place for One-Time chats with anyone in the world.</AccentText>
           </div>
           <div className={styles["navigation-btns"]}>
             {paths.map(path => (
