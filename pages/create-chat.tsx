@@ -1,7 +1,7 @@
 import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { FC, FormEvent, FormEventHandler, useEffect, useState } from "react";
-import { AccentText, Button, Modal } from "../constants/Components";
+import { AccentText, Button, Modal, Toggle } from "../constants/Components";
 import { ClientAvatar, getAvatars, getConstants } from "../constants/constants";
 import styles from "../styles/CreateChat.module.scss";
 import { BiCurrentLocation, BiUser } from "react-icons/bi";
@@ -14,18 +14,18 @@ const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose, currentAva
   const variants = {
     initial: {
       opacity: 0,
-      scale: 0.8,
+      y: 10,
     },
     animate: {
       opacity: 1,
-      scale: 1,
+      y: 0,
 
       transition: {
         duration: 0.6,
       },
     },
     exit: {
-      scale: 0.8,
+      y: 10,
       opacity: 0,
       transition: {
         duration: 0.6,
@@ -54,11 +54,12 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentCategory, setCurrentCategory] = useState<typeof avatarCategories[number]>("Classic");
   const [currentAvatar, setCurrentAvatar] = useState<ClientAvatar>({ avatar: "", kind: "Adventurer", id: "" });
+  const [isToggled, setIsToggled] = useState<boolean>(false);
   const handleSubmit: FormEventHandler = (e: FormEvent) => {
     e.preventDefault();
   };
   useEffect(() => {
-    console.log(avatars);
+    setCurrentAvatar(avatars[0][0]);
   }, []);
   return (
     <>
@@ -92,6 +93,10 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => 
             >
               Choose Avatar <BiUser />
             </Button>
+          </div>
+          <div className={styles["toggle-wrapper"]}>
+            <AccentText inverted={false}>{isToggled ? "Private" : "Public"}</AccentText>
+            <Toggle isToggled={isToggled} setIsToggled={setIsToggled} />
           </div>
           <Button style={{ border: `1px solid ${accentColor}` }} type='submit'>
             Create Room

@@ -1,9 +1,9 @@
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, Variants } from "framer-motion";
 import Link, { LinkProps } from "next/link";
 import { CSSProperties, FC, ReactPortal, useEffect, useState } from "react";
 import { IoChatboxSharp } from "react-icons/io5";
 import { getConstants } from "./constants";
-import { ButtonProps, SafeLinkProps, ModalProps } from "./Types";
+import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps } from "./Types";
 import ReactDOM from "react-dom";
 import { VscChromeClose } from "react-icons/vsc";
 import styles from "../styles/Components.module.scss";
@@ -152,4 +152,21 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
     </AnimatePresence>
   );
   return mounted ? ReactDOM.createPortal(element, document.getElementById("modal")!) : null;
+};
+export const Toggle: FC<ToggleProps> = ({ isToggled, setIsToggled }) => {
+  return (
+    <motion.div
+      className={styles.toggle}
+      animate={{
+        backgroundColor: isToggled ? "lime" : "red",
+        transition: {
+          duration: 5,
+        },
+      }}
+      onClick={() => setIsToggled(!isToggled)}
+      data-istoggled={isToggled}
+    >
+      <motion.div className='toggle-btn' layout transition={{ duration: 0.3 }} />
+    </motion.div>
+  );
 };

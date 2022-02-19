@@ -44,7 +44,7 @@ export const getAvatars: () => ClientAvatar[][] = () => {
     const currentField = fields[i1];
     for (let i2 = 0; i2 < 48; i2++) {
       currentField.push({
-        avatar: createAvatar(fieldsInfo[i1][1], { radius: 50, height: 50, width: 50 }),
+        avatar: createAvatar(fieldsInfo[i1][1]),
         kind: fieldsInfo[i1][0],
         id: getRandomKey(),
       });

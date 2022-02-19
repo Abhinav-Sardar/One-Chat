@@ -23,3 +23,7 @@ export interface AvatarsProps {
   currentAvatarCategory: ClientAvatar["kind"];
   avatars: ClientAvatar[][];
 }
+export interface ToggleProps {
+  isToggled: boolean;
+  setIsToggled: Dispatch<SetStateAction<boolean>>;
+}

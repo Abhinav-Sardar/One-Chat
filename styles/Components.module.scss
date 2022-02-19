@@ -36,3 +36,26 @@
     }
   }
 }
+
+.toggle {
+  height: 2rem;
+  width: 4rem;
+  border-radius: 100px;
+  background-color: gray;
+  margin: 1rem 0;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  &[data-istoggled="true"] {
+    justify-content: flex-end;
+  }
+  &[data-istoggled="false"] {
+    justify-content: flex-start;
+  }
+  div {
+    height: 1.6rem;
+    width: 1.6rem;
+    background-color: white;
+    border-radius: 50%;
+  }
+}
