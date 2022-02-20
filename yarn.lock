@@ -27,11 +27,6 @@
   resolved "https://registry.yarnpkg.com/@dicebear/avatars-avataaars-sprites/-/avatars-avataaars-sprites-4.10.2.tgz#194b4c46e571d0573cc75ad4556de62c06745494"
   integrity sha512-rnzPlMWUXfIIC56Mxu7hAgwm5PLlcLE3x4hxdwmW8gMHEbuHnlbkFxN+hOBJMDutDqosaw5h3LWItBdu3mA86A==
 
-"@dicebear/avatars-bottts-sprites@^4.10.2":
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/@dicebear/avatars-bottts-sprites/-/avatars-bottts-sprites-4.10.2.tgz#3c826c395012a05f27cc0a2f2e0329182092ff4b"
-  integrity sha512-gvjRZzLZgRnMyZvDPCt5RlEcov8bTIN5PcVDe+YPIRoj1kXRypJ1bwBvVEwPoglTDoCbHXXXxpqZ/Ll7R3fGMQ==
-
 "@dicebear/avatars@^4.10.2":
   version "4.10.2"
   resolved "https://registry.yarnpkg.com/@dicebear/avatars/-/avatars-4.10.2.tgz#140ff080752d2923ffdba7f4664c8937999bfd3f"

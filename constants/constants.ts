@@ -11,6 +11,10 @@ const config = {
   accentColor: "#bd14ca",
   appName: "One-Chat",
   avatarCategories: avatarCategories,
+  serverURls: {
+    socket: "http://localhost:1919",
+    rooms: "http://localhost:1919/rooms/",
+  },
 };
 export const getConstants = () => {
   return config;
@@ -36,8 +40,8 @@ export const getAvatars: () => ClientAvatar[][] = () => {
   let comics: ClientAvatar[] = [];
   const fields = [adventurers, classics, comics];
   const fieldsInfo: [ClientAvatar["kind"], Style<{}>][] = [
-    ["Adventurer", adventurerStyle],
     ["Classic", classicStyle],
+    ["Adventurer", adventurerStyle],
     ["Comic", comicStyle],
   ];
   for (let i1 = 0; i1 < 3; i1++) {
@@ -53,3 +57,14 @@ export const getAvatars: () => ClientAvatar[][] = () => {
 
   return fields;
 };
+export function validateText(input: string, length: number, messageAlias: string): Promise<string> {
+  return new Promise((res, rej) => {
+    if (!input || !input.trim()) {
+      rej(`Invalid ${messageAlias}`);
+    } else if (input.length > length) {
+      rej(`${messageAlias} is too long`);
+    } else {
+      res("Sucess!");
+    }
+  });
+}

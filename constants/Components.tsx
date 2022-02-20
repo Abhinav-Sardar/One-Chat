@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useMotionValue, Variants } from "framer-motion";
 import Link, { LinkProps } from "next/link";
-import { CSSProperties, FC, ReactPortal, useEffect, useState } from "react";
+import { createContext, CSSProperties, FC, ReactPortal, useEffect, useState } from "react";
 import { IoChatboxSharp } from "react-icons/io5";
 import { getConstants } from "./constants";
 import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps } from "./Types";
@@ -110,7 +110,26 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
       },
     },
   };
-
+  const modalVariants: Variants = {
+    initial: {
+      opacity: 0,
+      y: 200,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: 200,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
   useEffect(() => {
     setMounted(true);
     return () => {
@@ -132,7 +151,7 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
           <motion.div
             // @ts-ignore
 
-            variants={overlayVariants}
+            variants={modalVariants}
             className={styles.modal}
             exit='exit'
             initial='initial'
@@ -155,18 +174,15 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
 };
 export const Toggle: FC<ToggleProps> = ({ isToggled, setIsToggled }) => {
   return (
-    <motion.div
-      className={styles.toggle}
-      animate={{
-        backgroundColor: isToggled ? "lime" : "red",
-        transition: {
-          duration: 5,
-        },
-      }}
-      onClick={() => setIsToggled(!isToggled)}
-      data-istoggled={isToggled}
-    >
-      <motion.div className='toggle-btn' layout transition={{ duration: 0.3 }} />
-    </motion.div>
+    <>
+      <motion.div
+        className={`${styles.toggle}`}
+        data-istoggled={isToggled}
+        transition={{ duration: 1 }}
+        onClick={() => setIsToggled(!isToggled)}
+      >
+        <motion.div className={`toggle-btn`} layout transition={{ duration: 0.3 }} />
+      </motion.div>
+    </>
   );
 };

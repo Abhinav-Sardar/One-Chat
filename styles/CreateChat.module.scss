@@ -62,12 +62,13 @@
 }
 .tabs {
   list-style: none;
-  height: 2rem;
+  height: 10%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  margin: 1.5rem 0;
+
+  flex-wrap: wrap;
   li {
     font-size: 1.5rem;
     font-family: "Raleway", sans-serif;
@@ -77,24 +78,30 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    display: flex;
+    flex-direction: column;
+    div {
+      width: 70%;
+      height: 3px;
+      background-color: white;
+    }
   }
 }
 .avatars {
-  height: 75%;
   display: flex;
   justify-content: center;
-  overflow-y: hidden;
-
+  overflow: hidden;
+  align-items: center;
+  height: 90%;
   main {
+    gap: 2rem;
     height: 100%;
-    overflow: auto;
     text-align: center;
     display: flex;
     width: 100%;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 2rem 2rem;
-
+    padding-bottom: 200px;
     div {
       height: 5rem;
       width: 5rem;

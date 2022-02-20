@@ -27,3 +27,16 @@ export interface ToggleProps {
   isToggled: boolean;
   setIsToggled: Dispatch<SetStateAction<boolean>>;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  avatar: string;
+  room: string;
+  host: boolean;
+}
+export interface Room {
+  name: string;
+  isPublic: boolean;
+  members: User[];
+}
