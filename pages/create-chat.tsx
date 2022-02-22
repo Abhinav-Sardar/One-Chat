@@ -2,97 +2,103 @@ import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { FC, FormEvent, FormEventHandler, useEffect, useRef, useState } from "react";
 import { AccentText, Button, Modal, Toggle } from "../constants/Components";
-import { ClientAvatar, getAvatars, getConstants, validateText } from "../constants/constants";
+import { getAvatars, getConstants, getRandomKey, validateText } from "../constants/constants";
 import styles from "../styles/CreateChat.module.scss";
 import { BiCurrentLocation, BiUser } from "react-icons/bi";
-import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
-import { AvatarsProps } from "../constants/Types";
+import { AnimatePresence, motion } from "framer-motion";
+import { AvatarsProps, ClientAvatar } from "../constants/Types";
+import { useRouter } from "next/router";
+import { REPL_MODE_SLOPPY } from "repl";
+import { useUser } from "../constants/Context";
 const title = "Create A Chat Room";
-const { accentColor, avatarCategories, serverURls } = getConstants();
-const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose, currentAvatarCategory }) => {
-  const currentAvatars = avatars.find(category => category[0].kind === currentAvatarCategory)!;
-  const variants = {
-    initial: {
-      opacity: 0,
-      y: 10,
-    },
-    animate: {
-      opacity: 1,
-      y: 0,
-
-      transition: {
-        duration: 0.3,
-      },
-    },
-    exit: {
-      y: 10,
-      opacity: 0,
-      transition: {
-        duration: 0.3,
-      },
-    },
-  };
+const { accentColor, serverURls, varaints } = getConstants();
+const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose }) => {
   return (
-    <div className={styles.avatars}>
-      <AnimatePresence exitBeforeEnter>
-        <motion.main variants={variants} initial='initial' animate='animate' exit='exit' key={currentAvatarCategory}>
-          {currentAvatars.map((avatar, i) => (
-            <motion.div
-              key={avatar.id}
-              whileTap={{ scale: 0.9 }}
-              whileHover={{ scale: 1.1 }}
-              onClick={() => onClose(avatar)}
-              dangerouslySetInnerHTML={{ __html: avatar.avatar }}
-              style={{ border: `3px solid ${currentAvatar.avatar === avatar.avatar ? "yellow" : "white"}` }}
-            ></motion.div>
-          ))}
-        </motion.main>
-      </AnimatePresence>
-    </div>
+    <motion.div className={styles.content}>
+      {avatars.map((a, i) => (
+        <motion.div
+          className={styles["avatar"]}
+          dangerouslySetInnerHTML={{ __html: a.avatar }}
+          onClick={() => onClose(a)}
+          key={a.id}
+          initial={{
+            scale: 0,
+            y: 200,
+          }}
+          animate={{
+            scale: 1,
+            y: 0,
+            transition: {
+              duration: 0.4,
+              delay: (i + 1) * 0.1,
+            },
+          }}
+          whileHover={{
+            scale: 1.2,
+          }}
+          whileTap={{
+            scale: 0.85,
+          }}
+          style={{
+            borderColor: currentAvatar.id === a.id ? "yellow" : "white",
+          }}
+        />
+      ))}
+    </motion.div>
   );
 };
 // @ts-ignore
-const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => {
+
+const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [currentCategory, setCurrentCategory] = useState<typeof avatarCategories[number]>("Classic");
-  const [currentAvatar, setCurrentAvatar] = useState<ClientAvatar>({ avatar: "", kind: "Adventurer", id: "" });
+  const [currentAvatar, setCurrentAvatar] = useState<ClientAvatar>({ avatar: "", id: "" });
   const [isToggled, setIsToggled] = useState<boolean>(false);
   const inpRef = useRef<HTMLInputElement | null>(null);
   const roomRef = useRef<HTMLInputElement | null>(null);
-  console.log("I am being rendered");
+  const [user, setUser] = useUser();
+  const router = useRouter();
   const handleSubmit: FormEventHandler = async (e: FormEvent) => {
     e.preventDefault();
     const { value: inpValue } = inpRef.current!;
     const { value: roomValue } = roomRef.current!;
     console.log(inpValue, roomValue);
     try {
-      await validateText(inpValue, 15, "Name");
+      await validateText(inpValue, 20, "Name");
+
       try {
-        await validateText(roomValue, 20, "Room Name");
+        await validateText(roomValue, 25, "Room Name");
         const res = await fetch(serverURls.rooms, {
           method: "POST",
           body: JSON.stringify({
-            name: inpValue.trimStart().trimEnd(),
             roomName: roomValue.trim(),
-            avatar: currentAvatar.avatar,
-            public: !isToggled,
+            isPublic: !isToggled,
           }),
           headers: {
             "Content-Type": "application/json",
           },
         });
-        const response = await res.json();
-        console.log(response);
+        const data = await res.json();
+        if (!data.error) {
+          setUser({
+            avatar: currentAvatar.avatar,
+            id: getRandomKey(),
+            host: true,
+            name: inpValue,
+            room: roomValue,
+          });
+          router.push(`/chat/${roomValue}`);
+        }
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     } catch (e) {
       console.log(e);
     }
   };
   useEffect(() => {
-    setCurrentAvatar(avatars[0][0]);
+    setCurrentAvatar(avatars[0]);
   }, []);
+
   return (
     <>
       <Head>
@@ -112,13 +118,13 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => 
             <label htmlFor='Name'>
               <AccentText inverted={false}>Name</AccentText>
             </label>
-            <input type='text' name='Name' autoComplete='off' ref={inpRef} />
+            <input type='text' name='Name' autoComplete='off' ref={inpRef} required />
           </div>
           <div className={styles.field}>
             <label htmlFor='Room Name'>
               <AccentText inverted={false}>Room Name</AccentText>
             </label>
-            <input type='text' name='Room Name' autoComplete='off' ref={roomRef} />
+            <input type='text' name='Room Name' autoComplete='off' ref={roomRef} required />
           </div>
           <div className={styles["avatars-wrapper"]}>
             {currentAvatar.avatar && <div dangerouslySetInnerHTML={{ __html: currentAvatar.avatar }} />}
@@ -141,37 +147,9 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[][] }) => 
       </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title='Choose Your Avatar'>
         <>
-          <ul className={styles.tabs}>
-            {avatarCategories.map(category => (
-              <motion.li
-                onClick={() => setCurrentCategory(category)}
-                animate={{
-                  scale: currentCategory === category ? 1.2 : 1,
-
-                  fontWeight: currentCategory === category ? 600 : 400,
-                  transition: {
-                    duration: 0.3,
-                  },
-                }}
-                key={category}
-              >
-                <AccentText inverted={true}>{category}</AccentText>
-
-                {category === currentCategory ? (
-                  <motion.div
-                    layoutId='underline'
-                    transition={{
-                      duration: 0.3,
-                    }}
-                  />
-                ) : null}
-              </motion.li>
-            ))}
-          </ul>
           <Avatars
             avatars={avatars}
             currentAvatar={currentAvatar}
-            currentAvatarCategory={currentCategory}
             onClose={newAvatar => {
               setCurrentAvatar(newAvatar);
               setIsModalOpen(false);

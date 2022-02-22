@@ -1,6 +1,5 @@
 import { LinkProps } from "next/link";
 import { ButtonHTMLAttributes, CSSProperties, Dispatch, ReactChildren, ReactNode, SetStateAction } from "react";
-import { ClientAvatar } from "./constants";
 
 export interface ContextType {}
 export type URLPaths = "/" | "/create-chat" | "/join-chat" | `/chat/${string}`;
@@ -20,13 +19,13 @@ export interface ModalProps {
 export interface AvatarsProps {
   onClose: (avatar: ClientAvatar) => void;
   currentAvatar: ClientAvatar;
-  currentAvatarCategory: ClientAvatar["kind"];
-  avatars: ClientAvatar[][];
+  avatars: ClientAvatar[];
 }
 export interface ToggleProps {
   isToggled: boolean;
   setIsToggled: Dispatch<SetStateAction<boolean>>;
 }
+export type ClientAvatar = { avatar: string; id: string };
 
 export interface User {
   id: string;
@@ -36,7 +35,7 @@ export interface User {
   host: boolean;
 }
 export interface Room {
-  name: string;
+  roomName: string;
   isPublic: boolean;
   members: User[];
 }

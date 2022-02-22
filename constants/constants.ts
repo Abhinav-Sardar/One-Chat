@@ -1,20 +1,58 @@
-import * as classicStyle from "@dicebear/avatars-avataaars-sprites";
-import * as adventurerStyle from "@dicebear/adventurer";
-import * as comicStyle from "@dicebear/micah";
-import { createAvatar, Style } from "@dicebear/avatars";
+import * as style from "@dicebear/avatars-avataaars-sprites";
+import { createAvatar } from "@dicebear/avatars";
 import { ClientRequest } from "http";
-const avatarCategories = ["Classic", "Adventurer", "Comic"] as const;
-export type ClientAvatar = { avatar: string; kind: typeof avatarCategories[number]; id: string };
-
+import { ClientAvatar } from "./Types";
+import { Variants } from "framer-motion";
+const varaints: { [key: string]: Variants } = {
+  modalVariants: {
+    initial: {
+      opacity: 0,
+      y: 200,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: 200,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  },
+  modalOverlayVariants: {
+    initial: {
+      opacity: 0,
+    },
+    animate: {
+      opacity: 1,
+      transition: {
+        duration: 1,
+        ease: "easeInOut",
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: 1,
+        ease: "easeInOut",
+      },
+    },
+  },
+};
 const config = {
   localStoragePrefix: "ONE-CHAT-",
   accentColor: "#bd14ca",
   appName: "One-Chat",
-  avatarCategories: avatarCategories,
   serverURls: {
     socket: "http://localhost:1919",
     rooms: "http://localhost:1919/rooms/",
   },
+  varaints,
 };
 export const getConstants = () => {
   return config;
@@ -34,29 +72,7 @@ export const getRandomKey: () => string = () => {
   }
   return char;
 };
-export const getAvatars: () => ClientAvatar[][] = () => {
-  let adventurers: ClientAvatar[] = [];
-  let classics: ClientAvatar[] = [];
-  let comics: ClientAvatar[] = [];
-  const fields = [adventurers, classics, comics];
-  const fieldsInfo: [ClientAvatar["kind"], Style<{}>][] = [
-    ["Classic", classicStyle],
-    ["Adventurer", adventurerStyle],
-    ["Comic", comicStyle],
-  ];
-  for (let i1 = 0; i1 < 3; i1++) {
-    const currentField = fields[i1];
-    for (let i2 = 0; i2 < 48; i2++) {
-      currentField.push({
-        avatar: createAvatar(fieldsInfo[i1][1]),
-        kind: fieldsInfo[i1][0],
-        id: getRandomKey(),
-      });
-    }
-  }
 
-  return fields;
-};
 export function validateText(input: string, length: number, messageAlias: string): Promise<string> {
   return new Promise((res, rej) => {
     if (!input || !input.trim()) {
@@ -68,3 +84,11 @@ export function validateText(input: string, length: number, messageAlias: string
     }
   });
 }
+
+export const getAvatars: () => ClientAvatar[] = () => {
+  let avatars: ClientAvatar[] = [];
+  for (let i = 0; i < 60; i++) {
+    avatars.push({ avatar: createAvatar(style), id: getRandomKey() });
+  }
+  return avatars;
+};

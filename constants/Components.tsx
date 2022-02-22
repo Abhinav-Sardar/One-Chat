@@ -7,7 +7,10 @@ import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps } from "./Types";
 import ReactDOM from "react-dom";
 import { VscChromeClose } from "react-icons/vsc";
 import styles from "../styles/Components.module.scss";
-const { accentColor } = getConstants();
+const {
+  accentColor,
+  varaints: { modalVariants, modalOverlayVariants },
+} = getConstants();
 export const PageWrapper: FC = ({ children }) => {
   return (
     <motion.div
@@ -91,45 +94,7 @@ export const AccentText: FC<{ style?: CSSProperties; inverted: boolean }> = ({ c
 
 export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
   const [mounted, setMounted] = useState<boolean>(false);
-  const overlayVariants: Variants = {
-    initial: {
-      opacity: 0,
-    },
-    animate: {
-      opacity: 1,
-      transition: {
-        duration: 1,
-        ease: "easeInOut",
-      },
-    },
-    exit: {
-      opacity: 0,
-      transition: {
-        duration: 1,
-        ease: "easeInOut",
-      },
-    },
-  };
-  const modalVariants: Variants = {
-    initial: {
-      opacity: 0,
-      y: 200,
-    },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: 200,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
+
   useEffect(() => {
     setMounted(true);
     return () => {
@@ -142,7 +107,7 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
         <>
           <motion.div
             className='modal-overlay'
-            variants={overlayVariants}
+            variants={modalOverlayVariants}
             initial='initial'
             animate='animate'
             onClick={onClose}
