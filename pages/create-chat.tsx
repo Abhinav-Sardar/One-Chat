@@ -10,6 +10,7 @@ import { AvatarsProps, ClientAvatar } from "../constants/Types";
 import { useRouter } from "next/router";
 import { REPL_MODE_SLOPPY } from "repl";
 import { useUser } from "../constants/Context";
+import { isUint8ClampedArray } from "util/types";
 const title = "Create A Chat Room";
 const { accentColor, serverURls, varaints } = getConstants();
 const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose }) => {
@@ -96,6 +97,7 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
     }
   };
   useEffect(() => {
+    inpRef.current?.focus();
     setCurrentAvatar(avatars[0]);
   }, []);
 
@@ -118,7 +120,7 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
             <label htmlFor='Name'>
               <AccentText inverted={false}>Name</AccentText>
             </label>
-            <input type='text' name='Name' autoComplete='off' ref={inpRef} required />
+            <input type='text' name='Name' autoComplete='off' ref={inpRef} required autoFocus />
           </div>
           <div className={styles.field}>
             <label htmlFor='Room Name'>

@@ -61,8 +61,9 @@ const HomePage: NextPage = () => {
                 <div>
                   <Button
                     style={{
-                      minHeight: "5rem",
+                      minHeight: "4rem",
                       fontSize: "1.4rem",
+                      border: "none",
                     }}
                   >
                     <span> {path.navigationContent}</span> <path.Icon style={{ marginLeft: "1rem" }} />

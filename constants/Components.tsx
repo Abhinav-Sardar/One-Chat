@@ -45,26 +45,27 @@ export const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <>
-      {/* @ts-ignore */}
-      <motion.button
-        onClick={onClick}
-        className={styles.button}
-        style={{ ...rest.style }}
-        initial={{ color, backgroundColor }}
-        {...rest}
-        whileHover={{
-          backgroundColor: color,
-          color: backgroundColor,
-          transition: {
-            duration: 0.4,
-          },
-        }}
-        whileTap={{
-          scale: 0.9,
-        }}
-      >
+      <style jsx>
+        {`
+          button {
+            color: ${color};
+            background-color: ${backgroundColor};
+            border: 1px solid ${backgroundColor};
+            transition: color 400ms ease-in-out, background-color 400ms ease-in-out, transform 200ms ease-in-out;
+          }
+          button:hover {
+            background-color: ${color};
+
+            color: ${backgroundColor};
+          }
+          button:active {
+            transform: scale(0.9);
+          }
+        `}
+      </style>
+      <button className={styles.button} {...rest} onClick={onClick}>
         {children}
-      </motion.button>
+      </button>
     </>
   );
 };

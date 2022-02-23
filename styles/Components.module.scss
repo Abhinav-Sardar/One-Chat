@@ -1,15 +1,15 @@
 .button {
-  font-size: 20px;
-  min-height: 3rem;
-  min-width: 10rem;
+  font-size: 1.3rem;
   border: 0;
   font-family: "Poppins", sans-serif;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   border-radius: 5px;
   cursor: pointer;
   padding: 0 1em;
+  background-color: red;
+  min-height: 2.5rem;
 }
 
 .modal {

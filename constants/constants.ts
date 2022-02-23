@@ -92,3 +92,14 @@ export const getAvatars: () => ClientAvatar[] = () => {
   }
   return avatars;
 };
+function pad(string: string | number): string {
+  return String(string).padStart(2, "0");
+}
+export const formatDate: (date: Date, includeSeconds: boolean) => string = (date, includeSeconds) => {
+  const hour = Number(pad(date.getHours() + 1));
+  const minutes = pad(date.getMinutes() + 1);
+  const seconds = pad(date.getSeconds() + 1);
+  const ampm = hour > 12 ? "PM" : "AM";
+  const hour12 = pad(hour > 12 ? hour - 12 : hour);
+  return `${hour12}:${minutes}:${includeSeconds ? seconds : ""} ${ampm}`;
+};

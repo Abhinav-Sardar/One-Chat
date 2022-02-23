@@ -1,8 +1,9 @@
-import { GetStaticPaths, GetStaticPathsResult, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, GetStaticPaths, GetStaticPathsResult, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { Router, useRouter } from "next/router";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import io, { Socket } from "socket.io-client";
+import { Header } from "../../constants/Chat.SubComponents";
 import { getConstants } from "../../constants/constants";
 import { useUser } from "../../constants/Context";
 import { Room } from "../../constants/Types";
@@ -11,6 +12,7 @@ const { serverURls } = getConstants();
 const Chat: FC = () => {
   const socket = useRef<Socket | null>(null);
   const [user, setUser] = useUser();
+  const [counter, setCounter] = useState<number>(0);
   useEffect(() => {
     socket.current = io(serverURls.socket);
     socket.current.on("connect", async () => {
@@ -28,15 +30,20 @@ const Chat: FC = () => {
       }
     });
     return () => {
-      socket.current?.disconnect();
+      socket.current?.off();
     };
   }, []);
   return (
     <>
       <main className={styles.page}>
-        <header className={styles["header"]}>
-          <h1>THIS IS THE HEADER</h1>
-        </header>
+        <Header
+          // @ts-ignore
+          onLeave={() => {
+            socket.current?.disconnect();
+          }}
+        />
+
+        <button onClick={() => setCounter(counter + 1)}>{counter}</button>
       </main>
     </>
   );
@@ -65,20 +72,11 @@ const ChatRoom: NextPage = ({ chatRoom }) => {
   );
 };
 export default ChatRoom;
-export const getStaticProps: GetStaticProps = ctx => {
-  console.log(ctx.params?.chatRoom);
+
+export const getServerSideProps: GetServerSideProps = ctx => {
   return {
     props: {
       chatRoom: ctx.params?.chatRoom,
     },
-  };
-};
-export const getStaticPaths: GetStaticPaths = async () => {
-  const response = await fetch(serverURls.rooms);
-  const data: Room[] = await response.json();
-  const rooms: GetStaticPathsResult["paths"] = data.map(r => ({ params: { chatRoom: r.roomName } }));
-  return {
-    paths: rooms,
-    fallback: true,
   };
 };
