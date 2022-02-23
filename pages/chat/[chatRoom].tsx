@@ -72,7 +72,7 @@ const ChatRoom: NextPage = ({ chatRoom }) => {
   );
 };
 export default ChatRoom;
-
+// @ts-ignore
 export const getServerSideProps: GetServerSideProps = ctx => {
   return {
     props: {
