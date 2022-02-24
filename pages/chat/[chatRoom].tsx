@@ -12,7 +12,7 @@ const { serverURls } = getConstants();
 const Chat: FC = () => {
   const socket = useRef<Socket | null>(null);
   const [user, setUser] = useUser();
-  const [counter, setCounter] = useState<number>(0);
+  const inpRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     socket.current = io(serverURls.socket);
     socket.current.on("connect", async () => {
@@ -35,16 +35,17 @@ const Chat: FC = () => {
   }, []);
   return (
     <>
-      <main className={styles.page}>
+      <div className={styles.page}>
         <Header
           // @ts-ignore
           onLeave={() => {
             socket.current?.disconnect();
           }}
         />
-
-        <button onClick={() => setCounter(counter + 1)}>{counter}</button>
-      </main>
+        <main className={styles["chat-area"]}></main>
+        {/* <section className={styles["bottom-panel"]}></section> */}
+        <footer className={styles["message-input"]}></footer>
+      </div>
     </>
   );
 };

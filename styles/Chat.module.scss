@@ -8,6 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 2px solid #bd14ca;
   padding: 0 1rem;
   section {
     display: flex;
@@ -19,4 +20,16 @@
       margin: 0 1rem;
     }
   }
+}
+
+.chat-area {
+  flex: 1;
+}
+.message-input {
+  height: 10%;
+  border-top: 3px solid #bd14ca;
+}
+.message-options {
+  height: 40%;
+  border: 3px solid #bd14ca;
 }
