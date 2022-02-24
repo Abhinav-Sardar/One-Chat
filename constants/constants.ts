@@ -103,3 +103,33 @@ export const formatDate: (date: Date, includeSeconds: boolean) => string = (date
   const hour12 = pad(hour > 12 ? hour - 12 : hour);
   return `${hour12}:${minutes}:${includeSeconds ? seconds : ""} ${ampm}`;
 };
+
+export const getFabVaraints = (i: number): Variants => {
+  return {
+    initial: {
+      scale: 0,
+      bottom: 0,
+      opacity: 0,
+    },
+    exit: {
+      scale: 0,
+      opacity: 0,
+      bottom: 0,
+      transition: {
+        delay: i * 0.08,
+        type: "tween",
+      },
+    },
+    animate: {
+      scale: 1,
+      opacity: 1,
+      bottom: (i + 1) * 100,
+      transition: {
+        delay: i * 0.05,
+        type: "spring",
+        damping: 10,
+        velocity: 10,
+      },
+    },
+  };
+};

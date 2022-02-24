@@ -1,3 +1,4 @@
+$btn-size: 3.3rem;
 .page {
   height: 100%;
   display: flex;
@@ -25,9 +26,52 @@
 .chat-area {
   flex: 1;
 }
+
 .message-input {
-  height: 10%;
+  height: 12%;
   border-top: 3px solid #bd14ca;
+  display: flex;
+  align-items: center;
+  column-gap: 2rem;
+  justify-content: space-evenly;
+
+  svg:not(div > svg, button > svg) {
+    color: #bd14ca;
+    cursor: pointer;
+    font-size: 3rem;
+  }
+  input {
+    width: 80%;
+    height: $btn-size;
+    border-radius: 10px;
+    font-family: "Poppins", sans-serif;
+    font-size: 1.5rem;
+    padding-left: 0.2rem;
+    outline: 0;
+    border: 2px solid gray;
+    color: black;
+    &:focus {
+      border: 2px solid #bd14ca;
+      color: #bd14ca;
+    }
+  }
+}
+.button {
+  height: $btn-size;
+  cursor: pointer;
+  width: $btn-size;
+  background-color: #bd14ca;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0;
+  outline: 0;
+  border-radius: 50%;
+  position: relative;
+  svg {
+    color: white !important;
+    font-size: 1.8rem;
+  }
 }
 .message-options {
   height: 40%;

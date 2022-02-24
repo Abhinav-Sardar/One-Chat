@@ -13,8 +13,6 @@ const NoutFound: NextPage = () => {
             justify-content: center;
             height: 100%;
           }
-          h2 {
-          }
         `}
       </style>
       <div className='page'>

@@ -26,7 +26,7 @@ export const Header: FC<{ onLeave: () => void }> = memo(({ onLeave }) => {
           {currentTime}
         </AccentText>
       </section>
-      <SafeLink href='/'>
+      <SafeLink href='/' passHref>
         <Button
           color='#fff'
           backgroundColor='red'
