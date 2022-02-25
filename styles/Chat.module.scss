@@ -22,11 +22,10 @@ $btn-size: 3.3rem;
     }
   }
 }
-
-.chat-area {
+.chat {
   flex: 1;
+  height: 100%;
 }
-
 .message-input {
   height: 12%;
   border-top: 3px solid #bd14ca;
@@ -34,12 +33,6 @@ $btn-size: 3.3rem;
   align-items: center;
   column-gap: 2rem;
   justify-content: space-evenly;
-
-  svg:not(div > svg, button > svg) {
-    color: #bd14ca;
-    cursor: pointer;
-    font-size: 3rem;
-  }
   input {
     width: 80%;
     height: $btn-size;
@@ -67,13 +60,41 @@ $btn-size: 3.3rem;
   border: 0;
   outline: 0;
   border-radius: 50%;
-  position: relative;
   svg {
     color: white !important;
     font-size: 1.8rem;
   }
 }
+.button-wrapper {
+  height: 100%;
+  width: $btn-size;
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
 .message-options {
-  height: 40%;
   border: 3px solid #bd14ca;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-left: 2px solid #bd14ca;
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10%;
+    border-bottom: 2px solid #bd14ca;
+    column-gap: 10rem;
+
+    svg {
+      color: red;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+  }
 }

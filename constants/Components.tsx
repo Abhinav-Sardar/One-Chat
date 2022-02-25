@@ -112,14 +112,19 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
             initial='initial'
             animate='animate'
             onClick={onClose}
-            exit='exit'
+            exit='initial'
+            transition={{ duration: 0.5 }}
           />
           <motion.div
             // @ts-ignore
 
             variants={modalVariants}
             className={styles.modal}
-            exit='exit'
+            exit='initial'
+            transition={{
+              ease: "easeInOut",
+              duration: 1,
+            }}
             initial='initial'
             animate='animate'
           >

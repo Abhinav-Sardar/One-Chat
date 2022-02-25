@@ -1,6 +1,16 @@
 import { LinkProps } from "next/link";
-import { ButtonHTMLAttributes, CSSProperties, Dispatch, ReactChildren, ReactNode, SetStateAction } from "react";
-
+import {
+  ButtonHTMLAttributes,
+  CSSProperties,
+  Dispatch,
+  MutableRefObject,
+  ReactChildren,
+  ReactNode,
+  SetStateAction,
+} from "react";
+import { IconType } from "react-icons/lib";
+import { Socket } from "socket.io-client";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
 export interface ContextType {}
 export type URLPaths = "/" | "/create-chat" | "/join-chat" | `/chat/${string}`;
 export interface SafeLinkProps extends LinkProps {
@@ -39,3 +49,26 @@ export interface Room {
   isPublic: boolean;
   members: User[];
 }
+export type HangerBtnsType = "Emojis" | "Images" | "Gifs" | "theme";
+export interface ChatContextType {
+  currentSidePanelContent: Exclude<HangerBtnsType, "theme">;
+  setCurrentSidePanelContent: Dispatch<SetStateAction<Exclude<HangerBtnsType, "theme">>>;
+  isSidePanelOpen: boolean;
+  setIsSidePanelOpen: Dispatch<SetStateAction<boolean>>;
+  socket: MutableRefObject<Socket<DefaultEventsMap, DefaultEventsMap> | null>;
+  theme: "light" | "dark";
+  setTheme: Dispatch<SetStateAction<"light" | "dark">>;
+}
+
+export enum SocketMessages {
+  connection = "connection",
+  disconnect = "disconnect",
+  newUser = "new-user",
+  message = "message",
+  ban = "ban",
+}
+export type EmojisType = {
+  title: "objects" | "food" | "human" | "animal" | "symbol";
+  emojis: string[];
+  icon: IconType;
+};

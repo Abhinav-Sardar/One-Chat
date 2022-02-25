@@ -1,8 +1,11 @@
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import { createAvatar } from "@dicebear/avatars";
 import { ClientRequest } from "http";
-import { ClientAvatar } from "./Types";
+import { ClientAvatar, HangerBtnsType } from "./Types";
 import { Variants } from "framer-motion";
+import { IconType } from "react-icons";
+import { FaRegSmile, FaRegImage } from "react-icons/fa";
+import { RiFileGifLine } from "react-icons/ri";
 const varaints: { [key: string]: Variants } = {
   modalVariants: {
     initial: {
@@ -12,16 +15,6 @@ const varaints: { [key: string]: Variants } = {
     animate: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: 200,
-      transition: {
-        duration: 0.5,
-      },
     },
   },
   modalOverlayVariants: {
@@ -30,20 +23,43 @@ const varaints: { [key: string]: Variants } = {
     },
     animate: {
       opacity: 1,
-      transition: {
-        duration: 1,
-        ease: "easeInOut",
-      },
     },
-    exit: {
+  },
+  sidePanelVaraints: {
+    initial: {
       opacity: 0,
-      transition: {
-        duration: 1,
-        ease: "easeInOut",
-      },
+      width: 0,
+    },
+
+    animate: {
+      opacity: 1,
+      width: "30%",
     },
   },
 };
+const OptionsPanelInfo: {
+  type: HangerBtnsType;
+  Icon: IconType;
+}[] = [
+  {
+    type: "Emojis",
+    Icon: FaRegSmile,
+  },
+  {
+    type: "Gifs",
+    Icon: RiFileGifLine,
+  },
+
+  {
+    type: "Images",
+    Icon: FaRegImage,
+  },
+  {
+    type: "theme",
+    // @ts-ignore
+    Icon: null,
+  },
+];
 const config = {
   localStoragePrefix: "ONE-CHAT-",
   accentColor: "#bd14ca",
@@ -53,6 +69,7 @@ const config = {
     rooms: "http://localhost:1919/rooms/",
   },
   varaints,
+  OptionsPanelInfo,
 };
 export const getConstants = () => {
   return config;
@@ -116,8 +133,10 @@ export const getFabVaraints = (i: number): Variants => {
       opacity: 0,
       bottom: 0,
       transition: {
-        delay: i * 0.08,
-        type: "tween",
+        delay: i * 0.058,
+        type: "spring",
+        damping: 10,
+        velocity: 10,
       },
     },
     animate: {
