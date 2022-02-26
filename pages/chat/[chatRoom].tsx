@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import { Router, useRouter } from "next/router";
-import { ContextType, createContext, FC, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { ContextType, createContext, FC, memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { Header, MessageSection, SidePanel } from "../../constants/Chat.SubComponents";
 import { getConstants, getFabVaraints } from "../../constants/constants";
@@ -19,12 +19,13 @@ const { serverURls } = getConstants();
 // @ts-ignore
 export const ChatContext = createContext<ChatContextType>({});
 export const useChat = () => useContext(ChatContext);
-const Chat: FC = () => {
+function Chat(): JSX.Element {
   const socket = useRef<Socket | null>(null);
   const [user, setUser] = useUser();
   const [isSidePanelOpen, setIsSidePanelOpen] = useState<boolean>(false);
   const [currentSidePanelContent, setCurrentSidePanelContent] = useState<Exclude<HangerBtnsType, "theme">>("Emojis");
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  console.log("RENDER");
   useEffect(() => {
     socket.current = io(serverURls.socket);
     socket.current.on("connect", async () => {
@@ -64,7 +65,7 @@ const Chat: FC = () => {
             socket.current?.disconnect();
           }}
         />
-        <main style={{ flex: 1, display: "flex" }}>
+        <main style={{ display: "flex", height: "80%" }}>
           <div className={styles.chat}></div>
           <SidePanel />
         </main>
@@ -72,7 +73,8 @@ const Chat: FC = () => {
       </motion.div>
     </ChatContext.Provider>
   );
-};
+}
+const MemoiezedChat = memo(Chat);
 // @ts-ignore
 const ChatRoom: NextPage = ({ chatRoom }) => {
   const [user] = useUser();
@@ -92,7 +94,7 @@ const ChatRoom: NextPage = ({ chatRoom }) => {
       <Head>
         <title>Room - {chatRoom}</title>
       </Head>
-      {isAuthenticated ? <Chat /> : <h1>JOIN BISH</h1>}
+      {isAuthenticated ? <MemoiezedChat /> : <h1>JOIN BISH</h1>}
     </>
   );
 };

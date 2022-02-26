@@ -36,6 +36,29 @@ const varaints: { [key: string]: Variants } = {
       width: "30%",
     },
   },
+  emojisContainerVariants: {
+    initial: {
+      opacity: 0,
+    },
+    animate: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeInOut",
+        staggerChildren: 0.02,
+      },
+    },
+  },
+  emojiVariants: {
+    initial: {
+      opacity: 0,
+      y: 50,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+    },
+  },
 };
 const OptionsPanelInfo: {
   type: HangerBtnsType;
@@ -134,17 +157,6 @@ export const getFabVaraints = (i: number): Variants => {
       bottom: 0,
       transition: {
         delay: i * 0.058,
-        type: "spring",
-        damping: 10,
-        velocity: 10,
-      },
-    },
-    animate: {
-      scale: 1,
-      opacity: 1,
-      bottom: (i + 1) * 100,
-      transition: {
-        delay: i * 0.05,
         type: "spring",
         damping: 10,
         velocity: 10,

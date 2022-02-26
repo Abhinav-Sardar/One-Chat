@@ -14,46 +14,67 @@ import { EmojisType, HangerBtnsType } from "./Types";
 import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
 const { varaints, OptionsPanelInfo, accentColor } = getConstants();
-const Emojis: FC = () => {
+const Emojis: FC = memo(() => {
   const [currentEmojiType, setCurrentEmojiType] = useState<EmojisType["title"]>("human");
   const { theme } = useChat();
+  const currentEmojiData = EmojisData.find(e => e.title === currentEmojiType)!.emojis;
   return (
-    <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-      <div className={styles["emojis-icons-wrapper"]} style={{ display: "flex", height: "10%" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <div style={{ display: "flex", height: "15%" }}>
         {EmojisData.map(e => (
-          <>
-            <motion.div
-              key={e.title}
-              animate={{
-                color: currentEmojiType === e.title ? accentColor : theme === "light" ? "#000" : "#fff",
-                y: currentEmojiType === e.title ? 0 : 1,
-              }}
-              onClick={() => setCurrentEmojiType(e.title)}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                cursor: "pointer",
-              }}
-            >
-              <e.icon fontSize={"1.7rem"} />
-              {currentEmojiType === e.title && (
-                <motion.div
-                  style={{ height: "5px", width: "100%", background: accentColor, marginTop: ".5rem" }}
-                  layoutId={"underline"}
-                  transition={{ type: "spring", damping: 20 }}
-                />
-              )}
-            </motion.div>
-          </>
+          <motion.div
+            key={e.title}
+            animate={{
+              color: currentEmojiType === e.title ? accentColor : theme === "light" ? "#000" : "#fff",
+            }}
+            onClick={() => setCurrentEmojiType(e.title)}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+          >
+            <e.icon fontSize={"1.7rem"} />
+            {currentEmojiType === e.title && (
+              <motion.div
+                style={{ height: "5px", width: "100%", background: accentColor, marginTop: ".5rem" }}
+                layoutId={"underline"}
+                transition={{ type: "spring", damping: 10 }}
+              />
+            )}
+          </motion.div>
         ))}
       </div>
+      <motion.div
+        className={styles.emojis}
+        variants={varaints.emojisContainerVariants}
+        initial='initial'
+        animate='animate'
+        key={currentEmojiType}
+      >
+        {currentEmojiData.map(e => (
+          <motion.span
+            variants={varaints.emojiVariants}
+            key={e}
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              const element = document.getElementById("message__input") as HTMLInputElement;
+              element.value += e;
+              element.focus();
+            }}
+          >
+            {e}
+          </motion.span>
+        ))}
+      </motion.div>
     </div>
   );
-};
+});
 export const Header: FC<{ onLeave: () => void }> = memo(({ onLeave }) => {
   const [currentDate, setCurrentTime] = useState(new Date());
   useEffect(() => {
@@ -90,7 +111,7 @@ export const Header: FC<{ onLeave: () => void }> = memo(({ onLeave }) => {
   );
 });
 
-export const SidePanel: FC = () => {
+export const SidePanel: FC = memo(() => {
   const { isSidePanelOpen, currentSidePanelContent, theme, setIsSidePanelOpen } = useChat();
   return (
     <AnimatePresence exitBeforeEnter>
@@ -112,14 +133,14 @@ export const SidePanel: FC = () => {
               }}
             />
           </header>
-          {currentSidePanelContent === "Emojis" && <Emojis />}
+          <div style={{ height: "90%" }}>{currentSidePanelContent === "Emojis" ? <Emojis /> : ""}</div>
         </motion.aside>
       )}
     </AnimatePresence>
   );
-};
+});
 
-export const MessageSection: FC = () => {
+export const MessageSection: FC = memo(() => {
   const inpRef = useRef<HTMLInputElement>(null);
   const [isHangerOpen, setIsHangerOpen] = useState<boolean>(false);
   const { setCurrentSidePanelContent, isSidePanelOpen, setIsSidePanelOpen, theme, setTheme } = useChat();
@@ -142,14 +163,7 @@ export const MessageSection: FC = () => {
         </div>
         <AnimatePresence>
           {isHangerOpen && (
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                bottom: 0,
-                right: 0,
-              }}
-            >
+            <>
               {OptionsPanelInfo.map((item, i) => (
                 <motion.button
                   className={styles.button}
@@ -161,9 +175,8 @@ export const MessageSection: FC = () => {
                       setIsHangerOpen(true);
                     } else {
                       setCurrentSidePanelContent(item.type);
-                      setIsHangerOpen(false);
-
                       setIsSidePanelOpen(true);
+                      setIsHangerOpen(false);
                     }
                   }}
                   variants={getFabVaraints(i)}
@@ -174,7 +187,7 @@ export const MessageSection: FC = () => {
                   {item.type === "theme" ? theme === "dark" ? <FaRegMoon /> : <BiSun /> : <item.Icon />}
                 </motion.button>
               ))}
-            </div>
+            </>
           )}
         </AnimatePresence>
       </div>
@@ -191,4 +204,4 @@ export const MessageSection: FC = () => {
       </style>
     </footer>
   );
-};
+});
