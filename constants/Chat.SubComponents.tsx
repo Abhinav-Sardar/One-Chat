@@ -4,7 +4,7 @@ import styles from "../styles/Chat.module.scss";
 import { AccentText, Button, SafeLink } from "./Components";
 import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-icons/ai";
 import { BiExit, BiSend, BiSun } from "react-icons/bi";
-import { formatDate, getConstants, getFabVaraints } from "./constants";
+import { formatDate, getConstants } from "./constants";
 import { AnimatePresence, motion } from "framer-motion";
 import { useChat } from "../pages/chat/[chatRoom]";
 import { IconType } from "react-icons";
@@ -18,6 +18,7 @@ const Emojis: FC = memo(() => {
   const [currentEmojiType, setCurrentEmojiType] = useState<EmojisType["title"]>("human");
   const { theme } = useChat();
   const currentEmojiData = EmojisData.find(e => e.title === currentEmojiType)!.emojis;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div style={{ display: "flex", height: "15%" }}>
@@ -179,10 +180,10 @@ export const MessageSection: FC = memo(() => {
                       setIsHangerOpen(false);
                     }
                   }}
-                  variants={getFabVaraints(i)}
-                  initial='initial'
-                  animate='animate'
-                  exit='exit'
+                  initial={{ scale: 0, opacity: 0, bottom: 0 }}
+                  animate={{ scale: 1, opacity: 1, bottom: (i + 1) * 100 }}
+                  transition={{ delay: i * 0.05, type: "spring", damping: 10 }}
+                  exit={{ scale: 0, opacity: 0, bottom: 0, transition: { delay: i * 0.1, duration: 0.5 } }}
                 >
                   {item.type === "theme" ? theme === "dark" ? <FaRegMoon /> : <BiSun /> : <item.Icon />}
                 </motion.button>

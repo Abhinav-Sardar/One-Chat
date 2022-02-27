@@ -45,18 +45,7 @@ const varaints: { [key: string]: Variants } = {
       transition: {
         duration: 0.5,
         ease: "easeInOut",
-        staggerChildren: 0.02,
       },
-    },
-  },
-  emojiVariants: {
-    initial: {
-      opacity: 0,
-      y: 50,
-    },
-    animate: {
-      opacity: 1,
-      y: 0,
     },
   },
 };
@@ -142,25 +131,4 @@ export const formatDate: (date: Date, includeSeconds: boolean) => string = (date
   const ampm = hour > 12 ? "PM" : "AM";
   const hour12 = pad(hour > 12 ? hour - 12 : hour);
   return `${hour12}:${minutes}:${includeSeconds ? seconds : ""} ${ampm}`;
-};
-
-export const getFabVaraints = (i: number): Variants => {
-  return {
-    initial: {
-      scale: 0,
-      bottom: 0,
-      opacity: 0,
-    },
-    exit: {
-      scale: 0,
-      opacity: 0,
-      bottom: 0,
-      transition: {
-        delay: i * 0.058,
-        type: "spring",
-        damping: 10,
-        velocity: 10,
-      },
-    },
-  };
 };
