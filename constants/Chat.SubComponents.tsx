@@ -17,8 +17,7 @@ const { varaints, OptionsPanelInfo, accentColor } = getConstants();
 const Emojis: FC = memo(() => {
   const [currentEmojiType, setCurrentEmojiType] = useState<EmojisType["title"]>("human");
   const { theme } = useChat();
-  const currentEmojiData = EmojisData.find(e => e.title === currentEmojiType)!.emojis;
-
+  const [currentEmojisData, setCurrentEmojisData] = useState<string[]>(EmojisData[0].emojis);
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div style={{ display: "flex", height: "15%" }}>
@@ -28,7 +27,10 @@ const Emojis: FC = memo(() => {
             animate={{
               color: currentEmojiType === e.title ? accentColor : theme === "light" ? "#000" : "#fff",
             }}
-            onClick={() => setCurrentEmojiType(e.title)}
+            onClick={() => {
+              setCurrentEmojiType(e.title);
+              setCurrentEmojisData(e.emojis);
+            }}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -57,7 +59,7 @@ const Emojis: FC = memo(() => {
         animate='animate'
         key={currentEmojiType}
       >
-        {currentEmojiData.map(e => (
+        {currentEmojisData.map(e => (
           <motion.span
             variants={varaints.emojiVariants}
             key={e}
@@ -145,7 +147,21 @@ export const MessageSection: FC = memo(() => {
   const inpRef = useRef<HTMLInputElement>(null);
   const [isHangerOpen, setIsHangerOpen] = useState<boolean>(false);
   const { setCurrentSidePanelContent, isSidePanelOpen, setIsSidePanelOpen, theme, setTheme } = useChat();
-
+  const handleSubmit = () => {};
+  useEffect(() => {
+    inpRef.current?.addEventListener("keyup", e => {
+      if (e.key === "Enter") {
+        handleSubmit();
+      }
+    });
+    return () => {
+      inpRef.current?.removeEventListener("keyup", e => {
+        if (e.key === "Enter") {
+          handleSubmit();
+        }
+      });
+    };
+  }, []);
   return (
     <footer className={styles["message-input"]}>
       <div className={styles["button-wrapper"]}>

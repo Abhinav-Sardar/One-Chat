@@ -8,11 +8,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@dicebear/adventurer": "^4.10.2",
     "@dicebear/avatars": "^4.10.2",
     "@dicebear/avatars-avataaars-sprites": "^4.10.2",
-    "@dicebear/micah": "^4.10.2",
-    "@types/react-dom": "^17.0.11",
     "framer-motion": "^6.2.6",
     "next": "12.0.10",
     "react": "17.0.2",
@@ -23,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "17.0.18",
+    "@types/react-dom": "^17.0.11",
     "@types/react": "17.0.39",
     "@types/react-icons": "^3.0.0",
     "eslint": "8.9.0",

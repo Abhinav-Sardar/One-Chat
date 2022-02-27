@@ -72,3 +72,35 @@ export type EmojisType = {
   emojis: string[];
   icon: IconType;
 };
+type MessageTypes = "text" | "image" | "indicator" | "gif";
+type BaseMessage<T extends MessageTypes | `reply-${Exclude<MessageTypes, "indicator">}`> = {
+  id: string;
+  content: string;
+  createdAt: Date;
+  avatar: string;
+  author: string;
+  className: "Incoming" | "Outgoing";
+  type: T;
+};
+interface ReplyMessageBase<T extends Exclude<MessageTypes, "indicator">> extends BaseMessage<`reply-${T}`> {
+  to: string;
+}
+export interface TextMessage extends BaseMessage<"text"> {}
+export interface ImageMessage extends BaseMessage<"image"> {}
+export interface GifMessage extends BaseMessage<"gif"> {}
+export interface IndicatorMessage
+  extends Omit<Omit<Omit<Omit<BaseMessage<"indicator">, "createdAt">, "author">, "avatar">, "className"> {
+  backgroundColor: string;
+  status: "success" | "error";
+}
+export interface ReplyTextMessage extends ReplyMessageBase<"text"> {}
+export interface ReplyImageMessage extends ReplyMessageBase<"image"> {}
+export interface ReplyGifMessage extends ReplyMessageBase<"gif"> {}
+export type Message =
+  | TextMessage
+  | ImageMessage
+  | GifMessage
+  | IndicatorMessage
+  | ReplyTextMessage
+  | ReplyImageMessage
+  | ReplyGifMessage;

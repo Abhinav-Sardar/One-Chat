@@ -4,7 +4,7 @@ import { Router, useRouter } from "next/router";
 import { ContextType, createContext, FC, memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { Header, MessageSection, SidePanel } from "../../constants/Chat.SubComponents";
-import { getConstants, getFabVaraints } from "../../constants/constants";
+import { getConstants } from "../../constants/constants";
 import { useUser } from "../../constants/Context";
 import styles from "../../styles/Chat.module.scss";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -12,8 +12,9 @@ import { FaRegImage, FaRegSmile } from "react-icons/fa";
 import { BiSend } from "react-icons/bi";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconType } from "react-icons";
-import { ChatContextType, HangerBtnsType, SocketMessages } from "../../constants/Types";
+import { ChatContextType, HangerBtnsType, SocketMessages, User } from "../../constants/Types";
 import { RiFileGifLine } from "react-icons/ri";
+import JoinRoomPage from "../join-chat";
 const { serverURls } = getConstants();
 
 // @ts-ignore
@@ -34,6 +35,9 @@ function Chat(): JSX.Element {
         const newValue = { ...user, id: socket.current!.id };
         socket.current?.emit(SocketMessages.newUser, newValue);
         return newValue;
+      });
+      socket.current?.on(SocketMessages.newUser, (newUser: User) => {
+        console.log(newUser);
       });
     });
     document.querySelector("html")!.style.overflow = "hidden";
@@ -78,23 +82,25 @@ const MemoiezedChat = memo(Chat);
 // @ts-ignore
 const ChatRoom: NextPage = ({ chatRoom }) => {
   const [user] = useUser();
-
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-  // useEffect(() => {
-  //   if (!user) {
-  //     console.log("NOPE");
-  //     setIsAuthenticated(false);
-  //   } else {
-  //     console.log("YUP");
-  //     setIsAuthenticated(true);
-  //   }
-  // }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const router = useRouter();
+  useEffect(() => {
+    if (!user) {
+      console.log("NOPE");
+      setIsAuthenticated(false);
+      router.replace("/join-chat");
+    } else {
+      console.log("YUP");
+      setIsAuthenticated(true);
+    }
+  }, [user]);
   return (
     <>
       <Head>
         <title>Room - {chatRoom}</title>
       </Head>
-      {isAuthenticated ? <MemoiezedChat /> : <h1>JOIN BISH</h1>}
+      {/* @ts-ignore */}
+      {isAuthenticated ? <MemoiezedChat /> : null}
     </>
   );
 };
