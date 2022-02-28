@@ -104,3 +104,9 @@ export type Message =
   | ReplyTextMessage
   | ReplyImageMessage
   | ReplyGifMessage;
+
+export type ToastMessage = {
+  id: string;
+  type: "success" | "error";
+  content: string;
+};

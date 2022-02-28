@@ -6,7 +6,7 @@ import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-ic
 import { BiExit, BiSend, BiSun } from "react-icons/bi";
 import { formatDate, getConstants } from "./constants";
 import { AnimatePresence, motion } from "framer-motion";
-import { useChat } from "../pages/chat/[chatRoom]";
+import { useChat } from "../constants/Context";
 import { IconType } from "react-icons";
 import { FaRegSmile, FaRegImage, FaRegMoon } from "react-icons/fa";
 import { RiFileGifLine } from "react-icons/ri";

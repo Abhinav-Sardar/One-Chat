@@ -1,11 +1,13 @@
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import { createAvatar } from "@dicebear/avatars";
 import { ClientRequest } from "http";
-import { ClientAvatar, HangerBtnsType } from "./Types";
+import { ClientAvatar, HangerBtnsType, ToastMessage } from "./Types";
 import { Variants } from "framer-motion";
 import { IconType } from "react-icons";
 import { FaRegSmile, FaRegImage } from "react-icons/fa";
 import { RiFileGifLine } from "react-icons/ri";
+import { useContext } from "react";
+import { ToastContext } from "./Context";
 const varaints: { [key: string]: Variants } = {
   modalVariants: {
     initial: {
@@ -78,7 +80,7 @@ const config = {
   appName: "One-Chat",
   serverURls: {
     socket: "http://localhost:1919",
-    rooms: "http://localhost:1919/rooms/",
+    rooms: "http://localhost:1919/rooms/fr22f3rbfirefierfberbib",
   },
   varaints,
   OptionsPanelInfo,
@@ -131,4 +133,10 @@ export const formatDate: (date: Date, includeSeconds: boolean) => string = (date
   const ampm = hour > 12 ? "PM" : "AM";
   const hour12 = pad(hour > 12 ? hour - 12 : hour);
   return `${hour12}:${minutes}:${includeSeconds ? seconds : ""} ${ampm}`;
+};
+export const useAddToast: () => (message: string, type: ToastMessage["type"]) => void = () => {
+  const [, setToasts] = useContext(ToastContext);
+  return (message: string, type: ToastMessage["type"]) => {
+    setToasts(toasts => [...toasts, { content: message, type, id: getRandomKey() }]);
+  };
 };

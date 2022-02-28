@@ -1,12 +1,16 @@
-import { AnimatePresence, motion, useMotionValue, Variants } from "framer-motion";
+import { AnimatePresence, AnimateSharedLayout, motion, useMotionValue, useTransform, Variants } from "framer-motion";
 import Link, { LinkProps } from "next/link";
-import { createContext, CSSProperties, FC, ReactPortal, useEffect, useState } from "react";
+import { createContext, CSSProperties, FC, memo, ReactPortal, useContext, useEffect, useState } from "react";
 import { IoChatboxSharp } from "react-icons/io5";
 import { getConstants } from "./constants";
-import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps } from "./Types";
+import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps, ToastMessage } from "./Types";
 import ReactDOM from "react-dom";
 import { VscChromeClose } from "react-icons/vsc";
 import styles from "../styles/Components.module.scss";
+import { ToastContext } from "./Context";
+import { RiContactsBookLine, RiH1 } from "react-icons/ri";
+import { BiCheck, BiErrorCircle } from "react-icons/bi";
+import { GrClose } from "react-icons/gr";
 const {
   accentColor,
   varaints: { modalVariants, modalOverlayVariants },
@@ -154,6 +158,63 @@ export const Toggle: FC<ToggleProps> = ({ isToggled, setIsToggled }) => {
       >
         <motion.div className={`toggle-btn`} layout transition={{ duration: 0.3 }} />
       </motion.div>
+    </>
+  );
+};
+const toastColorSchemes: { [key in "success" | "error"]: { progressColor: string; backgroundColor: string } } = {
+  error: {
+    backgroundColor: "#ff1f0f",
+    progressColor: "#ffabab",
+  },
+  success: {
+    backgroundColor: "#38c742",
+    progressColor: "#40ff60",
+  },
+};
+const Toast: FC<{ toast: ToastMessage; index: number }> = memo(({ toast, index }) => {
+  const [toasts, setToasts] = useContext(ToastContext);
+  const width = useMotionValue("100%");
+  return (
+    <motion.div
+      initial={{ x: 500 }}
+      layout
+      id={toast.id}
+      animate={{ x: 0, transition: { type: "spring", damping: 10 } }}
+      exit={{ x: 500 }}
+      style={{ background: toastColorSchemes[toast.type].backgroundColor, top: (index + 0.1) * 80 }}
+      className={styles.toast}
+      onClick={() => {
+        setToasts(toasts.filter(t => t.id !== toast.id));
+      }}
+    >
+      <div className='toast-content'>
+        {toast.type === "error" ? <BiErrorCircle /> : <BiCheck />}
+        <span>{toast.content}</span>
+      </div>
+      <motion.div
+        className='progress'
+        style={{ width, background: toastColorSchemes[toast.type].progressColor }}
+        animate={{
+          width: "0%",
+          transition: { duration: 5, type: "tween" },
+        }}
+        onAnimationComplete={() => {
+          setToasts(toasts.filter(t => t.id !== toast.id));
+        }}
+      />
+    </motion.div>
+  );
+});
+export const Toasts: FC = () => {
+  const [toasts, setToasts] = useContext(ToastContext);
+
+  return (
+    <>
+      <AnimatePresence>
+        {[...toasts].map((t, i) => (
+          <Toast toast={t} key={t.id} index={i} />
+        ))}
+      </AnimatePresence>
     </>
   );
 };

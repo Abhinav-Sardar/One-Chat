@@ -2,7 +2,7 @@ import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { FC, FormEvent, FormEventHandler, useEffect, useRef, useState } from "react";
 import { AccentText, Button, Modal, Toggle } from "../constants/Components";
-import { getAvatars, getConstants, getRandomKey, validateText } from "../constants/constants";
+import { getAvatars, getConstants, getRandomKey, useAddToast, validateText } from "../constants/constants";
 import styles from "../styles/CreateChat.module.scss";
 import { BiCurrentLocation, BiUser } from "react-icons/bi";
 import { AnimatePresence, motion } from "framer-motion";
@@ -58,6 +58,7 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
   const roomRef = useRef<HTMLInputElement | null>(null);
   const [user, setUser] = useUser();
   const router = useRouter();
+  const add = useAddToast();
   const handleSubmit: FormEventHandler = async (e: FormEvent) => {
     e.preventDefault();
     const { value: inpValue } = inpRef.current!;
@@ -65,9 +66,8 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
     console.log(inpValue, roomValue);
     try {
       await validateText(inpValue, 20, "Name");
-
+      await validateText(roomValue, 25, "Room Name");
       try {
-        await validateText(roomValue, 25, "Room Name");
         const res = await fetch(serverURls.rooms, {
           method: "POST",
           body: JSON.stringify({
@@ -90,10 +90,10 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
           router.push(`/chat/${roomValue}`);
         }
       } catch (e) {
-        console.error(e);
+        add("An error occured", "error");
       }
-    } catch (e) {
-      console.log(e);
+    } catch (e: any) {
+      add(e, "error");
     }
   };
   useEffect(() => {

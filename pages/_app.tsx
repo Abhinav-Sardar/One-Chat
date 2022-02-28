@@ -1,15 +1,18 @@
 import "../globals.css";
 import type { AppProps } from "next/app";
-import { PageWrapper } from "../constants/Components";
-import { UserContextProvider } from "../constants/Context";
+import { PageWrapper, Toasts } from "../constants/Components";
+import { ToastProvider, UserContextProvider } from "../constants/Context";
 
 function MyApp({ Component, pageProps, router }: AppProps) {
   return (
-    <UserContextProvider>
-      <PageWrapper key={router.route}>
-        <Component {...pageProps} />
-      </PageWrapper>
-    </UserContextProvider>
+    <ToastProvider>
+      <UserContextProvider>
+        <PageWrapper key={router.route}>
+          <Component {...pageProps} />
+          <Toasts />
+        </PageWrapper>
+      </UserContextProvider>
+    </ToastProvider>
   );
 }
 
