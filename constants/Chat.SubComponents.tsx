@@ -1,19 +1,21 @@
-import { FC, memo, useEffect, useRef, useState } from "react";
+/* eslint-disable react/display-name */
+import { Dispatch, FC, FormEvent, FormEventHandler, memo, SetStateAction, useEffect, useRef, useState } from "react";
 import { useUser } from "./Context";
 import styles from "../styles/Chat.module.scss";
 import { AccentText, Button, SafeLink } from "./Components";
 import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-icons/ai";
 import { BiExit, BiSend, BiSun } from "react-icons/bi";
-import { formatDate, getConstants } from "./constants";
+import { formatDate, getConstants, getRandomKey, useAddToast } from "./constants";
 import { AnimatePresence, motion } from "framer-motion";
 import { useChat } from "../constants/Context";
 import { IconType } from "react-icons";
 import { FaRegSmile, FaRegImage, FaRegMoon } from "react-icons/fa";
 import { RiFileGifLine } from "react-icons/ri";
-import { EmojisType, HangerBtnsType } from "./Types";
+import { ChatContextType, EmojisType, HangerBtnsType, Message, TextMessage, User } from "./Types";
 import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
 const { varaints, OptionsPanelInfo, accentColor } = getConstants();
+
 const Emojis: FC = memo(() => {
   const [currentEmojiType, setCurrentEmojiType] = useState<EmojisType["title"]>("human");
   const { theme } = useChat();
@@ -78,8 +80,9 @@ const Emojis: FC = memo(() => {
     </div>
   );
 });
-export const Header: FC<{ onLeave: () => void }> = memo(({ onLeave }) => {
+export const Header: FC = memo(() => {
   const [currentDate, setCurrentTime] = useState(new Date());
+
   useEffect(() => {
     const counterInterval = setInterval(() => {
       setCurrentTime(new Date());
@@ -90,6 +93,7 @@ export const Header: FC<{ onLeave: () => void }> = memo(({ onLeave }) => {
   }, []);
   const [user] = useUser();
   const currentTime = formatDate(currentDate, true);
+  const { socket } = useChat();
   return (
     <header className={styles.header}>
       <AccentText inverted={false}>Room - {user?.room ?? "Gotcha!"}</AccentText>
@@ -104,7 +108,7 @@ export const Header: FC<{ onLeave: () => void }> = memo(({ onLeave }) => {
           color='#fff'
           backgroundColor='red'
           style={{ border: "1px solid red", height: "80%", minWidth: "13rem" }}
-          onClick={onLeave}
+          onClick={socket.current?.off}
         >
           <span>Leave Room</span>
           <BiExit />
@@ -143,27 +147,36 @@ export const SidePanel: FC = memo(() => {
   );
 });
 
-export const MessageSection: FC = memo(() => {
+export const MessageInput: FC = memo(() => {
   const inpRef = useRef<HTMLInputElement>(null);
   const [isHangerOpen, setIsHangerOpen] = useState<boolean>(false);
-  const { setCurrentSidePanelContent, isSidePanelOpen, setIsSidePanelOpen, theme, setTheme } = useChat();
-  const handleSubmit = () => {};
-  useEffect(() => {
-    inpRef.current?.addEventListener("keyup", e => {
-      if (e.key === "Enter") {
-        handleSubmit();
-      }
-    });
-    return () => {
-      inpRef.current?.removeEventListener("keyup", e => {
-        if (e.key === "Enter") {
-          handleSubmit();
-        }
-      });
-    };
-  }, []);
+  const { setMessages, setTheme, theme, setCurrentSidePanelContent, setIsSidePanelOpen } = useChat();
+  const add = useAddToast();
+  const [user] = useUser() as [User, Dispatch<SetStateAction<User>>];
+  const handleSubmit: FormEventHandler = (e: FormEvent) => {
+    e.preventDefault();
+    const { value } = inpRef.current!;
+    if (!value || !value.trim()) {
+      add("Invalid Message!", "error");
+    } else if (value.length > 250) {
+      add("Message is too long!", "error");
+    } else {
+      let newMessage: TextMessage = {
+        author: user.name,
+        avatar: user.avatar,
+        content: value,
+        type: "text",
+        className: "Outgoing",
+        createdAt: new Date(),
+        id: getRandomKey(),
+      };
+      setMessages(prev => [...prev, newMessage]);
+      inpRef.current!.value = "";
+    }
+  };
+
   return (
-    <footer className={styles["message-input"]}>
+    <form className={styles["message-input"]} onSubmit={handleSubmit}>
       <div className={styles["button-wrapper"]}>
         <div
           className={styles.button}
@@ -184,6 +197,7 @@ export const MessageSection: FC = memo(() => {
               {OptionsPanelInfo.map((item, i) => (
                 <motion.button
                   className={styles.button}
+                  type='button'
                   key={item.type}
                   style={{ position: "absolute", left: 0, right: 0, zIndex: 2 }}
                   onClick={() => {
@@ -208,8 +222,16 @@ export const MessageSection: FC = memo(() => {
           )}
         </AnimatePresence>
       </div>
-      <input type='text' name='Message' placeholder='Say Something...' ref={inpRef} id='message__input' />
-      <button className={`${styles.button} send-btn`}>
+      <input
+        type='text'
+        name='Message'
+        placeholder='Say Something...'
+        ref={inpRef}
+        onDoubleClick={() => setMessages([])}
+        id='message__input'
+      />
+
+      <button className={`${styles.button} send-btn`} type='submit'>
         <BiSend />
       </button>
       <style jsx>
@@ -219,6 +241,25 @@ export const MessageSection: FC = memo(() => {
           }
         `}
       </style>
-    </footer>
+    </form>
   );
+});
+
+export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => {
+  const [user] = useUser();
+  if (message.type === "text" || message.type === "reply-text") {
+    return (
+      <motion.div className={`${styles.message} ${message.className}`} id={message.id}>
+        <div className='avatar' dangerouslySetInnerHTML={{ __html: message.avatar }} />
+        <div className='rest-wrapper'>
+          <span>
+            {message.author === user!.name ? "You" : message.author} - {formatDate(message.createdAt, false)}
+          </span>
+          <div>{message.content}</div>
+        </div>
+      </motion.div>
+    );
+  } else {
+    return <></>;
+  }
 });

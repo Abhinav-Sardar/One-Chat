@@ -50,7 +50,7 @@ export interface Room {
   members: User[];
 }
 export type HangerBtnsType = "Emojis" | "Images" | "Gifs" | "theme";
-export interface ChatContextType {
+export type ChatContextType = {
   currentSidePanelContent: Exclude<HangerBtnsType, "theme">;
   setCurrentSidePanelContent: Dispatch<SetStateAction<Exclude<HangerBtnsType, "theme">>>;
   isSidePanelOpen: boolean;
@@ -58,7 +58,9 @@ export interface ChatContextType {
   socket: MutableRefObject<Socket<DefaultEventsMap, DefaultEventsMap> | null>;
   theme: "light" | "dark";
   setTheme: Dispatch<SetStateAction<"light" | "dark">>;
-}
+  messages: Message[];
+  setMessages: Dispatch<SetStateAction<Message[]>>;
+};
 
 export enum SocketMessages {
   connection = "connection",
@@ -83,7 +85,7 @@ type BaseMessage<T extends MessageTypes | `reply-${Exclude<MessageTypes, "indica
   type: T;
 };
 interface ReplyMessageBase<T extends Exclude<MessageTypes, "indicator">> extends BaseMessage<`reply-${T}`> {
-  to: string;
+  to: Message;
 }
 export interface TextMessage extends BaseMessage<"text"> {}
 export interface ImageMessage extends BaseMessage<"image"> {}

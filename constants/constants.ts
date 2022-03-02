@@ -80,7 +80,7 @@ const config = {
   appName: "One-Chat",
   serverURls: {
     socket: "http://localhost:1919",
-    rooms: "http://localhost:1919/rooms/fr22f3rbfirefierfberbib",
+    rooms: "http://localhost:1919/rooms/",
   },
   varaints,
   OptionsPanelInfo,
@@ -95,7 +95,7 @@ export const getRandomKey: () => string = () => {
   const symbols = "!@#$%^&*()_+-=[]{}<>,./?";
   const fields = [alphas, capitalize, nums, symbols];
   let char = "";
-  for (let i = 0; i < 15; i++) {
+  for (let i = 0; i < 30; i++) {
     const randomField = fields[Math.floor(Math.random() * fields.length)];
 
     const randomCharacter = randomField[Math.floor(Math.random() * randomField.length)];
@@ -127,12 +127,12 @@ function pad(string: string | number): string {
   return String(string).padStart(2, "0");
 }
 export const formatDate: (date: Date, includeSeconds: boolean) => string = (date, includeSeconds) => {
-  const hour = Number(pad(date.getHours() + 1));
-  const minutes = pad(date.getMinutes() + 1);
-  const seconds = pad(date.getSeconds() + 1);
+  const hour = Number(pad(date.getHours() + date.getHours() === 23 ? 0 : 1));
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
   const ampm = hour > 12 ? "PM" : "AM";
   const hour12 = pad(hour > 12 ? hour - 12 : hour);
-  return `${hour12}:${minutes}:${includeSeconds ? seconds : ""} ${ampm}`;
+  return `${hour12}:${minutes}${includeSeconds ? ":" + seconds : ""} ${ampm}`;
 };
 export const useAddToast: () => (message: string, type: ToastMessage["type"]) => void = () => {
   const [, setToasts] = useContext(ToastContext);

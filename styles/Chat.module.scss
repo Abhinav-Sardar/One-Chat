@@ -25,6 +25,11 @@ $btn-size: 3.3rem;
 .chat {
   flex: 1;
   height: 100%;
+
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  overflow-y: auto;
 }
 .message-input {
   height: 12%;
@@ -109,6 +114,21 @@ $btn-size: 3.3rem;
     font-size: 2rem;
     &::selection {
       background: transparent;
+    }
+  }
+}
+
+.message {
+  display: flex;
+  div[class="avatar"] {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    border: 1px solid black;
+    svg {
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
     }
   }
 }

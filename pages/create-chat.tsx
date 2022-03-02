@@ -29,16 +29,20 @@ const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose }) => {
           animate={{
             scale: 1,
             y: 0,
-            transition: {
-              duration: 0.4,
-              delay: (i + 1) * 0.1,
-            },
           }}
           whileHover={{
             scale: 1.2,
+            transition: {
+              duration: 0.05,
+              delay: 0,
+            },
           }}
           whileTap={{
             scale: 0.85,
+            transition: {
+              duration: 0.4,
+              delay: 0,
+            },
           }}
           style={{
             borderColor: currentAvatar.id === a.id ? "yellow" : "white",
@@ -78,7 +82,7 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
             "Content-Type": "application/json",
           },
         });
-        const data = await res.json();
+        const data: { error: boolean; message: string } = await res.json();
         if (!data.error) {
           setUser({
             avatar: currentAvatar.avatar,
@@ -88,6 +92,8 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
             room: roomValue,
           });
           router.push(`/chat/${roomValue}`);
+        } else {
+          add(data.message, "error");
         }
       } catch (e) {
         add("An error occured", "error");

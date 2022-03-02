@@ -1,5 +1,5 @@
 import { createContext, Dispatch, FC, SetStateAction, useContext, useEffect, useState } from "react";
-import { ToastMessage, User } from "./Types";
+import { ChatContextType, ToastMessage, User } from "./Types";
 const UserContext = createContext<[User | null, Dispatch<SetStateAction<User | null>>]>([null, () => {}]);
 export const UserContextProvider: FC = ({ children }) => {
   const userState = useState<User | null>(null);
@@ -8,7 +8,7 @@ export const UserContextProvider: FC = ({ children }) => {
 export const useUser = () => useContext(UserContext);
 // @ts-ignore
 export const ChatContext = createContext<ChatContextType>({});
-export const useChat = () => useContext(ChatContext);
+export const useChat = (): ChatContextType => useContext(ChatContext);
 export const ToastContext = createContext<[ToastMessage[], Dispatch<SetStateAction<ToastMessage[]>>]>([[], () => {}]);
 export const ToastProvider: FC = ({ children }) => {
   const toastState = useState<ToastMessage[]>([]);
