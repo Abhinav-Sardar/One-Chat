@@ -1,8 +1,9 @@
 import { createContext, Dispatch, FC, SetStateAction, useContext, useEffect, useState } from "react";
+import { defaultUserValue } from "./constants";
 import { ChatContextType, ToastMessage, User } from "./Types";
-const UserContext = createContext<[User | null, Dispatch<SetStateAction<User | null>>]>([null, () => {}]);
+const UserContext = createContext<[User, Dispatch<SetStateAction<User>>]>([defaultUserValue, () => {}]);
 export const UserContextProvider: FC = ({ children }) => {
-  const userState = useState<User | null>(null);
+  const userState = useState<User>(defaultUserValue);
   return <UserContext.Provider value={userState}>{children}</UserContext.Provider>;
 };
 export const useUser = () => useContext(UserContext);

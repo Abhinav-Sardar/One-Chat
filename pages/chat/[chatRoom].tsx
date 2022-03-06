@@ -37,20 +37,14 @@ function Chat(): JSX.Element {
       });
     });
     document.querySelector("html")!.style.overflow = "hidden";
-    const messagesELement = document.getElementById("main__chat") as HTMLDivElement;
-    // write an event listener to listen for the scroll event
-    // if the div is scrolled to the bottom, it should console.log "scrolled to bottom"
-    messagesELement.addEventListener("scroll", () => {
-      if (messagesELement.scrollHeight - messagesELement.scrollTop - messagesELement.clientHeight < 1) {
-        console.log("scrolled to bottom");
-      }
-    });
+
     return () => {
       socket.current?.off();
     };
   }, []);
   useEffect(() => {
-    console.log(messages);
+    const messagesELement = document.getElementById("main__chat") as HTMLDivElement;
+    messagesELement.scrollTop = messagesELement.scrollHeight;
   }, [messages]);
   return (
     <ChatContext.Provider
@@ -95,18 +89,18 @@ const MemoiezedChat = memo(Chat);
 // @ts-ignore
 const ChatRoom: NextPage = ({ chatRoom }) => {
   const [user] = useUser();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const router = useRouter();
-  useEffect(() => {
-    if (!user) {
-      console.log("NOPE");
-      setIsAuthenticated(false);
-      router.replace("/join-chat");
-    } else {
-      console.log("YUP");
-      setIsAuthenticated(true);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     console.log("NOPE");
+  //     setIsAuthenticated(false);
+  //     router.replace("/join-chat");
+  //   } else {
+  //     console.log("YUP");
+  //     setIsAuthenticated(true);
+  //   }
+  // }, []);
   return (
     <>
       <Head>

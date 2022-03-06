@@ -1,7 +1,7 @@
 import * as style from "@dicebear/avatars-avataaars-sprites";
 import { createAvatar } from "@dicebear/avatars";
 import { ClientRequest } from "http";
-import { ClientAvatar, HangerBtnsType, ToastMessage } from "./Types";
+import { ClientAvatar, HangerBtnsType, ToastMessage, User } from "./Types";
 import { Variants } from "framer-motion";
 import { IconType } from "react-icons";
 import { FaRegSmile, FaRegImage } from "react-icons/fa";
@@ -45,7 +45,7 @@ const varaints: { [key: string]: Variants } = {
     animate: {
       opacity: 1,
       transition: {
-        duration: 0.5,
+        duration: 0.7,
         ease: "easeInOut",
       },
     },
@@ -127,16 +127,28 @@ function pad(string: string | number): string {
   return String(string).padStart(2, "0");
 }
 export const formatDate: (date: Date, includeSeconds: boolean) => string = (date, includeSeconds) => {
-  const hour = Number(pad(date.getHours() + date.getHours() === 23 ? 0 : 1));
+  let hours: number | string = date.getHours();
   const minutes = pad(date.getMinutes());
   const seconds = pad(date.getSeconds());
-  const ampm = hour > 12 ? "PM" : "AM";
-  const hour12 = pad(hour > 12 ? hour - 12 : hour);
-  return `${hour12}:${minutes}${includeSeconds ? ":" + seconds : ""} ${ampm}`;
+
+  if (hours > 12) {
+    hours = pad(hours - 12);
+  } else {
+    hours = pad(hours);
+  }
+  return `${hours}:${minutes}${includeSeconds ? `:${seconds}` : ""} ${date.getHours() > 12 ? "PM" : "AM"}`;
 };
 export const useAddToast: () => (message: string, type: ToastMessage["type"]) => void = () => {
   const [, setToasts] = useContext(ToastContext);
   return (message: string, type: ToastMessage["type"]) => {
     setToasts(toasts => [...toasts, { content: message, type, id: getRandomKey() }]);
   };
+};
+
+export const defaultUserValue: User = {
+  avatar: "",
+  id: "dbeeofroefoerbforerbfoerbgoeboge",
+  name: "ladwa lassun",
+  room: "HELLO123",
+  host: false,
 };

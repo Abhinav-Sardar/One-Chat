@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap");
 * {
   margin: 0;
   padding: 0;
@@ -29,4 +30,11 @@ body,
   html {
     font-size: 80%;
   }
+}
+.Outgoing {
+  align-self: flex-start;
+  left: 10px;
+}
+.Outgoing .rest-wrapper div {
+  border-top-left-radius: 0px !important;
 }

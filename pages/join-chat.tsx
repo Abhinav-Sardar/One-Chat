@@ -8,9 +8,7 @@ import { BiCurrentLocation, BiUser } from "react-icons/bi";
 import { AnimatePresence, motion } from "framer-motion";
 import { AvatarsProps, ClientAvatar } from "../constants/Types";
 import { useRouter } from "next/router";
-import { REPL_MODE_SLOPPY } from "repl";
 import { useUser } from "../constants/Context";
-import { isUint8ClampedArray } from "util/types";
 const title = "Join A Chat Room";
 const { accentColor, serverURls, varaints } = getConstants();
 const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose }) => {

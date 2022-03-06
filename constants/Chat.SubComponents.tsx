@@ -14,6 +14,7 @@ import { RiFileGifLine } from "react-icons/ri";
 import { ChatContextType, EmojisType, HangerBtnsType, Message, TextMessage, User } from "./Types";
 import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
+import { BsArrowDown } from "react-icons/bs";
 const { varaints, OptionsPanelInfo, accentColor } = getConstants();
 
 const Emojis: FC = memo(() => {
@@ -26,8 +27,10 @@ const Emojis: FC = memo(() => {
         {EmojisData.map(e => (
           <motion.div
             key={e.title}
+            transition={{ type: "spring" }}
             animate={{
               color: currentEmojiType === e.title ? accentColor : theme === "light" ? "#000" : "#fff",
+              scale: currentEmojiType === e.title ? 1.3 : 1,
             }}
             onClick={() => {
               setCurrentEmojiType(e.title);
@@ -44,13 +47,6 @@ const Emojis: FC = memo(() => {
             }}
           >
             <e.icon fontSize={"1.7rem"} />
-            {currentEmojiType === e.title && (
-              <motion.div
-                style={{ height: "5px", width: "100%", background: accentColor, marginTop: ".5rem" }}
-                layoutId={"underline"}
-                transition={{ type: "spring", damping: 10 }}
-              />
-            )}
           </motion.div>
         ))}
       </div>
@@ -103,17 +99,17 @@ export const Header: FC = memo(() => {
           {currentTime}
         </AccentText>
       </section>
-      <SafeLink href='/' passHref>
-        <Button
-          color='#fff'
-          backgroundColor='red'
-          style={{ border: "1px solid red", height: "80%", minWidth: "13rem" }}
-          onClick={socket.current?.off}
-        >
-          <span>Leave Room</span>
-          <BiExit />
-        </Button>
-      </SafeLink>
+      <Button
+        color='#fff'
+        backgroundColor='red'
+        style={{ border: "1px solid red", height: "80%", minWidth: "13rem" }}
+        onClick={() => {
+          socket.current!.off();
+        }}
+      >
+        <span>Leave Room</span>
+        <BiExit />
+      </Button>
     </header>
   );
 });
@@ -150,7 +146,7 @@ export const SidePanel: FC = memo(() => {
 export const MessageInput: FC = memo(() => {
   const inpRef = useRef<HTMLInputElement>(null);
   const [isHangerOpen, setIsHangerOpen] = useState<boolean>(false);
-  const { setMessages, setTheme, theme, setCurrentSidePanelContent, setIsSidePanelOpen } = useChat();
+  const { setMessages, setTheme, theme, setCurrentSidePanelContent, setIsSidePanelOpen, messages } = useChat();
   const add = useAddToast();
   const [user] = useUser() as [User, Dispatch<SetStateAction<User>>];
   const handleSubmit: FormEventHandler = (e: FormEvent) => {
@@ -158,7 +154,7 @@ export const MessageInput: FC = memo(() => {
     const { value } = inpRef.current!;
     if (!value || !value.trim()) {
       add("Invalid Message!", "error");
-    } else if (value.length > 250) {
+    } else if (value.length > 400) {
       add("Message is too long!", "error");
     } else {
       let newMessage: TextMessage = {
@@ -172,9 +168,9 @@ export const MessageInput: FC = memo(() => {
       };
       setMessages(prev => [...prev, newMessage]);
       inpRef.current!.value = "";
+      setIsHangerOpen(false);
     }
   };
-
   return (
     <form className={styles["message-input"]} onSubmit={handleSubmit}>
       <div className={styles["button-wrapper"]}>
@@ -249,13 +245,18 @@ export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => 
   const [user] = useUser();
   if (message.type === "text" || message.type === "reply-text") {
     return (
-      <motion.div className={`${styles.message} ${message.className}`} id={message.id}>
+      <motion.div
+        className={`${styles.message} ${message.className}`}
+        id={message.id}
+        initial={{ opacity: 0, x: -100 }}
+        animate={{ opacity: 1, x: 0, transition: { duration: 0.2 } }}
+      >
         <div className='avatar' dangerouslySetInnerHTML={{ __html: message.avatar }} />
         <div className='rest-wrapper'>
           <span>
             {message.author === user!.name ? "You" : message.author} - {formatDate(message.createdAt, false)}
           </span>
-          <div>{message.content}</div>
+          <div className='message-content'>{message.content}</div>
         </div>
       </motion.div>
     );

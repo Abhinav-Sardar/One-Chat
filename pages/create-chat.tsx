@@ -67,7 +67,6 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
     e.preventDefault();
     const { value: inpValue } = inpRef.current!;
     const { value: roomValue } = roomRef.current!;
-    console.log(inpValue, roomValue);
     try {
       await validateText(inpValue, 20, "Name");
       await validateText(roomValue, 25, "Room Name");
@@ -88,8 +87,8 @@ const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
             avatar: currentAvatar.avatar,
             id: getRandomKey(),
             host: true,
-            name: inpValue,
-            room: roomValue,
+            name: inpValue.trimStart().trimEnd(),
+            room: roomValue.trim(),
           });
           router.push(`/chat/${roomValue}`);
         } else {
