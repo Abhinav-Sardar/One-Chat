@@ -144,11 +144,3 @@ export const useAddToast: () => (message: string, type: ToastMessage["type"]) =>
     setToasts(toasts => [...toasts, { content: message, type, id: getRandomKey() }]);
   };
 };
-
-export const defaultUserValue: User = {
-  avatar: "",
-  id: "dbeeofroefoerbforerbfoerbgoeboge",
-  name: "ladwa lassun",
-  room: "HELLO123",
-  host: false,
-};

@@ -27,7 +27,6 @@ const paths: PathsItemArray = [
     navigationContent: "Join A Chat",
   },
 ];
-
 const HomePage: NextPage = () => {
   const { accentColor, appName } = getConstants();
   return (
@@ -35,6 +34,7 @@ const HomePage: NextPage = () => {
       <Head>
         <title>{appName}</title>
       </Head>
+
       <div className={styles.page} style={{ background: `linear-gradient(60deg ,${accentColor} , white)` }}>
         <header className={styles.header} style={{ color: accentColor }}>
           <Logo size={0.3} />

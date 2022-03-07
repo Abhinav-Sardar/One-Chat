@@ -1,9 +1,13 @@
 import { NextPage } from "next";
+import Head from "next/head";
 import { FaBan } from "react-icons/fa";
 import { AccentText } from "../constants/Components";
 const NoutFound: NextPage = () => {
   return (
     <>
+      <Head>
+        <title>404! This page was not found!</title>
+      </Head>
       <style jsx>
         {`
           .page {

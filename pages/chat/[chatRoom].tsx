@@ -24,7 +24,7 @@ function Chat(): JSX.Element {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [messages, setMessages] = useState<Message[]>([]);
   useEffect(() => {
-    socket.current = io(serverURls.socket);
+    socket.current = io(serverURls.socket, { reconnection: false });
     socket.current.on("connect", async () => {
       // @ts-ignore
       setUser(p => {
