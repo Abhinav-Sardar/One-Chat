@@ -4,7 +4,7 @@ import { ClientRequest } from "http";
 import { ClientAvatar, HangerBtnsType, ToastMessage, User } from "./Types";
 import { Variants } from "framer-motion";
 import { IconType } from "react-icons";
-import { FaRegSmile, FaRegImage } from "react-icons/fa";
+import { FaRegSmile, FaRegImage, FaTrashAlt } from "react-icons/fa";
 import { RiFileGifLine } from "react-icons/ri";
 import { useContext } from "react";
 import { ToastContext } from "./Context";
@@ -59,19 +59,14 @@ const OptionsPanelInfo: {
     type: "Emojis",
     Icon: FaRegSmile,
   },
-  {
-    type: "Gifs",
-    Icon: RiFileGifLine,
-  },
 
   {
     type: "Images",
     Icon: FaRegImage,
   },
   {
-    type: "theme",
-    // @ts-ignore
-    Icon: null,
+    type: "Gifs",
+    Icon: RiFileGifLine,
   },
 ];
 const config = {

@@ -51,3 +51,15 @@ body,
 .Outgoing .rest-wrapper div {
   border-top-left-radius: 0px !important;
 }
+.Incoming {
+  align-self: flex-end;
+  right: 10px;
+}
+.Incoming .rest-wrapper div {
+  border-top-right-radius: 0px !important;
+  background-color: rgb(203, 203, 203) !important;
+  color: black !important;
+}
+.Incoming .rest-wrapper span {
+  text-align: right;
+}

@@ -4,17 +4,18 @@ import { useUser } from "./Context";
 import styles from "../styles/Chat.module.scss";
 import { AccentText, Button, SafeLink } from "./Components";
 import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-icons/ai";
-import { BiExit, BiSend, BiSun } from "react-icons/bi";
+import { BiExit, BiSend, BiShareAlt, BiSun } from "react-icons/bi";
 import { formatDate, getConstants, getRandomKey, useAddToast } from "./constants";
 import { AnimatePresence, motion } from "framer-motion";
 import { useChat } from "../constants/Context";
 import { IconType } from "react-icons";
-import { FaRegSmile, FaRegImage, FaRegMoon } from "react-icons/fa";
+import { FaRegSmile, FaRegImage, FaRegMoon, FaTrashAlt } from "react-icons/fa";
 import { RiFileGifLine } from "react-icons/ri";
 import { ChatContextType, EmojisType, HangerBtnsType, Message, TextMessage, User } from "./Types";
 import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
 import { BsArrowDown } from "react-icons/bs";
+import { FiShare2 } from "react-icons/fi";
 const { varaints, OptionsPanelInfo, accentColor } = getConstants();
 
 const Emojis: FC = memo(() => {
@@ -130,6 +131,7 @@ export const SidePanel: FC = memo(() => {
         >
           <header>
             <AccentText inverted={false}>{currentSidePanelContent}</AccentText>
+
             <VscChromeClose
               onClick={() => {
                 setIsSidePanelOpen(false);
@@ -197,35 +199,53 @@ export const MessageInput: FC = memo(() => {
                   key={item.type}
                   style={{ position: "absolute", left: 0, right: 0, zIndex: 2 }}
                   onClick={() => {
-                    if (item.type === "theme") {
-                      setTheme(theme === "dark" ? "light" : "dark");
-                      setIsHangerOpen(true);
-                    } else {
-                      setCurrentSidePanelContent(item.type);
-                      setIsSidePanelOpen(true);
-                      setIsHangerOpen(false);
-                    }
+                    setCurrentSidePanelContent(item.type);
+                    setIsSidePanelOpen(true);
+                    setIsHangerOpen(false);
                   }}
                   initial={{ scale: 0, opacity: 0, bottom: 0 }}
                   animate={{ scale: 1, opacity: 1, bottom: (i + 1) * 100 }}
                   transition={{ delay: i * 0.05, type: "spring", damping: 10 }}
                   exit={{ scale: 0, opacity: 0, bottom: 0, transition: { delay: i * 0.1, duration: 0.5 } }}
                 >
-                  {item.type === "theme" ? theme === "dark" ? <FaRegMoon /> : <BiSun /> : <item.Icon />}
+                  <item.Icon />
                 </motion.button>
               ))}
             </>
           )}
         </AnimatePresence>
       </div>
-      <input
-        type='text'
-        name='Message'
-        placeholder='Say Something...'
-        ref={inpRef}
-        onDoubleClick={() => setMessages([])}
-        id='message__input'
-      />
+      <button
+        className={styles.button}
+        type='button'
+        onClick={() => {
+          setMessages([]);
+          setIsHangerOpen(false);
+        }}
+      >
+        <FaTrashAlt />
+      </button>
+      <button
+        type='button'
+        className={styles.button}
+        onClick={() => {
+          setTheme(theme === "dark" ? "light" : "dark");
+        }}
+      >
+        {theme === "dark" ? <FaRegMoon /> : <BiSun />}
+      </button>
+      <button
+        type='button'
+        className={styles.button}
+        onClick={async () => {
+          const content = `One-Chat : Best place for One-Time chats with anyone in the world.\nTo join this room, click this link 👉 ${window.location.href}.`;
+          await navigator.clipboard.writeText(content);
+          add("Copied joining info to clipboard!", "success");
+        }}
+      >
+        <BiShareAlt />
+      </button>
+      <input type='text' name='Message' placeholder='Say Something...' ref={inpRef} id='message__input' />
 
       <button className={`${styles.button} send-btn`} type='submit'>
         <BiSend />
@@ -250,12 +270,17 @@ export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => 
         id={message.id}
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0, transition: { duration: 0.2 } }}
+        exit={{ opacity: 0, transition: { duration: 0.2 } }}
       >
-        <div className='avatar' dangerouslySetInnerHTML={{ __html: message.avatar }} />
+        <div
+          className='avatar'
+          dangerouslySetInnerHTML={{ __html: message.avatar }}
+          style={{ order: message.className === "Incoming" ? 1 : 0 }}
+        />
         <div className='rest-wrapper'>
-          <span>
+          <AccentText style={{ fontWeight: "bold", fontFamily: '"Quicksand" , sans-serif' }} inverted={false}>
             {message.author === user!.name ? "You" : message.author} - {formatDate(message.createdAt, false)}
-          </span>
+          </AccentText>
           <div className='message-content'>{message.content}</div>
         </div>
       </motion.div>

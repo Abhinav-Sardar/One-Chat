@@ -49,7 +49,7 @@ export interface Room {
   isPublic: boolean;
   members: User[];
 }
-export type HangerBtnsType = "Emojis" | "Images" | "Gifs" | "theme";
+export type HangerBtnsType = "Emojis" | "Images" | "Gifs";
 export type ChatContextType = {
   currentSidePanelContent: Exclude<HangerBtnsType, "theme">;
   setCurrentSidePanelContent: Dispatch<SetStateAction<Exclude<HangerBtnsType, "theme">>>;

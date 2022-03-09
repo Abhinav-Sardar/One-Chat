@@ -74,9 +74,11 @@ function Chat(): JSX.Element {
         />
         <main style={{ display: "flex", height: "80%" }}>
           <div className={styles.chat} id='main__chat'>
-            {messages.map(m => (
-              <MessageComponent key={m.id} message={m} />
-            ))}
+            <AnimatePresence>
+              {messages.map(m => (
+                <MessageComponent key={m.id} message={m} />
+              ))}
+            </AnimatePresence>
           </div>
           <SidePanel />
         </main>

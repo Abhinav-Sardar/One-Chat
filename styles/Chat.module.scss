@@ -1,4 +1,4 @@
-$btn-size: 3.3rem;
+$btn-size: 50px;
 
 .page {
   height: 100vh;
@@ -35,12 +35,13 @@ $btn-size: 3.3rem;
 .message-input {
   height: 12%;
   border-top: 3px solid #bd14ca;
+  padding: 0 1rem;
   display: flex;
   align-items: center;
   column-gap: 2rem;
   justify-content: space-evenly;
   input {
-    width: 80%;
+    flex: 1;
     height: $btn-size;
     border-radius: 10px;
     font-family: "Poppins", sans-serif;
@@ -68,7 +69,7 @@ $btn-size: 3.3rem;
   border-radius: 50%;
   svg {
     color: white !important;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
 }
 .button-wrapper {
@@ -132,7 +133,7 @@ $btn-size: 3.3rem;
 
     svg {
       height: 70px;
-      border: 2px solid #00c0f5;
+      border: 2px solid #bd14ca;
       width: 70px;
       border-radius: 50%;
     }
@@ -141,12 +142,7 @@ $btn-size: 3.3rem;
     display: flex;
     flex-direction: column;
     width: 100%;
-    span {
-      color: #00c0f5;
-      font-size: 2rem;
-      font-family: "Quicksand", sans-serif;
-      font-weight: bold;
-    }
+
     div {
       min-height: 3rem;
       overflow-wrap: break-word;
