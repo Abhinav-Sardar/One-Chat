@@ -1,6 +1,17 @@
 import { AnimatePresence, AnimateSharedLayout, motion, useMotionValue, useTransform, Variants } from "framer-motion";
 import Link, { LinkProps } from "next/link";
-import { createContext, CSSProperties, FC, memo, ReactPortal, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  CSSProperties,
+  Dispatch,
+  FC,
+  memo,
+  ReactPortal,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { IoChatboxSharp } from "react-icons/io5";
 import { getConstants } from "./constants";
 import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps, ToastMessage } from "./Types";
@@ -11,6 +22,7 @@ import { ToastContext } from "./Context";
 import { RiContactsBookLine, RiH1 } from "react-icons/ri";
 import { BiCheck, BiErrorCircle } from "react-icons/bi";
 import { GrClose } from "react-icons/gr";
+import { IconType } from "react-icons/";
 const {
   accentColor,
   varaints: { modalVariants, modalOverlayVariants },
@@ -211,10 +223,11 @@ export const Toasts: FC = () => {
   return (
     <>
       <AnimatePresence>
-        {[...toasts].map((t, i) => (
+        {toasts.map((t, i) => (
           <Toast toast={t} key={t.id} index={i} />
         ))}
       </AnimatePresence>
     </>
   );
 };
+export const Categories: FC<> = () => {};

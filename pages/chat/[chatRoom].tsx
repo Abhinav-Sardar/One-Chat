@@ -47,44 +47,53 @@ function Chat(): JSX.Element {
     messagesELement.scrollTop = messagesELement.scrollHeight;
   }, [messages]);
   return (
-    <ChatContext.Provider
-      value={{
-        isSidePanelOpen,
-        setIsSidePanelOpen,
-        currentSidePanelContent,
-        setCurrentSidePanelContent,
-        socket,
-        theme,
-        messages,
-        setMessages,
-        setTheme,
-      }}
-    >
-      <motion.div
-        animate={{
-          backgroundColor: theme === "light" ? "#fff" : "#1f1f1f",
+    <>
+      <ChatContext.Provider
+        value={{
+          isSidePanelOpen,
+          setIsSidePanelOpen,
+          currentSidePanelContent,
+          setCurrentSidePanelContent,
+          socket,
+          theme,
+          messages,
+          setMessages,
+          setTheme,
         }}
-        className={styles.page}
       >
-        <Header
-          // @ts-ignore
-          onLeave={() => {
-            socket.current?.disconnect();
+        <motion.div
+          animate={{
+            backgroundColor: theme === "light" ? "#fff" : "#1f1f1f",
           }}
-        />
-        <main style={{ display: "flex", height: "80%" }}>
-          <div className={styles.chat} id='main__chat'>
-            <AnimatePresence>
-              {messages.map(m => (
-                <MessageComponent key={m.id} message={m} />
-              ))}
-            </AnimatePresence>
-          </div>
-          <SidePanel />
-        </main>
-        <MessageInput />
-      </motion.div>
-    </ChatContext.Provider>
+          className={styles.page}
+        >
+          <Header
+            // @ts-ignore
+            onLeave={() => {
+              socket.current?.disconnect();
+            }}
+          />
+          <main style={{ display: "flex", height: "80%" }}>
+            <div className={styles.chat} id='main__chat'>
+              <AnimatePresence>
+                {messages.map(m => (
+                  <MessageComponent key={m.id} message={m} />
+                ))}
+              </AnimatePresence>
+            </div>
+            <SidePanel />
+          </main>
+          <MessageInput />
+        </motion.div>
+      </ChatContext.Provider>
+      <style jsx>
+        {`
+          * {
+            color: ${theme === "dark" ? "#fff" : "#000"};
+          }
+        `}
+      </style>
+    </>
   );
 }
 const MemoiezedChat = memo(Chat);

@@ -2,13 +2,15 @@ import { GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import { FC, FormEvent, FormEventHandler, useEffect, useRef, useState } from "react";
 import { AccentText, Button, Modal, Toggle } from "../constants/Components";
-import { getAvatars, getConstants, getRandomKey, validateText } from "../constants/constants";
+import { getAvatars, getConstants, getRandomKey, useAddToast, validateText } from "../constants/constants";
 import styles from "../styles/CreateChat.module.scss";
 import { BiCurrentLocation, BiUser } from "react-icons/bi";
 import { AnimatePresence, motion } from "framer-motion";
 import { AvatarsProps, ClientAvatar } from "../constants/Types";
 import { useRouter } from "next/router";
+import { REPL_MODE_SLOPPY } from "repl";
 import { useUser } from "../constants/Context";
+import { isUint8ClampedArray } from "util/types";
 const title = "Join A Chat Room";
 const { accentColor, serverURls, varaints } = getConstants();
 const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose }) => {
@@ -27,16 +29,20 @@ const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose }) => {
           animate={{
             scale: 1,
             y: 0,
-            transition: {
-              duration: 0.4,
-              delay: (i + 1) * 0.1,
-            },
           }}
           whileHover={{
             scale: 1.2,
+            transition: {
+              duration: 0.05,
+              delay: 0,
+            },
           }}
           whileTap={{
             scale: 0.85,
+            transition: {
+              duration: 0.4,
+              delay: 0,
+            },
           }}
           style={{
             borderColor: currentAvatar.id === a.id ? "yellow" : "white",
@@ -48,56 +54,58 @@ const Avatars: FC<AvatarsProps> = ({ avatars, currentAvatar, onClose }) => {
 };
 // @ts-ignore
 
-const JoinRoomPage: NextPage = ({ avatars, isRedirect }: { avatars: ClientAvatar[]; isRedirect: boolean }) => {
+const CreateRoomPge: NextPage = ({ avatars }: { avatars: ClientAvatar[] }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [currentAvatar, setCurrentAvatar] = useState<ClientAvatar>({ avatar: "", id: "" });
+  const [isToggled, setIsToggled] = useState<boolean>(false);
   const inpRef = useRef<HTMLInputElement | null>(null);
   const roomRef = useRef<HTMLInputElement | null>(null);
   const [user, setUser] = useUser();
   const router = useRouter();
-  //   const handleSubmit: FormEventHandler = async (e: FormEvent) => {
-  //     e.preventDefault();
-  //     const { value: inpValue } = inpRef.current!;
-  //     const { value: roomValue } = roomRef.current!;
-  //     console.log(inpValue, roomValue);
-  //     try {
-  //       await validateText(inpValue, 20, "Name");
-
-  //       try {
-  //         await validateText(roomValue, 25, "Room Name");
-  //         const res = await fetch(serverURls.rooms, {
-  //           method: "POST",
-  //           body: JSON.stringify({
-  //             roomName: roomValue.trim(),
-  //             isPublic: !isToggled,
-  //           }),
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //         });
-  //         const data = await res.json();
-  //         if (!data.error) {
-  //           setUser({
-  //             avatar: currentAvatar.avatar,
-  //             id: getRandomKey(),
-  //             host: true,
-  //             name: inpValue,
-  //             room: roomValue,
-  //           });
-  //           router.push(`/chat/${roomValue}`);
-  //         }
-  //       } catch (e) {
-  //         console.error(e);
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   };
+  const add = useAddToast();
+  const handleSubmit: FormEventHandler = async (e: FormEvent) => {
+    e.preventDefault();
+    const { value: inpValue } = inpRef.current!;
+    const { value: roomValue } = roomRef.current!;
+    try {
+      await validateText(inpValue, 20, "Name");
+      await validateText(roomValue, 25, "Room Name");
+      try {
+        const res = await fetch(serverURls.rooms, {
+          method: "POST",
+          body: JSON.stringify({
+            roomName: roomValue.trim(),
+            isPublic: !isToggled,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data: { error: boolean; message: string } = await res.json();
+        if (!data.error) {
+          setUser({
+            avatar: currentAvatar.avatar,
+            id: getRandomKey(),
+            host: true,
+            name: inpValue.trimStart().trimEnd(),
+            room: roomValue.trim(),
+          });
+          router.push(`/chat/${roomValue}`);
+        } else {
+          add(data.message, "error");
+        }
+      } catch (e) {
+        add("An error occured", "error");
+      }
+    } catch (e: any) {
+      add(e, "error");
+    }
+  };
   useEffect(() => {
     inpRef.current?.focus();
     setCurrentAvatar(avatars[0]);
-    console.log(isRedirect);
   }, []);
+
   return (
     <>
       <Head>
@@ -112,7 +120,7 @@ const JoinRoomPage: NextPage = ({ avatars, isRedirect }: { avatars: ClientAvatar
 
           <hr color={accentColor} style={{ height: "10px" }} />
         </div>
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
             <label htmlFor='Name'>
               <AccentText inverted={false}>Name</AccentText>
@@ -135,8 +143,9 @@ const JoinRoomPage: NextPage = ({ avatars, isRedirect }: { avatars: ClientAvatar
               Choose Avatar <BiUser />
             </Button>
           </div>
+
           <Button style={{ border: `1px solid ${accentColor}` }} type='submit'>
-            Join Room
+            Create Room
           </Button>
         </form>
       </div>
@@ -155,7 +164,7 @@ const JoinRoomPage: NextPage = ({ avatars, isRedirect }: { avatars: ClientAvatar
     </>
   );
 };
-export default JoinRoomPage;
+export default CreateRoomPge;
 export const getStaticProps: GetStaticProps = () => {
   return {
     props: {

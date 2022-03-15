@@ -6,7 +6,7 @@ import { AccentText, Button, SafeLink } from "./Components";
 import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-icons/ai";
 import { BiExit, BiSend, BiShareAlt, BiSun } from "react-icons/bi";
 import { formatDate, getConstants, getRandomKey, useAddToast } from "./constants";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, createMotionComponent } from "framer-motion";
 import { useChat } from "../constants/Context";
 import { IconType } from "react-icons";
 import { FaRegSmile, FaRegImage, FaRegMoon, FaTrashAlt } from "react-icons/fa";
@@ -16,14 +16,27 @@ import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
 import { BsArrowDown } from "react-icons/bs";
 import { FiShare2 } from "react-icons/fi";
-const { varaints, OptionsPanelInfo, accentColor } = getConstants();
-
+import { useRouter } from "next/router";
+// @ts-ignore
+const { varaints, OptionsPanelInfo, accentColor, tenorApiKey } = getConstants();
+const Gifs: FC = memo(() => {
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <h1>GIFS/</h1>
+    </motion.div>
+  );
+});
 const Emojis: FC = memo(() => {
   const [currentEmojiType, setCurrentEmojiType] = useState<EmojisType["title"]>("human");
   const { theme } = useChat();
   const [currentEmojisData, setCurrentEmojisData] = useState<string[]>(EmojisData[0].emojis);
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <motion.div
+      style={{ display: "flex", flexDirection: "column", height: "100%" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <div style={{ display: "flex", height: "15%" }}>
         {EmojisData.map(e => (
           <motion.div
@@ -74,7 +87,7 @@ const Emojis: FC = memo(() => {
           </motion.span>
         ))}
       </motion.div>
-    </div>
+    </motion.div>
   );
 });
 export const Header: FC = memo(() => {
@@ -91,6 +104,7 @@ export const Header: FC = memo(() => {
   const [user] = useUser();
   const currentTime = formatDate(currentDate, true);
   const { socket } = useChat();
+  const router = useRouter();
   return (
     <header className={styles.header}>
       <AccentText inverted={false}>Room - {user?.room ?? "Gotcha!"}</AccentText>
@@ -106,6 +120,7 @@ export const Header: FC = memo(() => {
         style={{ border: "1px solid red", height: "80%", minWidth: "13rem" }}
         onClick={() => {
           socket.current!.off();
+          router.push("/");
         }}
       >
         <span>Leave Room</span>
@@ -127,18 +142,38 @@ export const SidePanel: FC = memo(() => {
           exit='initial'
           transition={{ duration: 1 }}
           className={styles["side-panel"]}
-          key={currentSidePanelContent}
         >
           <header>
-            <AccentText inverted={false}>{currentSidePanelContent}</AccentText>
-
+            <div>
+              {currentSidePanelContent.split("").map((l, i) => (
+                <motion.span
+                  style={{
+                    fontSize: "2rem",
+                    color: accentColor,
+                    fontFamily: '"Poppins" , sans-serif',
+                    display: "inline-block",
+                  }}
+                  transition={{ type: "spring", delay: i * 0.1, damping: 5 }}
+                  initial={{ y: 30 }}
+                  animate={{ y: 0 }}
+                  exit={{ y: 30 }}
+                  key={`${l}${currentSidePanelContent}`}
+                >
+                  {l}
+                </motion.span>
+              ))}
+            </div>
             <VscChromeClose
               onClick={() => {
                 setIsSidePanelOpen(false);
               }}
             />
           </header>
-          <div style={{ height: "90%" }}>{currentSidePanelContent === "Emojis" ? <Emojis /> : ""}</div>
+          <div style={{ height: "90%" }}>
+            <AnimatePresence>
+              {currentSidePanelContent === "Emojis" ? <Emojis /> : currentSidePanelContent === "Gifs" ? <Gifs /> : ""}
+            </AnimatePresence>
+          </div>
         </motion.aside>
       )}
     </AnimatePresence>
@@ -269,7 +304,7 @@ export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => 
         className={`${styles.message} ${message.className}`}
         id={message.id}
         initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0, transition: { duration: 0.2 } }}
+        animate={{ opacity: 1, x: 0, transition: { duration: 0.5 } }}
         exit={{ opacity: 0, transition: { duration: 0.2 } }}
       >
         <div

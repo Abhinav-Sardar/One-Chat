@@ -8,6 +8,7 @@ import { FaRegSmile, FaRegImage, FaTrashAlt } from "react-icons/fa";
 import { RiFileGifLine } from "react-icons/ri";
 import { useContext } from "react";
 import { ToastContext } from "./Context";
+import { FiMusic } from "react-icons/fi";
 const varaints: { [key: string]: Variants } = {
   modalVariants: {
     initial: {
@@ -68,6 +69,10 @@ const OptionsPanelInfo: {
     type: "Gifs",
     Icon: RiFileGifLine,
   },
+  {
+    type: "Audio",
+    Icon: FiMusic,
+  },
 ];
 const config = {
   localStoragePrefix: "ONE-CHAT-",
@@ -77,8 +82,10 @@ const config = {
     socket: "http://localhost:1919",
     rooms: "http://localhost:1919/rooms/",
   },
+
   varaints,
   OptionsPanelInfo,
+  tenorApiKey: process.env.NEXT_PUBLIC_TENOR_API_KEY,
 };
 export const getConstants = () => {
   return config;

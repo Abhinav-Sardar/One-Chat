@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { createContext, Dispatch, FC, SetStateAction, useContext, useEffect, useState } from "react";
 import { ChatContextType, ToastMessage, User } from "./Types";
 const defaultUserValue: User = {
@@ -20,6 +21,10 @@ export const ChatContext = createContext<ChatContextType>({});
 export const useChat = (): ChatContextType => useContext(ChatContext);
 export const ToastContext = createContext<[ToastMessage[], Dispatch<SetStateAction<ToastMessage[]>>]>([[], () => {}]);
 export const ToastProvider: FC = ({ children }) => {
+  const router = useRouter();
   const toastState = useState<ToastMessage[]>([]);
+  useEffect(() => {
+    toastState[1]([]);
+  }, [router.pathname]);
   return <ToastContext.Provider value={toastState}>{children}</ToastContext.Provider>;
 };

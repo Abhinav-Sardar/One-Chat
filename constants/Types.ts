@@ -49,7 +49,7 @@ export interface Room {
   isPublic: boolean;
   members: User[];
 }
-export type HangerBtnsType = "Emojis" | "Images" | "Gifs";
+export type HangerBtnsType = "Emojis" | "Images" | "Gifs" | "Audio";
 export type ChatContextType = {
   currentSidePanelContent: Exclude<HangerBtnsType, "theme">;
   setCurrentSidePanelContent: Dispatch<SetStateAction<Exclude<HangerBtnsType, "theme">>>;
@@ -74,7 +74,12 @@ export type EmojisType = {
   emojis: string[];
   icon: IconType;
 };
-type MessageTypes = "text" | "image" | "indicator" | "gif";
+type MessageTypes = "text" | "image" | "indicator" | "gif" | "audio";
+type MediaTypeExtender = {
+  content: string | Blob;
+  resultType: "url" | "blob";
+  caption: string;
+};
 type BaseMessage<T extends MessageTypes | `reply-${Exclude<MessageTypes, "indicator">}`> = {
   id: string;
   content: string;
@@ -88,16 +93,21 @@ interface ReplyMessageBase<T extends Exclude<MessageTypes, "indicator">> extends
   to: Message;
 }
 export interface TextMessage extends BaseMessage<"text"> {}
-export interface ImageMessage extends BaseMessage<"image"> {}
-export interface GifMessage extends BaseMessage<"gif"> {}
+export type ImageMessage = BaseMessage<"image"> & MediaTypeExtender;
+export type GifMessage = BaseMessage<"gif"> & { preview_url: string } & MediaTypeExtender;
 export interface IndicatorMessage
   extends Omit<Omit<Omit<Omit<BaseMessage<"indicator">, "createdAt">, "author">, "avatar">, "className"> {
   backgroundColor: string;
   status: "success" | "error";
 }
+export type AudioMessage = BaseMessage<"audio"> & MediaTypeExtender;
+export type ReplyAudioMessage = BaseMessage<"reply-audio"> & MediaTypeExtender;
 export interface ReplyTextMessage extends ReplyMessageBase<"text"> {}
-export interface ReplyImageMessage extends ReplyMessageBase<"image"> {}
-export interface ReplyGifMessage extends ReplyMessageBase<"gif"> {}
+export type ReplyImageMessage = ReplyMessageBase<"image"> & MediaTypeExtender;
+export type ReplyGifMessage = ReplyMessageBase<"gif"> & {
+  preview_url: string;
+};
+
 export type Message =
   | TextMessage
   | ImageMessage
@@ -105,7 +115,9 @@ export type Message =
   | IndicatorMessage
   | ReplyTextMessage
   | ReplyImageMessage
-  | ReplyGifMessage;
+  | ReplyGifMessage
+  | AudioMessage
+  | ReplyAudioMessage;
 
 export type ToastMessage = {
   id: string;
