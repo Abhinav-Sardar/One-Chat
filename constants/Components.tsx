@@ -14,7 +14,7 @@ import {
 } from "react";
 import { IoChatboxSharp } from "react-icons/io5";
 import { getConstants } from "./constants";
-import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps, ToastMessage } from "./Types";
+import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps, ToastMessage, CategoriesType } from "./Types";
 import ReactDOM from "react-dom";
 import { VscChromeClose } from "react-icons/vsc";
 import styles from "../styles/Components.module.scss";
@@ -230,4 +230,43 @@ export const Toasts: FC = () => {
     </>
   );
 };
-export const Categories: FC<> = () => {};
+export const Categories: FC<CategoriesType> = ({ categories, currentCategory, setCurrentCategory }) => {
+  return (
+    <>
+      <style jsx>
+        {`
+          .wrapper {
+            display: flex;
+            height: 10%;
+          }
+          .wrapper button {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            color: ${accentColor};
+            justify-content: space-evenly;
+            align-items: center;
+            font-size: 1.3rem;
+            border: 0;
+            outline: 0;
+            font-family: "Quicksand", sans-serif;
+            font-weight: bold;
+            transition: 300ms ease-in-out;
+            cursor: pointer;
+          }
+        `}
+      </style>
+      <div className='wrapper'>
+        {categories.map(c => (
+          <button
+            style={{ background: currentCategory === c.text ? "#f4baf7" : "transparent" }}
+            onClick={() => setCurrentCategory(c.text)}
+            key={c.text}
+          >
+            {c.text} <c.icon />
+          </button>
+        ))}
+      </div>
+    </>
+  );
+};

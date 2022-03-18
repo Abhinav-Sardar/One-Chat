@@ -23,6 +23,8 @@ function Chat(): JSX.Element {
   const [currentSidePanelContent, setCurrentSidePanelContent] = useState<Exclude<HangerBtnsType, "theme">>("Emojis");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isHangerOpen, setIsHangerOpen] = useState<boolean>(false);
+
   useEffect(() => {
     socket.current = io(serverURls.socket, { reconnection: false });
     socket.current.on("connect", async () => {
@@ -59,6 +61,8 @@ function Chat(): JSX.Element {
           messages,
           setMessages,
           setTheme,
+          setIsHangerOpen,
+          isHangerOpen,
         }}
       >
         <motion.div
@@ -73,7 +77,12 @@ function Chat(): JSX.Element {
               socket.current?.disconnect();
             }}
           />
-          <main style={{ display: "flex", height: "80%" }}>
+          <main
+            style={{ display: "flex", height: "80%" }}
+            onClick={() => {
+              setIsHangerOpen(false);
+            }}
+          >
             <div className={styles.chat} id='main__chat'>
               <AnimatePresence>
                 {messages.map(m => (

@@ -2,7 +2,7 @@
 import { Dispatch, FC, FormEvent, FormEventHandler, memo, SetStateAction, useEffect, useRef, useState } from "react";
 import { useUser } from "./Context";
 import styles from "../styles/Chat.module.scss";
-import { AccentText, Button, SafeLink } from "./Components";
+import { AccentText, Button, Categories, Modal, SafeLink } from "./Components";
 import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-icons/ai";
 import { BiExit, BiSend, BiShareAlt, BiSun } from "react-icons/bi";
 import { formatDate, getConstants, getRandomKey, useAddToast } from "./constants";
@@ -14,9 +14,10 @@ import { RiFileGifLine } from "react-icons/ri";
 import { ChatContextType, EmojisType, HangerBtnsType, Message, TextMessage, User } from "./Types";
 import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
-import { BsArrowDown } from "react-icons/bs";
+import { BsArrowDown, BsArrowUp, BsFillFileMusicFill } from "react-icons/bs";
 import { FiShare2 } from "react-icons/fi";
 import { useRouter } from "next/router";
+import { MdOutlineKeyboardVoice } from "react-icons/md";
 // @ts-ignore
 const { varaints, OptionsPanelInfo, accentColor, tenorApiKey } = getConstants();
 const Gifs: FC = memo(() => {
@@ -129,7 +130,51 @@ export const Header: FC = memo(() => {
     </header>
   );
 });
-
+const Audio: FC = memo(() => {
+  const [currentCategory, setCurrentCategory] = useState<string>("Record Your Voice");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  return (
+    <div style={{ height: "100%" }}>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title='Add A Caption'>
+        <h1>HELLO</h1>
+      </Modal>
+      <Categories
+        currentCategory={currentCategory}
+        setCurrentCategory={setCurrentCategory}
+        categories={[
+          { icon: MdOutlineKeyboardVoice, text: "Record Your Voice" },
+          { text: "Choose File", icon: BsFillFileMusicFill },
+        ]}
+      />
+      <div style={{ height: "90%" }}>
+        {currentCategory === "Choose File" ? (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <Button
+              style={{ minWidth: "15rem" }}
+              onClick={() => {
+                const file = document.getElementById("audio__input") as HTMLInputElement;
+                file.click();
+                file.onchange = () => {
+                  const audio = document.createElement("audio");
+                  console.log(file.files[0]);
+                  audio.src = URL.createObjectURL(new Blob([file.files[0]], { type: "audio/mp3" }));
+                  document.body.appendChild(audio);
+                  audio.play();
+                  file.value = null;
+                };
+              }}
+            >
+              Choose File <BsArrowUp />
+            </Button>
+            <input type='file' accept='audio/*' id='audio__input' style={{ display: "none" }} />
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
+    </div>
+  );
+});
 export const SidePanel: FC = memo(() => {
   const { isSidePanelOpen, currentSidePanelContent, theme, setIsSidePanelOpen } = useChat();
   return (
@@ -153,10 +198,10 @@ export const SidePanel: FC = memo(() => {
                     fontFamily: '"Poppins" , sans-serif',
                     display: "inline-block",
                   }}
-                  transition={{ type: "spring", delay: i * 0.1, damping: 5 }}
-                  initial={{ y: 30 }}
-                  animate={{ y: 0 }}
-                  exit={{ y: 30 }}
+                  transition={{ duration: 0.2, delay: i * 0.1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   key={`${l}${currentSidePanelContent}`}
                 >
                   {l}
@@ -171,7 +216,15 @@ export const SidePanel: FC = memo(() => {
           </header>
           <div style={{ height: "90%" }}>
             <AnimatePresence>
-              {currentSidePanelContent === "Emojis" ? <Emojis /> : currentSidePanelContent === "Gifs" ? <Gifs /> : ""}
+              {currentSidePanelContent === "Emojis" ? (
+                <Emojis />
+              ) : currentSidePanelContent === "Gifs" ? (
+                <Gifs />
+              ) : currentSidePanelContent === "Audio" ? (
+                <Audio />
+              ) : (
+                ""
+              )}
             </AnimatePresence>
           </div>
         </motion.aside>
@@ -182,8 +235,15 @@ export const SidePanel: FC = memo(() => {
 
 export const MessageInput: FC = memo(() => {
   const inpRef = useRef<HTMLInputElement>(null);
-  const [isHangerOpen, setIsHangerOpen] = useState<boolean>(false);
-  const { setMessages, setTheme, theme, setCurrentSidePanelContent, setIsSidePanelOpen, messages } = useChat();
+  const {
+    setMessages,
+    setTheme,
+    theme,
+    setCurrentSidePanelContent,
+    setIsSidePanelOpen,
+    setIsHangerOpen,
+    isHangerOpen,
+  } = useChat();
   const add = useAddToast();
   const [user] = useUser() as [User, Dispatch<SetStateAction<User>>];
   const handleSubmit: FormEventHandler = (e: FormEvent) => {

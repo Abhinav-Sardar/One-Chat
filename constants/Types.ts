@@ -60,6 +60,9 @@ export type ChatContextType = {
   setTheme: Dispatch<SetStateAction<"light" | "dark">>;
   messages: Message[];
   setMessages: Dispatch<SetStateAction<Message[]>>;
+
+  isHangerOpen: boolean;
+  setIsHangerOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export enum SocketMessages {
@@ -123,4 +126,10 @@ export type ToastMessage = {
   id: string;
   type: "success" | "error";
   content: string;
+};
+
+export type CategoriesType = {
+  categories: { icon: IconType; text: string }[];
+  currentCategory: string;
+  setCurrentCategory: Dispatch<SetStateAction<string>>;
 };
