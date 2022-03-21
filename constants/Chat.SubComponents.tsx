@@ -2,7 +2,7 @@
 import { Dispatch, FC, FormEvent, FormEventHandler, memo, SetStateAction, useEffect, useRef, useState } from "react";
 import { useUser } from "./Context";
 import styles from "../styles/Chat.module.scss";
-import { AccentText, Button, Categories, Modal, SafeLink } from "./Components";
+import { AccentText, Button, Categories, Modal, AudioPlayer, SafeLink } from "./Components";
 import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-icons/ai";
 import { BiExit, BiSend, BiShareAlt, BiSun } from "react-icons/bi";
 import { formatDate, getConstants, getRandomKey, useAddToast } from "./constants";
@@ -21,23 +21,14 @@ import { MdOutlineKeyboardVoice } from "react-icons/md";
 // @ts-ignore
 const { varaints, OptionsPanelInfo, accentColor, tenorApiKey } = getConstants();
 const Gifs: FC = memo(() => {
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <h1>GIFS/</h1>
-    </motion.div>
-  );
+  return <h1>GIFS/</h1>;
 });
 const Emojis: FC = memo(() => {
   const [currentEmojiType, setCurrentEmojiType] = useState<EmojisType["title"]>("human");
   const { theme } = useChat();
   const [currentEmojisData, setCurrentEmojisData] = useState<string[]>(EmojisData[0].emojis);
   return (
-    <motion.div
-      style={{ display: "flex", flexDirection: "column", height: "100%" }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
+    <>
       <div style={{ display: "flex", height: "15%" }}>
         {EmojisData.map(e => (
           <motion.div
@@ -88,7 +79,7 @@ const Emojis: FC = memo(() => {
           </motion.span>
         ))}
       </motion.div>
-    </motion.div>
+    </>
   );
 });
 export const Header: FC = memo(() => {
@@ -133,10 +124,14 @@ export const Header: FC = memo(() => {
 const Audio: FC = memo(() => {
   const [currentCategory, setCurrentCategory] = useState<string>("Record Your Voice");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [audioContent, setAudioContent] = useState<Blob | null>(null);
+
   return (
     <div style={{ height: "100%" }}>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title='Add A Caption'>
-        <h1>HELLO</h1>
+        <div style={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <AudioPlayer source={audioContent as Blob} />
+        </div>
       </Modal>
       <Categories
         currentCategory={currentCategory}
@@ -155,11 +150,10 @@ const Audio: FC = memo(() => {
                 const file = document.getElementById("audio__input") as HTMLInputElement;
                 file.click();
                 file.onchange = () => {
-                  const audio = document.createElement("audio");
-                  console.log(file.files[0]);
-                  audio.src = URL.createObjectURL(new Blob([file.files[0]], { type: "audio/mp3" }));
-                  document.body.appendChild(audio);
-                  audio.play();
+                  // @ts-ignore
+                  setAudioContent(new Blob([file.files[0]], { type: "audio/mp3" }));
+                  setIsModalOpen(true);
+                  // @ts-ignore
                   file.value = null;
                 };
               }}
@@ -187,27 +181,10 @@ export const SidePanel: FC = memo(() => {
           exit='initial'
           transition={{ duration: 1 }}
           className={styles["side-panel"]}
+          key={currentSidePanelContent}
         >
           <header>
-            <div>
-              {currentSidePanelContent.split("").map((l, i) => (
-                <motion.span
-                  style={{
-                    fontSize: "2rem",
-                    color: accentColor,
-                    fontFamily: '"Poppins" , sans-serif',
-                    display: "inline-block",
-                  }}
-                  transition={{ duration: 0.2, delay: i * 0.1 }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  key={`${l}${currentSidePanelContent}`}
-                >
-                  {l}
-                </motion.span>
-              ))}
-            </div>
+            <AccentText inverted={false}>{currentSidePanelContent}</AccentText>
             <VscChromeClose
               onClick={() => {
                 setIsSidePanelOpen(false);
@@ -215,17 +192,15 @@ export const SidePanel: FC = memo(() => {
             />
           </header>
           <div style={{ height: "90%" }}>
-            <AnimatePresence>
-              {currentSidePanelContent === "Emojis" ? (
-                <Emojis />
-              ) : currentSidePanelContent === "Gifs" ? (
-                <Gifs />
-              ) : currentSidePanelContent === "Audio" ? (
-                <Audio />
-              ) : (
-                ""
-              )}
-            </AnimatePresence>
+            {currentSidePanelContent === "Emojis" ? (
+              <Emojis />
+            ) : currentSidePanelContent === "Gifs" ? (
+              <Gifs />
+            ) : currentSidePanelContent === "Audio" ? (
+              <Audio />
+            ) : (
+              ""
+            )}
           </div>
         </motion.aside>
       )}
@@ -254,6 +229,8 @@ export const MessageInput: FC = memo(() => {
     } else if (value.length > 400) {
       add("Message is too long!", "error");
     } else {
+      inpRef.current!.value = "";
+
       let newMessage: TextMessage = {
         author: user.name,
         avatar: user.avatar,
@@ -264,7 +241,6 @@ export const MessageInput: FC = memo(() => {
         id: getRandomKey(),
       };
       setMessages(prev => [...prev, newMessage]);
-      inpRef.current!.value = "";
       setIsHangerOpen(false);
     }
   };

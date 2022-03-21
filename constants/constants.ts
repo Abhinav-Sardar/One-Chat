@@ -95,6 +95,8 @@ export const getRandomKey: () => string = () => {
   const capitalize = alphas.toUpperCase();
   const nums = "1234567890";
   const symbols = "!@#$%^&*()_+-=[]{}<>,./?";
+  // how many uniqure strings can be made of characters which include letters , capital letters , numbers from 0 to 1 and the symbols?
+
   const fields = [alphas, capitalize, nums, symbols];
   let char = "";
   for (let i = 0; i < 30; i++) {

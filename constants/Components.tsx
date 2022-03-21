@@ -10,6 +10,7 @@ import {
   SetStateAction,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { IoChatboxSharp } from "react-icons/io5";
@@ -20,9 +21,11 @@ import { VscChromeClose } from "react-icons/vsc";
 import styles from "../styles/Components.module.scss";
 import { ToastContext } from "./Context";
 import { RiContactsBookLine, RiH1 } from "react-icons/ri";
-import { BiCheck, BiErrorCircle } from "react-icons/bi";
+import { BiCheck, BiErrorCircle, BiVolumeFull } from "react-icons/bi";
 import { GrClose } from "react-icons/gr";
 import { IconType } from "react-icons/";
+import { BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
+import { MdForward5, MdReplay5 } from "react-icons/md";
 const {
   accentColor,
   varaints: { modalVariants, modalOverlayVariants },
@@ -67,7 +70,7 @@ export const Button: FC<ButtonProps> = ({
             color: ${color};
             background-color: ${backgroundColor};
             border: 1px solid ${backgroundColor};
-            transition: color 400ms ease-in-out, background-color 400ms ease-in-out, transform 200ms ease-in-out;
+            transition: color 400ms ease-in-out, background-color 400ms ease-in-out, transform 100ms ease-in-out;
           }
           button:hover {
             background-color: ${color};
@@ -268,5 +271,28 @@ export const Categories: FC<CategoriesType> = ({ categories, currentCategory, se
         ))}
       </div>
     </>
+  );
+};
+export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [paused, setPaused] = useState<boolean>(true);
+  useEffect(() => {
+    return () => {};
+  }, []);
+  return (
+    <div className={styles["audio-player"]}>
+      <Button
+        style={{ width: "55px", height: "55px", borderRadius: "50%", padding: 0 }}
+        onClick={() => setPaused(!paused)}
+      >
+        {paused ? <BsFillPlayFill style={{ fontSize: "2rem" }} /> : <BsFillPauseFill style={{ fontSize: "2rem" }} />}
+      </Button>
+      <MdForward5 style={{ fontSize: "2.5rem", color: accentColor }} />
+      <div className='track' style={{ height: "100%", width: "30%" }}>
+        <div className='progress' />
+      </div>
+      <MdReplay5 style={{ fontSize: "2.5rem", color: accentColor }} />
+      <BiVolumeFull style={{ fontSize: "2.5rem", color: accentColor }} />
+    </div>
   );
 };
