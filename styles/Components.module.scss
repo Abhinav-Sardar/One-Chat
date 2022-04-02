@@ -103,11 +103,54 @@
 }
 
 .audio-player {
-  height: 5rem;
-  width: 30rem;
+  height: 4.5rem;
+  width: 27rem;
   border-radius: 10px !important;
   background-color: white !important;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+}
+
+.caption {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  column-gap: 4rem;
+  align-items: center;
+  --height: 2.5rem;
+  input {
+    height: var(--height);
+    width: 60%;
+    border-radius: 100px;
+    outline: 0;
+    border: 0;
+    padding: 0 0.5rem;
+    font-size: 1.1rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: bold;
+    color: #bd14ca;
+    &:focus {
+      border: 2px solid black;
+    }
+  }
+  button {
+    height: var(--height);
+    width: var(--height);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #bd14ca;
+    background-color: white;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    svg {
+      font-size: 1.5rem;
+    }
+    &:active {
+      transform: scale(0.9);
+    }
+  }
 }

@@ -5,6 +5,7 @@ import {
   CSSProperties,
   Dispatch,
   FC,
+  FormEventHandler,
   memo,
   ReactPortal,
   SetStateAction,
@@ -14,14 +15,14 @@ import {
   useState,
 } from "react";
 import { IoChatboxSharp } from "react-icons/io5";
-import { getConstants } from "./constants";
+import { getConstants, useAddToast, validateText } from "./constants";
 import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps, ToastMessage, CategoriesType } from "./Types";
 import ReactDOM from "react-dom";
 import { VscChromeClose } from "react-icons/vsc";
 import styles from "../styles/Components.module.scss";
 import { ToastContext } from "./Context";
 import { RiContactsBookLine, RiH1 } from "react-icons/ri";
-import { BiCheck, BiErrorCircle, BiVolumeFull } from "react-icons/bi";
+import { BiCheck, BiErrorCircle, BiSend, BiVolumeFull } from "react-icons/bi";
 import { GrClose } from "react-icons/gr";
 import { IconType } from "react-icons/";
 import { BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
@@ -276,23 +277,109 @@ export const Categories: FC<CategoriesType> = ({ categories, currentCategory, se
 export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [paused, setPaused] = useState<boolean>(true);
+
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [progress, setProgress] = useState<string>("0%");
   useEffect(() => {
-    return () => {};
+    const blob = new Blob([source]);
+    const url = URL.createObjectURL(blob);
+    audioRef.current!.src = url;
+    audioRef.current!.addEventListener("ended", () => setPaused(true));
+    audioRef.current!.addEventListener("timeupdate", () => {
+      setCurrentTime(audioRef.current!.currentTime);
+      setProgress(`${(audioRef.current!.currentTime / audioRef.current!.duration) * 100}%`);
+    });
+
+    audioRef.current!.addEventListener("play", () => setPaused(false));
+    audioRef.current!.addEventListener("pause", () => setPaused(true));
+    audioRef.current!.addEventListener("keyup", e => {
+      e.preventDefault();
+      if (e.code === "Space") {
+        audioRef.current!.paused ? audioRef.current!.play() : audioRef.current!.pause();
+      } else if (e.code === "ArrowRight") {
+        audioRef.current!.currentTime += 5;
+      } else if (e.code === "ArrowLeft") {
+        audioRef.current!.currentTime -= 5;
+      }
+    });
+
+    return () => {
+      URL.revokeObjectURL(url);
+      audioRef.current!.removeEventListener("keyup", e => {
+        e.preventDefault();
+        if (e.code === "Space") {
+          audioRef.current!.pause();
+        } else if (e.code === "ArrowRight") {
+          audioRef.current!.currentTime += 5;
+        } else if (e.code === "ArrowLeft") {
+          audioRef.current!.currentTime -= 5;
+        }
+      });
+      audioRef.current?.removeEventListener("ended", () => setPaused(true));
+      audioRef.current?.removeEventListener("timeupdate", () => {
+        setCurrentTime(audioRef.current!.currentTime);
+        setProgress(`${(audioRef.current!.currentTime / audioRef.current!.duration) * 100}%`);
+      });
+
+      audioRef.current?.removeEventListener("play", () => setPaused(false));
+      audioRef.current?.removeEventListener("pause", () => setPaused(true));
+    };
   }, []);
   return (
     <div className={styles["audio-player"]}>
+      <audio ref={audioRef} />
+
       <Button
         style={{ width: "55px", height: "55px", borderRadius: "50%", padding: 0 }}
-        onClick={() => setPaused(!paused)}
+        onClick={() => (paused ? audioRef.current!.play() : audioRef.current!.pause())}
       >
         {paused ? <BsFillPlayFill style={{ fontSize: "2rem" }} /> : <BsFillPauseFill style={{ fontSize: "2rem" }} />}
       </Button>
-      <MdForward5 style={{ fontSize: "2.5rem", color: accentColor }} />
-      <div className='track' style={{ height: "100%", width: "30%" }}>
-        <div className='progress' />
+      <MdForward5
+        style={{ fontSize: "2rem", cursor: "pointer", color: accentColor }}
+        onClick={() => {
+          audioRef.current!.currentTime += 5;
+        }}
+      />
+      <div className='track' style={{ height: "100%", width: "50%", display: "flex", alignItems: "center" }}>
+        <div className='progress' style={{ height: "20%", width: "100%", backgroundColor: "lightgray" }}>
+          <motion.div
+            className='progress'
+            style={{ height: "100%", width: "100%", backgroundColor: accentColor }}
+            animate={{ width: progress }}
+          />
+        </div>{" "}
       </div>
-      <MdReplay5 style={{ fontSize: "2.5rem", color: accentColor }} />
-      <BiVolumeFull style={{ fontSize: "2.5rem", color: accentColor }} />
+      <MdReplay5
+        style={{ fontSize: "2rem", cursor: "pointer", color: accentColor }}
+        onClick={() => {
+          audioRef.current!.currentTime -= 5;
+        }}
+      />
+      <BiVolumeFull style={{ fontSize: "2rem", cursor: "pointer", color: accentColor }} onClick={() => {}} />
     </div>
   );
 };
+
+export const Caption: FC<{ onSubmit: (caption: string) => void }> = memo(({ onSubmit }) => {
+  const add = useAddToast();
+  const onCaptionSubmit: FormEventHandler = async e => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const { value } = form.querySelector("input")!;
+    try {
+      await validateText(value, 50, "Caption");
+      onSubmit(value);
+    } catch (e) {
+      add(e as string, "error");
+    }
+  };
+  return (
+    <form className={styles.caption} onSubmit={onCaptionSubmit}>
+      <input type='text' name='caption' />
+      <button type='submit'>
+        <BiSend />
+      </button>
+    </form>
+  );
+});

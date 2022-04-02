@@ -2,7 +2,7 @@
 import { Dispatch, FC, FormEvent, FormEventHandler, memo, SetStateAction, useEffect, useRef, useState } from "react";
 import { useUser } from "./Context";
 import styles from "../styles/Chat.module.scss";
-import { AccentText, Button, Categories, Modal, AudioPlayer, SafeLink } from "./Components";
+import { AccentText, Button, Categories, Modal, AudioPlayer, SafeLink, Caption } from "./Components";
 import { AiFillClockCircle, AiOutlineClockCircle, AiOutlinePlus } from "react-icons/ai";
 import { BiExit, BiSend, BiShareAlt, BiSun } from "react-icons/bi";
 import { formatDate, getConstants, getRandomKey, useAddToast } from "./constants";
@@ -129,8 +129,18 @@ const Audio: FC = memo(() => {
   return (
     <div style={{ height: "100%" }}>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title='Add A Caption'>
-        <div style={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          style={{
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            rowGap: "2rem",
+          }}
+        >
           <AudioPlayer source={audioContent as Blob} />
+          <Caption onSubmit={() => {}} />
         </div>
       </Modal>
       <Categories
