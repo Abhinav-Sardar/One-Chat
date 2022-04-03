@@ -292,29 +292,9 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
 
     audioRef.current!.addEventListener("play", () => setPaused(false));
     audioRef.current!.addEventListener("pause", () => setPaused(true));
-    audioRef.current!.addEventListener("keyup", e => {
-      e.preventDefault();
-      if (e.code === "Space") {
-        audioRef.current!.paused ? audioRef.current!.play() : audioRef.current!.pause();
-      } else if (e.code === "ArrowRight") {
-        audioRef.current!.currentTime += 5;
-      } else if (e.code === "ArrowLeft") {
-        audioRef.current!.currentTime -= 5;
-      }
-    });
 
     return () => {
       URL.revokeObjectURL(url);
-      audioRef.current!.removeEventListener("keyup", e => {
-        e.preventDefault();
-        if (e.code === "Space") {
-          audioRef.current!.pause();
-        } else if (e.code === "ArrowRight") {
-          audioRef.current!.currentTime += 5;
-        } else if (e.code === "ArrowLeft") {
-          audioRef.current!.currentTime -= 5;
-        }
-      });
       audioRef.current?.removeEventListener("ended", () => setPaused(true));
       audioRef.current?.removeEventListener("timeupdate", () => {
         setCurrentTime(audioRef.current!.currentTime);

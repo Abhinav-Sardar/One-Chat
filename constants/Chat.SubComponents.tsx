@@ -11,7 +11,7 @@ import { useChat } from "../constants/Context";
 import { IconType } from "react-icons";
 import { FaRegSmile, FaRegImage, FaRegMoon, FaTrashAlt } from "react-icons/fa";
 import { RiFileGifLine } from "react-icons/ri";
-import { ChatContextType, EmojisType, HangerBtnsType, Message, TextMessage, User } from "./Types";
+import { AudioMessage, ChatContextType, EmojisType, HangerBtnsType, Message, TextMessage, User } from "./Types";
 import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
 import { BsArrowDown, BsArrowUp, BsFillFileMusicFill } from "react-icons/bs";
@@ -125,7 +125,8 @@ const Audio: FC = memo(() => {
   const [currentCategory, setCurrentCategory] = useState<string>("Record Your Voice");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [audioContent, setAudioContent] = useState<Blob | null>(null);
-
+  const { setMessages } = useChat();
+  const [user] = useUser();
   return (
     <div style={{ height: "100%" }}>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title='Add A Caption'>
@@ -140,7 +141,24 @@ const Audio: FC = memo(() => {
           }}
         >
           <AudioPlayer source={audioContent as Blob} />
-          <Caption onSubmit={() => {}} />
+          <Caption
+            onSubmit={caption => {
+              const newMessage: AudioMessage = {
+                author: user.name,
+                avatar: user.avatar,
+                caption,
+                className: "Outgoing",
+                content: audioContent as Blob,
+
+                createdAt: new Date(),
+
+                id: getRandomKey(),
+                type: "audio",
+                resultType: "url",
+              };
+              setMessages(prev => [...prev, newMessage]);
+            }}
+          />
         </div>
       </Modal>
       <Categories
@@ -344,7 +362,9 @@ export const MessageInput: FC = memo(() => {
 
 export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => {
   const [user] = useUser();
-  if (message.type === "text" || message.type === "reply-text") {
+  if (message.type === "indicator") {
+    return <h1>Yoo</h1>;
+  } else {
     return (
       <motion.div
         className={`${styles.message} ${message.className}`}
@@ -362,11 +382,17 @@ export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => 
           <AccentText style={{ fontWeight: "bold", fontFamily: '"Quicksand" , sans-serif' }} inverted={false}>
             {message.author === user!.name ? "You" : message.author} - {formatDate(message.createdAt, false)}
           </AccentText>
-          <div className='message-content'>{message.content}</div>
+          <div className='message-content'>
+            {message.type.includes("text") ? (
+              message.content
+            ) : message.type.includes("audio") ? (
+              <AudioPlayer source={message.content as Blob} />
+            ) : (
+              ""
+            )}
+          </div>
         </div>
       </motion.div>
     );
-  } else {
-    return <></>;
   }
 });

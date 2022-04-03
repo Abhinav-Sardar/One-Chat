@@ -48,14 +48,14 @@ body,
   align-self: flex-start;
   left: 10px;
 }
-.Outgoing .rest-wrapper div {
+.Outgoing .rest-wrapper .message-content {
   border-top-left-radius: 0px !important;
 }
 .Incoming {
   align-self: flex-end;
   right: 10px;
 }
-.Incoming .rest-wrapper div {
+.Incoming .rest-wrapper .message-content {
   border-top-right-radius: 0px !important;
   background-color: rgb(203, 203, 203) !important;
   color: black !important;

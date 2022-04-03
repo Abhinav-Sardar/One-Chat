@@ -79,13 +79,13 @@ export type EmojisType = {
 };
 type MessageTypes = "text" | "image" | "indicator" | "gif" | "audio";
 type MediaTypeExtender = {
-  content: string | Blob;
   resultType: "url" | "blob";
   caption: string;
 };
+type MediaTypes = "image" | "audio" | "gif";
 type BaseMessage<T extends MessageTypes | `reply-${Exclude<MessageTypes, "indicator">}`> = {
   id: string;
-  content: string;
+  content: T extends MediaTypes | `reply-${MediaTypes}` ? string | Blob : string;
   createdAt: Date;
   avatar: string;
   author: string;
@@ -133,3 +133,5 @@ export type CategoriesType = {
   currentCategory: string;
   setCurrentCategory: Dispatch<SetStateAction<string>>;
 };
+
+export type ReplyContextType = { isOpen: boolean; message: Message | null };
