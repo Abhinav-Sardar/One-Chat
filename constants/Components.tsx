@@ -15,7 +15,7 @@ import {
   useState,
 } from "react";
 import { IoChatboxSharp } from "react-icons/io5";
-import { getConstants, useAddToast, validateText } from "./constants";
+import { formatAudioDuration, getConstants, getRandomKey, pad, useAddToast, validateText } from "./constants";
 import { ButtonProps, SafeLinkProps, ModalProps, ToggleProps, ToastMessage, CategoriesType } from "./Types";
 import ReactDOM from "react-dom";
 import { VscChromeClose } from "react-icons/vsc";
@@ -115,7 +115,7 @@ export const AccentText: FC<{ style?: CSSProperties; inverted: boolean }> = ({ c
 
 export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
   const [mounted, setMounted] = useState<boolean>(false);
-
+  const id = getRandomKey();
   useEffect(() => {
     setMounted(true);
     return () => {
@@ -141,6 +141,7 @@ export const Modal: FC<ModalProps> = ({ onClose, isOpen, children, title }) => {
             variants={modalVariants}
             className={styles.modal}
             exit='initial'
+            id={id}
             transition={{
               ease: "easeInOut",
               duration: 1,
@@ -278,30 +279,59 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [paused, setPaused] = useState<boolean>(true);
 
-  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<string>("00:00");
   const [progress, setProgress] = useState<string>("0%");
+
+  const [duration, setDuration] = useState<number>(0);
   useEffect(() => {
     const blob = new Blob([source]);
     const url = URL.createObjectURL(blob);
     audioRef.current!.src = url;
     audioRef.current!.addEventListener("ended", () => setPaused(true));
     audioRef.current!.addEventListener("timeupdate", () => {
-      setCurrentTime(audioRef.current!.currentTime);
-      setProgress(`${(audioRef.current!.currentTime / audioRef.current!.duration) * 100}%`);
+      if (!audioRef.current) return;
+      else {
+        setProgress(`${(audioRef.current!.currentTime / audioRef.current!.duration) * 100}%`);
+
+        setCurrentTime(formatAudioDuration(audioRef.current!.currentTime));
+      }
     });
 
-    audioRef.current!.addEventListener("play", () => setPaused(false));
+    audioRef.current!.addEventListener("play", () => {
+      const audios = document.querySelectorAll("audio");
+      audios.forEach(a => {
+        if (a === audioRef.current) return;
+        else {
+          a.pause();
+        }
+      });
+      setPaused(false);
+      setDuration(audioRef.current!.duration);
+    });
     audioRef.current!.addEventListener("pause", () => setPaused(true));
 
     return () => {
       URL.revokeObjectURL(url);
       audioRef.current?.removeEventListener("ended", () => setPaused(true));
       audioRef.current?.removeEventListener("timeupdate", () => {
-        setCurrentTime(audioRef.current!.currentTime);
-        setProgress(`${(audioRef.current!.currentTime / audioRef.current!.duration) * 100}%`);
+        if (!audioRef.current) return;
+        else {
+          setProgress(`${(audioRef.current!.currentTime / audioRef.current!.duration) * 100}%`);
+          setCurrentTime(formatAudioDuration(audioRef.current!.currentTime));
+        }
       });
 
-      audioRef.current?.removeEventListener("play", () => setPaused(false));
+      audioRef.current?.removeEventListener("play", () => {
+        const audios = document.querySelectorAll("audio");
+        audios.forEach(a => {
+          if (a === audioRef.current) return;
+          else {
+            a.pause();
+          }
+        });
+        setPaused(false);
+        setDuration(audioRef.current!.duration);
+      });
       audioRef.current?.removeEventListener("pause", () => setPaused(true));
     };
   }, []);
@@ -321,14 +351,21 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
           audioRef.current!.currentTime += 5;
         }}
       />
-      <div className='track' style={{ height: "100%", width: "50%", display: "flex", alignItems: "center" }}>
+      <AccentText
+        inverted={false}
+        style={{ fontFamily: "'Poppins' , sans-serif", fontSize: "1.2rem", padding: "0 .6rem" }}
+      >
+        {currentTime}
+      </AccentText>
+
+      <div className='track' style={{ height: "100%", width: "40%", display: "flex", alignItems: "center" }}>
         <div className='progress' style={{ height: "20%", width: "100%", backgroundColor: "lightgray" }}>
           <motion.div
             className='progress'
             style={{ height: "100%", width: "100%", backgroundColor: accentColor }}
             animate={{ width: progress }}
           />
-        </div>{" "}
+        </div>
       </div>
       <MdReplay5
         style={{ fontSize: "2rem", cursor: "pointer", color: accentColor }}
@@ -336,7 +373,13 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
           audioRef.current!.currentTime -= 5;
         }}
       />
-      <BiVolumeFull style={{ fontSize: "2rem", cursor: "pointer", color: accentColor }} onClick={() => {}} />
+      <AccentText
+        inverted={false}
+        style={{ fontFamily: "'Poppins' , sans-serif", fontSize: "1.2rem", margin: "0 .6rem" }}
+      >
+        {formatAudioDuration(duration)}
+      </AccentText>
+      <BiVolumeFull style={{ fontSize: "1.8rem", cursor: "pointer", color: accentColor }} onClick={() => {}} />
     </div>
   );
 };

@@ -127,6 +127,7 @@ const Audio: FC = memo(() => {
   const [audioContent, setAudioContent] = useState<Blob | null>(null);
   const { setMessages } = useChat();
   const [user] = useUser();
+
   return (
     <div style={{ height: "100%" }}>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title='Add A Caption'>
@@ -143,6 +144,7 @@ const Audio: FC = memo(() => {
           <AudioPlayer source={audioContent as Blob} />
           <Caption
             onSubmit={caption => {
+              setIsModalOpen(false);
               const newMessage: AudioMessage = {
                 author: user.name,
                 avatar: user.avatar,
@@ -174,17 +176,21 @@ const Audio: FC = memo(() => {
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
             <Button
               style={{ minWidth: "15rem" }}
-              onClick={() => {
-                const file = document.getElementById("audio__input") as HTMLInputElement;
-                file.click();
-                file.onchange = () => {
-                  // @ts-ignore
-                  setAudioContent(new Blob([file.files[0]], { type: "audio/mp3" }));
-                  setIsModalOpen(true);
-                  // @ts-ignore
-                  file.value = null;
-                };
-              }}
+              onClick={
+                isModalOpen
+                  ? () => {}
+                  : () => {
+                      const file = document.getElementById("audio__input") as HTMLInputElement;
+                      file.click();
+                      file.onchange = () => {
+                        // @ts-ignore
+                        setAudioContent(new Blob([file.files[0]], { type: "audio/mp3" }));
+                        setIsModalOpen(true);
+                        // @ts-ignore
+                        file.value = null;
+                      };
+                    }
+              }
             >
               Choose File <BsArrowUp />
             </Button>
@@ -384,7 +390,9 @@ export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => 
           </AccentText>
           <div className='message-content'>
             {message.type.includes("text") ? (
-              message.content
+              <div style={{ alignSelf: "flex-start", overflowWrap: "break-word", height: "100%", width: "100%" }}>
+                {message.content}
+              </div>
             ) : message.type.includes("audio") ? (
               <AudioPlayer source={message.content as Blob} />
             ) : (

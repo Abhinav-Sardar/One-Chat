@@ -103,22 +103,24 @@
 }
 
 .audio-player {
-  height: 4.5rem;
-  width: 27rem;
+  height: 5rem;
+  width: 90%;
+  padding: 0 1rem;
   border-radius: 10px !important;
   background-color: white !important;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
+  column-gap: 5px;
 }
 
 .caption {
   width: 100%;
   display: flex;
   justify-content: center;
-  column-gap: 4rem;
+  column-gap: 2rem;
   align-items: center;
-  --height: 2.5rem;
+  --height: 50px;
   input {
     height: var(--height);
     width: 60%;

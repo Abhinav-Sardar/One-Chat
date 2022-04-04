@@ -127,7 +127,7 @@ export const getAvatars: () => ClientAvatar[] = () => {
   }
   return avatars;
 };
-function pad(string: string | number): string {
+export function pad(string: string | number): string {
   return String(string).padStart(2, "0");
 }
 export const formatDate: (date: Date, includeSeconds: boolean) => string = (date, includeSeconds) => {
@@ -147,4 +147,11 @@ export const useAddToast: () => (message: string, type: ToastMessage["type"]) =>
   return (message: string, type: ToastMessage["type"]) => {
     setToasts(toasts => [...toasts, { content: message, type, id: getRandomKey() }]);
   };
+};
+
+export const formatAudioDuration = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const secondsLeft = Math.floor(seconds % 60);
+  const time = `${pad(minutes)}:${secondsLeft < 10 ? "0" : ""}${secondsLeft}`;
+  return time;
 };
