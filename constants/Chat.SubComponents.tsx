@@ -203,6 +203,16 @@ const Audio: FC = memo(() => {
     </div>
   );
 });
+const Images: FC = memo(() => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        height: "100%",
+      }}
+    ></div>
+  );
+});
 export const SidePanel: FC = memo(() => {
   const { isSidePanelOpen, currentSidePanelContent, theme, setIsSidePanelOpen } = useChat();
   return (
@@ -233,7 +243,7 @@ export const SidePanel: FC = memo(() => {
             ) : currentSidePanelContent === "Audio" ? (
               <Audio />
             ) : (
-              ""
+              <Images />
             )}
           </div>
         </motion.aside>
@@ -391,10 +401,17 @@ export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => 
           <div className='message-content'>
             {message.type.includes("text") ? (
               <div style={{ alignSelf: "flex-start", overflowWrap: "break-word", height: "100%", width: "100%" }}>
-                {message.content}
+                <AccentText inverted={true} style={{ fontSize: "1.5rem", fontFamily: "'Poppins' , sans-serif" }}>
+                  {message.content}
+                </AccentText>
               </div>
-            ) : message.type.includes("audio") ? (
-              <AudioPlayer source={message.content as Blob} />
+            ) : message.type === "audio" || message.type === "reply-audio" ? (
+              <>
+                <AudioPlayer source={message.content as Blob} />
+                <AccentText inverted={true} style={{ fontSize: "1.5rem", fontFamily: "'Poppins' , sans-serif" }}>
+                  {message.caption}
+                </AccentText>
+              </>
             ) : (
               ""
             )}

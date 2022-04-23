@@ -123,7 +123,7 @@ $btn-size: 50px;
 .message {
   display: flex;
   position: relative;
-  width: 70%;
+  width: 65%;
   align-items: center;
   margin: 3rem 0;
 
@@ -156,6 +156,7 @@ $btn-size: 50px;
       font-size: 1.3rem;
       font-family: "Poppins", sans-serif;
       flex-shrink: 0;
+      row-gap: 1.2rem;
     }
   }
 }

@@ -296,6 +296,17 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
         setCurrentTime(formatAudioDuration(audioRef.current!.currentTime));
       }
     });
+    document.addEventListener("keyup", ev => {
+      const { activeElement } = document;
+      if (activeElement && activeElement.tagName === "INPUT") return;
+      if (ev.code === "Space") {
+        audioRef.current!.paused ? audioRef.current!.play() : audioRef.current!.pause();
+      } else if (ev.code === "ArrowRight") {
+        audioRef.current!.currentTime += 5;
+      } else if (ev.code === "ArrowLeft") {
+        audioRef.current!.currentTime -= 5;
+      }
+    });
 
     audioRef.current!.addEventListener("play", () => {
       const audios = document.querySelectorAll("audio");
@@ -329,6 +340,17 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
             a.pause();
           }
         });
+        document.removeEventListener("keyup", ev => {
+          const { activeElement } = document;
+          if (activeElement && activeElement.tagName === "INPUT") return;
+          if (ev.code === "Space") {
+            audioRef.current!.paused ? audioRef.current!.play() : audioRef.current!.pause();
+          } else if (ev.code === "ArrowRight") {
+            audioRef.current!.currentTime += 5;
+          } else if (ev.code === "ArrowLeft") {
+            audioRef.current!.currentTime -= 5;
+          }
+        });
         setPaused(false);
         setDuration(audioRef.current!.duration);
       });
@@ -339,47 +361,39 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
     <div className={styles["audio-player"]}>
       <audio ref={audioRef} />
 
-      <Button
-        style={{ width: "55px", height: "55px", borderRadius: "50%", padding: 0 }}
-        onClick={() => (paused ? audioRef.current!.play() : audioRef.current!.pause())}
-      >
-        {paused ? <BsFillPlayFill style={{ fontSize: "2rem" }} /> : <BsFillPauseFill style={{ fontSize: "2rem" }} />}
+      <Button onClick={() => (paused ? audioRef.current!.play() : audioRef.current!.pause())} className='play-pause'>
+        {paused ? <BsFillPlayFill /> : <BsFillPauseFill />}
       </Button>
       <MdForward5
-        style={{ fontSize: "2rem", cursor: "pointer", color: accentColor }}
         onClick={() => {
           audioRef.current!.currentTime += 5;
         }}
+        className='icon'
       />
       <AccentText
         inverted={false}
         style={{ fontFamily: "'Poppins' , sans-serif", fontSize: "1.2rem", padding: "0 .6rem" }}
       >
-        {currentTime}
+        {currentTime} / {formatAudioDuration(duration)}
       </AccentText>
 
       <div className='track' style={{ height: "100%", width: "40%", display: "flex", alignItems: "center" }}>
         <div className='progress' style={{ height: "20%", width: "100%", backgroundColor: "lightgray" }}>
           <motion.div
-            className='progress'
+            className='current-progress'
             style={{ height: "100%", width: "100%", backgroundColor: accentColor }}
             animate={{ width: progress }}
           />
         </div>
       </div>
       <MdReplay5
-        style={{ fontSize: "2rem", cursor: "pointer", color: accentColor }}
         onClick={() => {
           audioRef.current!.currentTime -= 5;
         }}
+        className='icon'
       />
-      <AccentText
-        inverted={false}
-        style={{ fontFamily: "'Poppins' , sans-serif", fontSize: "1.2rem", margin: "0 .6rem" }}
-      >
-        {formatAudioDuration(duration)}
-      </AccentText>
-      <BiVolumeFull style={{ fontSize: "1.8rem", cursor: "pointer", color: accentColor }} onClick={() => {}} />
+
+      <BiVolumeFull onClick={() => {}} className='icon' />
     </div>
   );
 };
