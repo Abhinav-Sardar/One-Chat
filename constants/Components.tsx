@@ -238,30 +238,7 @@ export const Toasts: FC = () => {
 export const Categories: FC<CategoriesType> = ({ categories, currentCategory, setCurrentCategory }) => {
   return (
     <>
-      <style jsx>
-        {`
-          .wrapper {
-            display: flex;
-            height: 10%;
-          }
-          .wrapper button {
-            flex: 1;
-            height: 100%;
-            display: flex;
-            color: ${accentColor};
-            justify-content: space-evenly;
-            align-items: center;
-            font-size: 1.3rem;
-            border: 0;
-            outline: 0;
-            font-family: "Quicksand", sans-serif;
-            font-weight: bold;
-            transition: 300ms ease-in-out;
-            cursor: pointer;
-          }
-        `}
-      </style>
-      <div className='wrapper'>
+      <div className={styles.wrapper}>
         {categories.map(c => (
           <button
             style={{ background: currentCategory === c.text ? "#f4baf7" : "transparent" }}
@@ -370,15 +347,12 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
         }}
         className='icon'
       />
-      <AccentText
-        inverted={false}
-        style={{ fontFamily: "'Poppins' , sans-serif", fontSize: "1.2rem", padding: "0 .6rem" }}
-      >
+      <AccentText inverted={false}>
         {currentTime} / {formatAudioDuration(duration)}
       </AccentText>
 
-      <div className='track' style={{ height: "100%", width: "40%", display: "flex", alignItems: "center" }}>
-        <div className='progress' style={{ height: "20%", width: "100%", backgroundColor: "lightgray" }}>
+      <div className='track'>
+        <div className='progress' style={{}}>
           <motion.div
             className='current-progress'
             style={{ height: "100%", width: "100%", backgroundColor: accentColor }}
@@ -400,12 +374,14 @@ export const AudioPlayer: FC<{ source: Blob }> = ({ source }) => {
 
 export const Caption: FC<{ onSubmit: (caption: string) => void }> = memo(({ onSubmit }) => {
   const add = useAddToast();
+  const id = getRandomKey();
   const onCaptionSubmit: FormEventHandler = async e => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
     const { value } = form.querySelector("input")!;
     try {
       await validateText(value, 50, "Caption");
+      (document.getElementById(id) as HTMLInputElement).disabled = true;
       onSubmit(value);
     } catch (e) {
       add(e as string, "error");
@@ -413,7 +389,7 @@ export const Caption: FC<{ onSubmit: (caption: string) => void }> = memo(({ onSu
   };
   return (
     <form className={styles.caption} onSubmit={onCaptionSubmit}>
-      <input type='text' name='caption' />
+      <input type='text' name='caption' id={id} />
       <button type='submit'>
         <BiSend />
       </button>

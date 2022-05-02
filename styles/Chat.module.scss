@@ -153,8 +153,10 @@ $btn-size: 50px;
       color: white;
       padding: 0.7rem;
       border-radius: 10px;
-      font-size: 1.3rem;
-      font-family: "Poppins", sans-serif;
+      span {
+        font-size: 1.3rem;
+        font-family: "Poppins", sans-serif;
+      }
       flex-shrink: 0;
       row-gap: 1.2rem;
     }

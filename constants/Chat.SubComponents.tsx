@@ -14,10 +14,10 @@ import { RiFileGifLine } from "react-icons/ri";
 import { AudioMessage, ChatContextType, EmojisType, HangerBtnsType, Message, TextMessage, User } from "./Types";
 import { VscChromeClose } from "react-icons/vsc";
 import EmojisData from "./data/Emojis";
-import { BsArrowDown, BsArrowUp, BsFillFileMusicFill } from "react-icons/bs";
+import { BsArrowDown, BsArrowUp, BsFillFileImageFill, BsFillFileMusicFill } from "react-icons/bs";
 import { FiShare2 } from "react-icons/fi";
 import { useRouter } from "next/router";
-import { MdOutlineKeyboardVoice } from "react-icons/md";
+import { MdImage, MdOutlineKeyboardVoice } from "react-icons/md";
 // @ts-ignore
 const { varaints, OptionsPanelInfo, accentColor, tenorApiKey } = getConstants();
 const Gifs: FC = memo(() => {
@@ -204,13 +204,19 @@ const Audio: FC = memo(() => {
   );
 });
 const Images: FC = memo(() => {
+  const [currentCategory, setCurrentCategory] = useState<"Browse Images" | "Choose File">("Browse Images");
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100%",
-      }}
-    ></div>
+    <div style={{ height: "100%" }}>
+      <Categories
+        currentCategory={currentCategory}
+        categories={[
+          { icon: MdImage, text: "Browse Images" },
+          { text: "Choose File", icon: BsFillFileImageFill },
+        ]}
+        // @ts-ignore
+        setCurrentCategory={setCurrentCategory}
+      />
+    </div>
   );
 });
 export const SidePanel: FC = memo(() => {
@@ -401,16 +407,12 @@ export const MessageComponent: FC<{ message: Message }> = memo(({ message }) => 
           <div className='message-content'>
             {message.type.includes("text") ? (
               <div style={{ alignSelf: "flex-start", overflowWrap: "break-word", height: "100%", width: "100%" }}>
-                <AccentText inverted={true} style={{ fontSize: "1.5rem", fontFamily: "'Poppins' , sans-serif" }}>
-                  {message.content}
-                </AccentText>
+                <AccentText inverted={true}>{message.content}</AccentText>
               </div>
             ) : message.type === "audio" || message.type === "reply-audio" ? (
               <>
                 <AudioPlayer source={message.content as Blob} />
-                <AccentText inverted={true} style={{ fontSize: "1.5rem", fontFamily: "'Poppins' , sans-serif" }}>
-                  {message.caption}
-                </AccentText>
+                <AccentText inverted={true}>{message.caption}</AccentText>
               </>
             ) : (
               ""
