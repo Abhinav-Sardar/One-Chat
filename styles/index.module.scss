@@ -1,0 +1,15 @@
+.page {
+  height: 100%;
+  background: linear-gradient(30deg, #bd14ca, white);
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  height: 10%;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 1rem;
+  border-bottom: 2px solid #bd14ca;
+}
