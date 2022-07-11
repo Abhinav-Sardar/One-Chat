@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@types/react-icons": "^3.0.0",
-    "framer-motion": "^6.3.15",
+    "framer-motion": "^6.4.3",
     "next": "12.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
