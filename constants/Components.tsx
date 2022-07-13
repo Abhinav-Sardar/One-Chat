@@ -38,26 +38,27 @@ export const Button: Component<ButtonProps> = ({ children, styles }) => {
     <>
       <style jsx>{`
         button {
-          height: 3.5rem;
-          width: 15rem;
-          padding: 0 1rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 1.2rem;
           font-family: "Poppins", sans-serif;
-          border-radius: 10px;
           cursor: pointer;
           border: 0;
           outline: 0;
           color: white;
-          background: ${constants.accentColor};
-          transition: 400ms ease-in-out;
+          background-color: ${constants.accentColor};
+          transition: color 400ms, background-color 400ms, transform 50ms ease-in-out;
+          min-height: 2.5rem;
+          padding: 0 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          font-size: 1rem;
+          border-radius: 5px;
         }
         button:hover {
           color: ${constants.accentColor};
           background-color: white;
-          transform: scale(1.1);
+        }
+        button:active {
+          transform: scale(0.9);
         }
       `}</style>
       <button style={styles}>{children}</button>

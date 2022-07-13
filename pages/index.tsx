@@ -5,6 +5,8 @@ import { constants } from "../constants/constants";
 import { motion } from "framer-motion";
 import { AiOutlinePlus } from "react-icons/ai";
 import { IoChatboxSharp } from "react-icons/io5";
+import { useRouter } from "next/router";
+import Link from "next/link";
 const HomePage: NextPage = () => {
   return (
     <div className={styles.page}>
@@ -16,7 +18,7 @@ const HomePage: NextPage = () => {
       <main className={styles.main}>
         <motion.div
           initial={{ position: "relative", bottom: 0, left: 0 }}
-          animate={{ bottom: 50, transition: { duration: 2, yoyo: Infinity } }}
+          animate={{ bottom: [50, 0, 50], transition: { duration: 3, repeat: Infinity } }}
         >
           <Logo size={12} />
         </motion.div>
@@ -30,10 +32,14 @@ const HomePage: NextPage = () => {
           </AccentText>
         </>
         <section className={styles.btnWrapper}>
-          <Button styles={{ width: "16rem" }}>
-            Create A Chat Room <AiOutlinePlus />
-          </Button>
-          <Button>
+          <Link href='/create'>
+            <a style={{ textDecoration: "none" }}>
+              <Button onClick={() => {}} styles={{ minWidth: "19rem", height: "3.5rem", fontSize: "1.4rem" }}>
+                Create A Chat Room <AiOutlinePlus />
+              </Button>
+            </a>
+          </Link>
+          <Button styles={{ minWidth: "19rem", height: "3.5rem", fontSize: "1.4rem" }} onClick={() => {}}>
             Join A Chat Room
             <IoChatboxSharp />
           </Button>
